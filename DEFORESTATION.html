@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Từ Vựng B2-C1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4;
+            /* Màu Green-50 (Thiên nhiên) */
+        }
+
+        .flip-card {
+            perspective: 1000px;
+            width: 100%;
+            height: 520px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.3);
+            /* Green shadow */
+            outline: none;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .input-error {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            color: #b91c1c !important;
+        }
+
+        #topic-toast {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 p-4 md:p-8 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+
+    <!-- Toast Notification -->
+    <div id="topic-toast"
+        class="absolute top-8 left-1/2 transform -translate-x-1/2 translate-y-[-250%] bg-white border-2 border-green-500 text-green-800 px-6 py-3 rounded-full shadow-2xl font-bold text-lg z-50 flex items-center gap-3">
+        <span class="text-2xl">🌲</span>
+        <span id="toast-message">Chủ đề mới: Deforestation</span>
+        <span class="text-2xl">🪓</span>
+    </div>
+
+    <div class="max-w-xl w-full mx-auto relative">
+        <!-- Nút quay lại từ trước đó (ẩn ở thẻ đầu tiên) -->
+        <button id="top-prev-btn" onclick="prevCard()"
+            class="absolute left-0 top-0 mt-1 flex items-center justify-center p-2 text-gray-400 hover:text-green-700 hover:bg-green-100 rounded-full transition-colors hidden"
+            title="Quay lại từ trước">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </button>
+
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 id="main-topic-title" class="text-3xl font-bold text-green-900 tracking-tight uppercase">CHỦ ĐỀ:
+                DEFORESTATION</h1>
+            <p class="text-green-600 mt-2 font-medium">Level: B2-C1 | <span id="progress-text">1 / X</span></p>
+
+            <div class="w-full bg-green-200 rounded-full h-2.5 mt-4">
+                <div id="progress-bar" class="bg-green-600 h-2.5 rounded-full transition-all duration-300"
+                    style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Vùng chứa Flashcard -->
+        <div class="flip-card" id="flashcard">
+            <div class="flip-card-inner">
+
+                <!-- Mặt trước: Câu hỏi -->
+                <div class="flip-card-front p-6 md:p-8 border-t-4 border-green-600">
+                    <div class="flex-grow flex flex-col justify-center items-center text-center">
+
+                        <!-- Nghĩa tiếng Việt và Loại từ -->
+                        <div class="flex items-center justify-center gap-3 mb-2">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800" id="word-mean"></h2>
+                            <span
+                                class="inline-block px-2 py-1 bg-amber-100 text-amber-800 rounded font-semibold text-sm uppercase"
+                                id="word-type"></span>
+                        </div>
+
+                        <div class="w-16 h-1 bg-green-200 my-4 mx-auto rounded"></div>
+
+                        <!-- Câu tiếng Anh lên trước, câu tiếng Việt xuống dưới -->
+                        <p class="text-xl md:text-2xl text-gray-700 font-medium mb-3 leading-relaxed" id="word-ex"></p>
+                        <p class="text-gray-500 italic text-base md:text-lg mb-6" id="word-exVi"></p>
+
+                        <div class="w-full flex flex-col items-center gap-4">
+                            <div id="letter-inputs-container" class="flex flex-wrap justify-center gap-x-1 gap-y-3">
+                            </div>
+
+                            <!-- Nút Loa & Nút Hint -->
+                            <div class="flex items-center justify-center gap-3">
+                                <button onclick="speakCurrentWord()"
+                                    class="flex items-center justify-center w-9 h-9 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-sm"
+                                    title="Nghe phát âm (Phím tắt: Shift + Enter)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <button onclick="giveHint()" title="Gợi ý (Phím tắt: Alt + H)"
+                                    class="text-sm px-4 py-1.5 h-9 bg-stone-200 text-stone-700 hover:bg-stone-300 font-medium rounded-full transition-colors flex items-center gap-1 shadow-sm border border-stone-300">
+                                    Hint
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="checkAnswer()"
+                        class="mt-4 w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center gap-2">
+                        Check Answer
+                    </button>
+                </div>
+
+                <!-- Mặt sau: Kết quả -->
+                <div class="flip-card-back p-6 md:p-8 flex flex-col border-t-4 border-green-600">
+                    <div id="result-header" class="text-center py-2 rounded-lg font-bold text-lg mb-4"></div>
+
+                    <div class="flex-grow flex flex-col justify-center items-center text-center">
+                        <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2" id="back-word"></h2>
+
+                        <div
+                            class="flex items-center gap-2 mb-4 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-full">
+                            <p class="text-xl text-amber-700 font-mono font-medium" id="back-phonetic"></p>
+                            <button onclick="speakCurrentWord()"
+                                class="flex items-center justify-center w-8 h-8 bg-amber-200 hover:bg-amber-300 text-amber-800 rounded-full transition-colors focus:outline-none"
+                                title="Nghe phát âm (Phím tắt: Shift + Enter)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <p class="text-lg text-gray-600 font-medium mb-3" id="back-mean"></p>
+
+                        <!-- Thêm khối hiển thị câu ví dụ trọn vẹn -->
+                        <div class="bg-stone-100 border border-stone-200 rounded-lg p-4 w-full max-w-md mt-2">
+                            <p class="text-gray-800 text-xl md:text-2xl font-medium leading-relaxed" id="back-ex"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 mt-4">
+                        <button onclick="prevCard()"
+                            class="flex-1 py-3 bg-stone-200 hover:bg-stone-300 text-gray-800 font-semibold rounded-lg transition-colors">Quay
+                            lại</button>
+                        <button onclick="nextCard()" id="next-btn"
+                            class="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-colors">Tiếp
+                            theo</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Điểm số (hiện khi kết thúc) -->
+        <div id="final-screen"
+            class="hidden bg-white rounded-2xl shadow-xl p-8 text-center border-t-4 border-green-600">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Hoàn thành bài tập!</h2>
+            <p class="text-lg text-gray-600 mb-6">Bạn đã ôn tập xong toàn bộ danh sách từ vựng.</p>
+            <div class="text-6xl mb-6">🏆</div>
+            <button onclick="resetQuiz()"
+                class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-colors">Học
+                lại từ đầu</button>
+        </div>
+
+    </div>
+
+    <script>
+        const flashcards = [
+            // VOCABULARY - DEFORESTATION
+            { topic: "Deforestation", word: "desperate", phonetic: "/ˈdespərət/", type: "adj", mean: "tuyệt vọng, tuyệt cùng", ex: "Many people become _______ when they cannot find enough food or money to support their families.", exVi: "Nhiều người trở nên tuyệt vọng khi họ không thể tìm đủ thức ăn hoặc tiền bạc để nuôi sống gia đình." },
+            { topic: "Deforestation", word: "earn a living", phonetic: "/ɜːrn ə ˈlɪvɪŋ/", type: "v. phrase", mean: "kiếm sống", ex: "Many farmers _______ by growing vegetables and selling them at local markets.", exVi: "Nhiều nông dân kiếm sống bằng cách trồng rau và bán chúng tại các khu chợ địa phương." },
+            { topic: "Deforestation", word: "Loggers", phonetic: "/ˈlɒɡərz/", type: "n", mean: "người đốn gỗ", ex: "_______ often work in remote forests where the weather can be difficult and dangerous.", exVi: "Những người đốn gỗ thường làm việc ở các khu rừng hẻo lánh nơi thời tiết có thể khắc nghiệt và nguy hiểm." },
+            { topic: "Deforestation", word: "pristine", phonetic: "/ˈprɪstiːn/", type: "adj", mean: "nguyên sơ, tinh khiết", ex: "Tourists love visiting _______ beaches because they are clean and beautiful.", exVi: "Du khách thích đến thăm những bãi biển nguyên sơ vì chúng sạch và đẹp." },
+            { topic: "Deforestation", word: "block clearings", phonetic: "/blɒk ˈklɪərɪŋz/", type: "n. phrase", mean: "những khu đất bị phát quang theo mảng lớn", ex: "Satellite images show _______ in many rainforest areas every year.", exVi: "Hình ảnh vệ tinh cho thấy những khu đất bị phát quang theo mảng lớn ở nhiều khu vực rừng nhiệt đới mỗi năm." },
+            { topic: "Deforestation", word: "Smaller-scale efforts", phonetic: "/ˈsmɔːlər skeɪl ˈefərts/", type: "n. phrase", mean: "các nỗ lực quy mô nhỏ hơn", ex: "_______ often help local communities solve problems more effectively.", exVi: "Các nỗ lực quy mô nhỏ hơn thường giúp các cộng đồng địa phương giải quyết vấn đề hiệu quả hơn." },
+            { topic: "Deforestation", word: "swaths", phonetic: "/swɒðz/", type: "n", mean: "những dải/vùng rộng lớn", ex: "Huge _______ of land disappear after the fire spreads across the dry forest.", exVi: "Những dải đất rộng lớn biến mất sau khi ngọn lửa lan rộng khắp khu rừng khô hạn." },
+            { topic: "Deforestation", word: "chunky blocks", phonetic: "/ˈtʃʌŋki blɒks/", type: "n. phrase", mean: "các khối lớn dày/cồng kềnh", ex: "The old building consists of _______ of stone from the mountains.", exVi: "Tòa nhà cũ bao gồm các khối đá lớn dày từ trên núi." },
+            { topic: "Deforestation", word: "motive", phonetic: "/ˈməʊtɪv/", type: "n", mean: "động cơ, lý do", ex: "Police try to understand the _______ behind the criminal’s strange behavior.", exVi: "Cảnh sát cố gắng hiểu động cơ đằng sau hành vi kỳ lạ của tên tội phạm." },
+            { topic: "Deforestation", word: "A statistical analysis", phonetic: "/ə stəˈtɪstɪkəl əˈnæləsɪs/", type: "n. phrase", mean: "một phân tích thống kê", ex: "_______ shows that students perform better after enough sleep.", exVi: "Một phân tích thống kê cho thấy học sinh có kết quả tốt hơn sau khi ngủ đủ giấc." },
+            { topic: "Deforestation", word: "forest loss rates", phonetic: "/ˈfɒrɪst lɒs reɪts/", type: "n. phrase", mean: "tỷ lệ mất rừng", ex: "Scientists worry because _______ continue to rise in many countries.", exVi: "Các nhà khoa học lo lắng vì tỷ lệ mất rừng tiếp tục gia tăng ở nhiều quốc gia." },
+            { topic: "Deforestation", word: "Urban population growth", phonetic: "/ˈɜːrbən ˌpɒpjəˈleɪʃən ɡrəʊθ/", type: "n. phrase", mean: "sự gia tăng dân số đô thị", ex: "_______ creates pressure on housing and transportation systems.", exVi: "Sự gia tăng dân số đô thị tạo áp lực lên hệ thống nhà ở và giao thông." },
+            { topic: "Deforestation", word: "Agricultural exports", phonetic: "/ˌæɡrɪˈkʌltʃərəl ˈekspɔːrts/", type: "n. phrase", mean: "xuất khẩu nông sản", ex: "_______ play an important role in the country’s economy.", exVi: "Xuất khẩu nông sản đóng vai trò quan trọng trong nền kinh tế của đất nước." },
+            { topic: "Deforestation", word: "Planned colonization", phonetic: "/plænd ˌkɒlənaɪˈzeɪʃən/", type: "n. phrase", mean: "sự khai hoang/thuộc địa hóa có kế hoạch", ex: "_______ changes the environment in many developing areas.", exVi: "Sự khai hoang có kế hoạch làm thay đổi môi trường ở nhiều khu vực đang phát triển." },
+            { topic: "Deforestation", word: "resettlement schemes", phonetic: "/ˌriːˈsetlmənt skiːmz/", type: "n. phrase", mean: "các kế hoạch tái định cư", ex: "The government introduces _______ for families affected by floods.", exVi: "Chính phủ đưa ra các kế hoạch tái định cư cho các gia đình bị ảnh hưởng bởi lũ lụt." },
+            { topic: "Deforestation", word: "subsistence", phonetic: "/səbˈsɪstəns/", type: "n", mean: "sự sinh tồn/mức đủ sống", ex: "Many villagers depend on _______ farming to feed their families.", exVi: "Nhiều dân làng phụ thuộc vào nông nghiệp tự cung tự cấp để nuôi sống gia đình họ." },
+            { topic: "Deforestation", word: "Booming cities", phonetic: "/ˈbuːmɪŋ ˈsɪtiz/", type: "n. phrase", mean: "các thành phố bùng nổ phát triển", ex: "_______ attract young workers from rural areas every year.", exVi: "Các thành phố bùng nổ phát triển thu hút công nhân trẻ từ các vùng nông thôn mỗi năm." },
+            { topic: "Deforestation", word: "shoe leather", phonetic: "/ʃuː ˈleðər/", type: "n. phrase", mean: "da làm giày", ex: "The company uses natural _______ to make expensive products.", exVi: "Công ty sử dụng da làm giày tự nhiên để sản xuất các sản phẩm đắt tiền." },
+            { topic: "Deforestation", word: "striking characteristics", phonetic: "/ˈstraɪkɪŋ ˌkærəktəˈrɪstɪks/", type: "n. phrase", mean: "đặc điểm nổi bật", ex: "One of the _______ of the animal is its bright blue skin.", exVi: "Một trong những đặc điểm nổi bật của loài động vật này là làn da màu xanh sáng của nó." },
+            { topic: "Deforestation", word: "An executive director", phonetic: "/ɪɡˈzekjətɪv dəˈrektər/", type: "n. phrase", mean: "giám đốc điều hành", ex: "The executive director presents new plans at the meeting today.", exVi: "Giám đốc điều hành trình bày các kế hoạch mới tại cuộc họp hôm nay." },
+            { topic: "Deforestation", word: "Sustainable forestry", phonetic: "/səˈsteɪnəbl ˈfɒrɪstri/", type: "n. phrase", mean: "lâm nghiệp bền vững", ex: "_______ helps protect natural resources for future generations.", exVi: "Lâm nghiệp bền vững giúp bảo vệ các nguồn tài nguyên thiên nhiên cho các thế hệ tương lai." },
+            { topic: "Deforestation", word: "Global demand", phonetic: "/ˈɡləʊbl dɪˈmɑːnd/", type: "n. phrase", mean: "nhu cầu toàn cầu", ex: "_______ for clean energy continues to increase rapidly.", exVi: "Nhu cầu toàn cầu về năng lượng sạch tiếp tục tăng nhanh." },
+            { topic: "Deforestation", word: "crop varieties", phonetic: "/krɒp vəˈraɪətiz/", type: "n. phrase", mean: "các giống cây trồng", ex: "Farmers test different _______ to improve production.", exVi: "Nông dân thử nghiệm các giống cây trồng khác nhau để cải thiện sản lượng." },
+            { topic: "Deforestation", word: "management techniques", phonetic: "/ˈmænɪdʒmənt tekˈniːks/", type: "n. phrase", mean: "kỹ thuật quản lý", ex: "Good _______ improve teamwork in large companies.", exVi: "Kỹ thuật quản lý tốt cải thiện sự làm việc nhóm trong các công ty lớn." },
+            { topic: "Deforestation", word: "Degraded and abandoned lands", phonetic: "/dɪˈɡreɪdɪd ənd əˈbændənd lændz/", type: "n. phrase", mean: "đất suy thoái và bị bỏ hoang", ex: "_______ can become useful again with proper care.", exVi: "Đất suy thoái và bị bỏ hoang có thể trở nên hữu ích trở lại nếu được chăm sóc đúng cách." },
+            { topic: "Deforestation", word: "in the tropics", phonetic: "/ɪn ðə ˈtrɒpɪks/", type: "prep phrase", mean: "ở vùng nhiệt đới", ex: "Many rare animals live _______ because of the warm climate.", exVi: "Nhiều loài động vật quý hiếm sống ở vùng nhiệt đới vì khí hậu ấm áp." },
+            { topic: "Deforestation", word: "building management systems", phonetic: "/ˈbɪldɪŋ ˈmænɪdʒmənt ˈsɪstəmz/", type: "n. phrase", mean: "hệ thống quản lý tòa nhà", ex: "Modern offices use _______ to control lights and temperature.", exVi: "Các văn phòng hiện đại sử dụng hệ thống quản lý tòa nhà để điều khiển ánh sáng và nhiệt độ." },
+            { topic: "Deforestation", word: "illegally harvested wood", phonetic: "/ɪˈliːɡəli ˈhɑːrvɪstɪd wʊd/", type: "n. phrase", mean: "gỗ khai thác trái phép", ex: "Many countries ban the sale of _______.", exVi: "Nhiều quốc gia cấm bán gỗ khai thác trái phép." },
+            { topic: "Deforestation", word: "forest footprint", phonetic: "/ˈfɒrɪst ˈfʊtprɪnt/", type: "n. phrase", mean: "tác động/dấu chân lên rừng", ex: "People should reduce their _______ by using less paper.", exVi: "Mọi người nên giảm tác động lên rừng của mình bằng cách sử dụng ít giấy hơn." },
+            { topic: "Deforestation", word: "Palm oil", phonetic: "/pɑːm ɔɪl/", type: "n", mean: "dầu cọ", ex: "_______ appears in many snacks and beauty products.", exVi: "Dầu cọ xuất hiện trong nhiều loại đồ ăn nhẹ và sản phẩm làm đẹp." },
+            { topic: "Deforestation", word: "be locked away", phonetic: "/bi lɒkt əˈweɪ/", type: "v. phrase", mean: "bị khóa/chôn giữ lại", ex: "Large amounts of carbon can _______ in healthy forests.", exVi: "Một lượng lớn carbon bị khóa giữ lại trong các khu rừng khỏe mạnh." },
+            { topic: "Deforestation", word: "halts", phonetic: "/hɔːlts/", type: "n/adj?", mean: "sự dừng lại / ngăn chặn", ex: "A sudden halt in production causes problems for the company.", exVi: "Sự dừng lại đột ngột trong sản xuất gây ra vấn đề cho công ty." },
+            { topic: "Deforestation", word: "Forest regrowth", phonetic: "/ˈfɒrɪst ˈriːɡrəʊθ/", type: "n", mean: "sự tái sinh rừng", ex: "_______ takes many years after serious damage.", exVi: "Sự tái sinh rừng mất nhiều năm sau những thiệt hại nghiêm trọng." },
+            { topic: "Deforestation", word: "Tropical lands", phonetic: "/ˈtrɒpɪkəl lændz/", type: "n. phrase", mean: "vùng đất nhiệt đới", ex: "_______ often support a wide range of wildlife.", exVi: "Vùng đất nhiệt đới thường nuôi dưỡng một lượng lớn các loài động vật hoang dã." },
+            { topic: "Deforestation", word: "driving forces", phonetic: "/ˈdraɪvɪŋ fɔːrsɪz/", type: "n. phrase", mean: "động lực/chủ lực thúc đẩy", ex: "Money and ambition are _______ behind his success.", exVi: "Tiền bạc và tham vọng là những động lực thúc đẩy đằng sau thành công của anh ấy." },
+            { topic: "Deforestation", word: "Greenhouse gas emissions", phonetic: "/ˈɡriːnhaʊs ɡæs ɪˈmɪʃənz/", type: "n. phrase", mean: "khí thải nhà kính", ex: "_______ contribute to climate change worldwide.", exVi: "Khí thải nhà kính góp phần vào biến đổi khí hậu trên toàn thế giới." },
+            { topic: "Deforestation", word: "a double blow", phonetic: "/ə ˈdʌbl bləʊ/", type: "n. phrase", mean: "cú đòn kép", ex: "Losing his job and his home at once is _______ for him.", exVi: "Mất việc và mất nhà cùng một lúc là một cú đòn kép đối với anh ấy." },
+            { topic: "Deforestation", word: "suck up CO2", phonetic: "/sʌk ʌp siː oʊ tuː/", type: "v. phrase", mean: "hấp thụ CO2", ex: "Trees _______ and help keep the air clean.", exVi: "Cây xanh hấp thụ CO2 và giúp giữ cho không khí trong sạch." },
+            { topic: "Deforestation", word: "Decaying plants", phonetic: "/dɪˈkeɪɪŋ plænts/", type: "n. phrase", mean: "thực vật phân hủy", ex: "_______ provide nutrients for the soil.", exVi: "Thực vật phân hủy cung cấp chất dinh dưỡng cho đất." },
+            { topic: "Deforestation", word: "Forest degradation", phonetic: "/ˈfɒrɪst ˌdeɡrəˈdeɪʃən/", type: "n. phrase", mean: "sự suy thoái rừng", ex: "_______ affects many animals that lose their homes.", exVi: "Sự suy thoái rừng ảnh hưởng đến nhiều loài động vật bị mất nhà cửa." },
+            { topic: "Deforestation", word: "In the light of", phonetic: "/ɪn ðə laɪt əv/", type: "prep phrase", mean: "xét theo, dưới góc độ", ex: "_______ recent events, the school changes its policy.", exVi: "Xét theo các sự kiện gần đây, nhà trường thay đổi chính sách của mình." },
+            { topic: "Deforestation", word: "on the horizon", phonetic: "/ɒn ðə həˈraɪzn/", type: "phrase", mean: "sắp xảy ra, đang đến gần", ex: "New opportunities appear _______ for young graduates.", exVi: "Những cơ hội mới sắp xuất hiện đối với các sinh viên mới tốt nghiệp." },
+            { topic: "Deforestation", word: "biofuels", phonetic: "/ˈbaɪəʊfjuːəlz/", type: "n", mean: "nhiên liệu sinh học", ex: "Many scientists study _______ as an alternative energy source.", exVi: "Nhiều nhà khoa học nghiên cứu nhiên liệu sinh học như một nguồn năng lượng thay thế." },
+            { topic: "Deforestation", word: "exacerbate", phonetic: "/ɪɡˈzæsəbeɪt/", type: "v", mean: "làm trầm trọng thêm", ex: "Poor planning can _______ traffic problems in crowded cities.", exVi: "Quy hoạch kém có thể làm trầm trọng thêm các vấn đề giao thông ở các thành phố đông đúc." }
+        ];
+
+        let currentIndex = 0;
+        const totalCards = flashcards.length;
+        let canGoNext = false;
+
+        const flashcardEl = document.getElementById('flashcard');
+        const inputsContainer = document.getElementById('letter-inputs-container');
+        const finalScreen = document.getElementById('final-screen');
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSuccessSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(987.77, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.4);
+        }
+
+        function playErrorSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(350, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(250, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
+            gainNode.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.1);
+            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.15);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.25);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.25);
+        }
+
+        function playTransitionSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.15);
+            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.3);
+            osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.45);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.1);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.8);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.8);
+        }
+
+        // --- Tính năng Text-to-Speech ---
+        let preferredVoice = null;
+
+        function loadVoices() {
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) return;
+
+            const goodFemaleVoices = [
+                "Google US English",
+                "Google UK English Female",
+                "Samantha",
+                "Victoria",
+                "Karen",
+                "Microsoft Zira",
+                "Microsoft Hazel"
+            ];
+
+            for (let name of goodFemaleVoices) {
+                const voice = voices.find(v => v.name.includes(name));
+                if (voice) {
+                    preferredVoice = voice;
+                    break;
+                }
+            }
+
+            if (!preferredVoice) {
+                preferredVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Female')) ||
+                    voices.find(v => v.lang === 'en-US') || voices[0];
+            }
+        }
+
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+
+        function speakCurrentWord() {
+            if (window.event) window.event.stopPropagation();
+
+            const card = flashcards[currentIndex];
+            const wordToSpeak = card.word.replace(/-/g, ' ');
+            const utterance = new SpeechSynthesisUtterance(wordToSpeak);
+
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            } else {
+                utterance.lang = 'en-US';
+            }
+
+            utterance.rate = 0.85;
+            utterance.pitch = 1.15;
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showTopicToast(topicName) {
+            const toast = document.getElementById('topic-toast');
+            document.getElementById('toast-message').textContent = `Chủ đề mới: ${topicName}`;
+            toast.classList.remove('translate-y-[-250%]');
+            toast.classList.add('translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0');
+                toast.classList.add('translate-y-[-250%]');
+            }, 2500);
+        }
+
+        function renderCard() {
+            const card = flashcards[currentIndex];
+
+            document.getElementById('main-topic-title').textContent = `CHỦ ĐỀ: ${card.topic.toUpperCase()}`;
+            document.getElementById('word-type').textContent = card.type;
+
+            document.getElementById('word-mean').textContent = card.mean;
+            document.getElementById('word-exVi').textContent = card.exVi;
+
+            const blankedEx = card.ex.replace('_______', `<span class="text-green-700 border-b-2 border-green-600 inline-block w-24"></span>`);
+            document.getElementById('word-ex').innerHTML = blankedEx;
+
+            inputsContainer.innerHTML = '';
+            const words = card.word.split(' ');
+
+            words.forEach((w, wordIndex) => {
+                const wordGroup = document.createElement('div');
+                wordGroup.className = 'flex gap-1';
+
+                for (let i = 0; i < w.length; i++) {
+                    if (w[i] === '-') {
+                        const dash = document.createElement('span');
+                        dash.textContent = '-';
+                        dash.className = 'text-xl font-bold text-gray-400 self-center px-1';
+                        wordGroup.appendChild(dash);
+                        continue;
+                    }
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.maxLength = 1;
+
+                    if (i === 0) {
+                        input.value = w[i].toLowerCase();
+                        input.readOnly = true;
+                        input.className = 'char-input hint-input w-9 h-11 md:w-10 md:h-12 text-center text-xl font-bold border-2 border-stone-200 bg-stone-100 text-stone-500 rounded-lg cursor-not-allowed select-none shadow-sm';
+                    } else {
+                        input.className = 'char-input editable-input w-9 h-11 md:w-10 md:h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-green-600 focus:bg-green-50 transition-colors bg-white text-green-800 shadow-inner';
+
+                        input.addEventListener('input', function () {
+                            this.value = this.value.toLowerCase();
+                            this.classList.remove('input-error');
+
+                            const editableInputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const currentIdx = editableInputs.indexOf(this);
+                            if (this.value && currentIdx < editableInputs.length - 1) {
+                                editableInputs[currentIdx + 1].focus();
+                            }
+                        });
+
+                        input.addEventListener('keydown', function (e) {
+                            const editableInputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const currentIdx = editableInputs.indexOf(this);
+
+                            if (e.key === 'Backspace' && !this.value && currentIdx > 0) {
+                                editableInputs[currentIdx - 1].focus();
+                            } else if (e.key === 'Enter') {
+                                if (!e.shiftKey) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    checkAnswer();
+                                }
+                            } else if (e.key === 'ArrowLeft' && currentIdx > 0) {
+                                editableInputs[currentIdx - 1].focus();
+                                e.preventDefault();
+                            } else if (e.key === 'ArrowRight' && currentIdx < editableInputs.length - 1) {
+                                editableInputs[currentIdx + 1].focus();
+                                e.preventDefault();
+                            }
+                        });
+                    }
+                    wordGroup.appendChild(input);
+                }
+                inputsContainer.appendChild(wordGroup);
+
+                if (wordIndex < words.length - 1) {
+                    const space = document.createElement('div');
+                    space.className = 'w-3 md:w-4';
+                    inputsContainer.appendChild(space);
+                }
+            });
+
+            setTimeout(() => {
+                const firstEditableInput = document.querySelector('.editable-input');
+                if (firstEditableInput) firstEditableInput.focus();
+            }, 100);
+
+            document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${totalCards}`;
+            const percent = ((currentIndex + 1) / totalCards) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+
+            const topPrevBtn = document.getElementById('top-prev-btn');
+            if (currentIndex > 0) {
+                topPrevBtn.classList.remove('hidden');
+            } else {
+                topPrevBtn.classList.add('hidden');
+            }
+
+            const nextBtn = document.getElementById('next-btn');
+            if (currentIndex === totalCards - 1) {
+                nextBtn.textContent = "Hoàn thành";
+                nextBtn.className = "flex-1 py-3 bg-stone-500 hover:bg-stone-600 text-white font-semibold rounded-lg shadow-md transition-colors";
+            } else {
+                nextBtn.textContent = "Tiếp theo";
+                nextBtn.className = "flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-colors";
+            }
+        }
+
+        function giveHint() {
+            const card = flashcards[currentIndex];
+            const targetWord = card.word.replace(/[\s-]/g, '');
+            const allInputs = document.querySelectorAll('.char-input');
+            const editableInputs = document.querySelectorAll('.editable-input');
+
+            for (let i = 0; i < allInputs.length; i++) {
+                if (!allInputs[i].readOnly && allInputs[i].value.toLowerCase() !== targetWord[i].toLowerCase()) {
+                    allInputs[i].value = targetWord[i].toLowerCase();
+                    allInputs[i].classList.remove('input-error');
+                    allInputs[i].classList.add('bg-amber-100', 'border-amber-400', 'text-amber-800');
+
+                    let currentEditableIdx = Array.from(editableInputs).indexOf(allInputs[i]);
+                    let next = currentEditableIdx + 1;
+                    while (next < editableInputs.length && editableInputs[next].value !== '') {
+                        next++;
+                    }
+                    if (next < editableInputs.length) editableInputs[next].focus();
+                    else editableInputs[editableInputs.length - 1].focus();
+
+                    break;
+                }
+            }
+        }
+
+        function checkAnswer() {
+            const card = flashcards[currentIndex];
+            const allInputs = document.querySelectorAll('.char-input');
+
+            const userAnswer = Array.from(allInputs).map(inp => inp.value).join('').toLowerCase();
+            const correctAnswer = card.word.replace(/[\s-]/g, '').toLowerCase();
+
+            if (userAnswer === correctAnswer) {
+                playSuccessSound();
+
+                const resultHeader = document.getElementById('result-header');
+                resultHeader.textContent = "🎉 Chính xác!";
+                resultHeader.className = "text-center py-2 rounded-lg font-bold text-lg mb-4 bg-green-100 text-green-800";
+
+                document.getElementById('back-word').textContent = card.word;
+                document.getElementById('back-phonetic').textContent = card.phonetic;
+                document.getElementById('back-mean').textContent = `${card.mean} (${card.type})`;
+
+                const fullSentence = card.ex.replace('_______', `<span class="font-bold text-green-700">${card.word}</span>`);
+                document.getElementById('back-ex').innerHTML = fullSentence;
+
+                flashcardEl.classList.add('flipped');
+
+                canGoNext = false;
+                setTimeout(() => { canGoNext = true; }, 500);
+
+                if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                    document.activeElement.blur();
+                }
+            } else {
+                playErrorSound();
+                inputsContainer.classList.add('shake');
+                setTimeout(() => inputsContainer.classList.remove('shake'), 400);
+
+                let firstEmptyOrWrongInput = null;
+
+                for (let i = 0; i < allInputs.length; i++) {
+                    if (!allInputs[i].readOnly) {
+                        if (allInputs[i].value !== '' && allInputs[i].value.toLowerCase() !== correctAnswer[i]) {
+                            allInputs[i].value = '';
+                            allInputs[i].classList.add('input-error');
+                            if (!firstEmptyOrWrongInput) firstEmptyOrWrongInput = allInputs[i];
+                        } else if (allInputs[i].value === '') {
+                            allInputs[i].classList.add('input-error');
+                            if (!firstEmptyOrWrongInput) firstEmptyOrWrongInput = allInputs[i];
+                        }
+                    }
+                }
+
+                if (firstEmptyOrWrongInput) {
+                    firstEmptyOrWrongInput.focus();
+                }
+            }
+        }
+
+        function nextCard() {
+            flashcardEl.classList.remove('flipped');
+
+            setTimeout(() => {
+                if (currentIndex < totalCards - 1) {
+                    const currentTopic = flashcards[currentIndex].topic;
+                    const nextTopicCard = flashcards[currentIndex + 1].topic;
+
+                    currentIndex++;
+
+                    if (currentTopic !== nextTopicCard) {
+                        showTopicToast(nextTopicCard);
+                        playTransitionSound();
+                    }
+
+                    renderCard();
+                } else {
+                    flashcardEl.classList.add('hidden');
+                    finalScreen.classList.remove('hidden');
+                }
+            }, 300);
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                flashcardEl.classList.remove('flipped');
+                setTimeout(() => {
+                    currentIndex--;
+                    renderCard();
+                }, 300);
+            } else {
+                flashcardEl.classList.remove('flipped');
+            }
+        }
+
+        function resetQuiz() {
+            currentIndex = 0;
+            finalScreen.classList.add('hidden');
+            flashcardEl.classList.remove('hidden');
+            renderCard();
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.altKey && e.key.toLowerCase() === 'h') {
+                e.preventDefault();
+                giveHint();
+                return;
+            }
+
+            if ((e.shiftKey && e.key === 'Enter') || (e.ctrlKey && e.code === 'Space')) {
+                e.preventDefault();
+                speakCurrentWord();
+                return;
+            }
+
+            if (e.key === 'Enter' && !e.shiftKey && flashcardEl.classList.contains('flipped') && canGoNext) {
+                e.preventDefault();
+                nextCard();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', renderCard);
+
+    </script>
+</body>
+
+</html>
