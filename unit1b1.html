@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book 1 - Unit 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f3ff;
+            /* Màu Purple-50 (Màu nền học thuật nhẹ nhàng) */
+            /* Thêm họa tiết chấm bi chìm để không gian xung quanh có họa tiết, bớt trống rỗng */
+            background-image: radial-gradient(#e9d5ff 2px, transparent 2px);
+            background-size: 32px 32px;
+        }
+
+        .flip-card {
+            perspective: 1000px;
+            width: 100%;
+            height: 540px;
+        }
+
+        /* Tối ưu chiều cao trên màn hình máy tính để tạo tỷ lệ màn hình ngang (landscape) */
+        @media (min-width: 768px) {
+            .flip-card {
+                height: 500px;
+            }
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3);
+            /* Purple shadow */
+            outline: none;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+
+        .input-error {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            color: #b91c1c !important;
+        }
+
+        #topic-toast {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* --- NEW EDUCATIONAL HEADER STYLES --- */
+        @keyframes float-header {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0, 0, 0, 0.03);
+            }
+
+            50% {
+                transform: translateY(-3px);
+                box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.8), 0 8px 15px rgba(0, 0, 0, 0.06);
+            }
+        }
+
+        @keyframes badge-pulse {
+
+            0%,
+            100% {
+                transform: translateY(-50%) scale(1);
+                box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.6), 0 0 0 0 rgba(168, 85, 247, 0.4);
+            }
+
+            50% {
+                transform: translateY(-50%) scale(1.02);
+                box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.7), 0 0 0 8px rgba(168, 85, 247, 0);
+            }
+        }
+
+        @keyframes ribbon-wave {
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: 0% center;
+            }
+        }
+
+        .textbook-header {
+            position: relative;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            /* Nền tím nhạt */
+            border-radius: 1rem;
+            padding: 1.25rem 1.25rem 1.25rem 3.5rem;
+            box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e9d5ff;
+            /* Viền tím */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+            animation: float-header 6s ease-in-out infinite;
+        }
+
+        .textbook-header:hover {
+            animation-play-state: paused;
+        }
+
+        .unit-badge {
+            position: absolute;
+            left: -1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5.5rem;
+            height: 5.5rem;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+            z-index: 10;
+            animation: badge-pulse 3s ease-in-out infinite;
+        }
+
+        .textbook-header:hover .unit-badge {
+            animation: none;
+            transform: translateY(-50%) scale(1.08);
+            box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.8);
+        }
+
+        .ribbon-banner {
+            background: linear-gradient(90deg, #f97316 0%, #fbbf24 50%, #f97316 100%);
+            background-size: 200% auto;
+            padding: 0.5rem 1.5rem 0.5rem 2.5rem;
+            margin-left: -2rem;
+            /* Connects behind the badge */
+            border-radius: 0 0.5rem 0.5rem 0;
+            color: white;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+            transition: box-shadow 0.3s ease, filter 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            z-index: 5;
+            animation: ribbon-wave 3s linear infinite;
+        }
+
+        .textbook-header:hover .ribbon-banner {
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5), 0 0 15px rgba(245, 158, 11, 0.5);
+            filter: brightness(1.05);
+        }
+
+        /* Folded corner detail on the right side */
+        .ribbon-banner::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: -8px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid #c2410c;
+            /* Darker orange shadow */
+            border-right: 8px solid transparent;
+        }
+
+        .font-rounded {
+            font-family: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
+        }
+
+        @media (min-width: 768px) {
+            .textbook-header {
+                padding-left: 5rem;
+            }
+
+            .unit-badge {
+                left: -2.5rem;
+                width: 6.5rem;
+                height: 6.5rem;
+            }
+
+            .ribbon-banner {
+                padding: 0.5rem 2rem 0.5rem 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 p-4 md:p-8 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+
+    <!-- Toast Notification -->
+    <div id="topic-toast"
+        class="absolute top-8 left-1/2 transform -translate-x-1/2 translate-y-[-250%] bg-white border-2 border-purple-400 text-purple-800 px-6 py-3 rounded-full shadow-2xl font-bold text-lg z-50 flex items-center gap-3">
+        <span class="text-2xl">📚</span>
+        <span id="toast-message">Chủ đề mới: Book 1 - Unit 1</span>
+        <span class="text-2xl">🎓</span>
+    </div>
+
+    <!-- Toast Hành động (Học lại) -->
+    <div id="action-toast"
+        class="absolute top-24 left-1/2 transform -translate-x-1/2 translate-y-[-250%] opacity-0 bg-white border-2 border-purple-400 text-purple-700 px-5 py-2 rounded-full shadow-lg font-semibold text-md z-50 transition-all duration-300 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Học lại
+    </div>
+
+    <!-- Nới rộng giới hạn chiều rộng trên màn hình lớn từ max-w-xl lên max-w-2xl / lg:max-w-3xl -->
+    <div class="max-w-2xl lg:max-w-3xl w-full mx-auto relative transition-all duration-300">
+        <!-- Header Component Inspired by Textbook UI -->
+        <div class="w-full pl-6 pr-2 md:px-6 mb-8 mt-4 md:mt-2">
+            <div class="textbook-header group">
+                <!-- Badge on the left -->
+                <div class="unit-badge">
+                    <span
+                        class="text-[0.65rem] md:text-xs font-bold text-purple-200 tracking-widest uppercase mt-1">Unit</span>
+                    <span class="text-4xl md:text-5xl font-black text-white leading-none drop-shadow-md">1</span>
+                </div>
+
+                <!-- Ribbon Banner connected to badge -->
+                <div class="flex items-center mb-3">
+                    <div class="ribbon-banner">
+                        <h1 id="main-topic-title"
+                            class="text-xl md:text-2xl font-bold font-rounded tracking-wide uppercase">BOOK 1</h1>
+                    </div>
+                </div>
+
+                <!-- Progress Info & Bar -->
+                <div class="ml-2 md:ml-4">
+                    <div
+                        class="flex justify-between items-center text-xs md:text-sm font-semibold text-purple-800 mb-1.5">
+                        <span id="level-text">Level: A1-A2</span>
+                        <span id="progress-text"
+                            class="bg-white/60 px-2 py-0.5 rounded-md shadow-sm border border-purple-200">1 / X</span>
+                    </div>
+                    <div class="w-full bg-purple-200/60 rounded-full h-2 md:h-2.5 shadow-inner">
+                        <div id="progress-bar"
+                            class="bg-gradient-to-r from-purple-400 to-violet-500 h-2 md:h-2.5 rounded-full transition-all duration-300 shadow-sm"
+                            style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vùng chứa Flashcard -->
+        <div class="flip-card" id="flashcard">
+            <div class="flip-card-inner">
+
+                <!-- Mặt trước: Câu hỏi -->
+                <div class="flip-card-front p-6 md:p-8 border-t-4 border-purple-500">
+                    <div class="flex-grow flex flex-col justify-center items-center text-center">
+
+                        <!-- Nghĩa tiếng Việt và Loại từ -->
+                        <div class="flex items-center justify-center gap-3 mb-2">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800" id="word-mean"></h2>
+                            <div id="word-type-container"></div>
+                        </div>
+
+                        <div class="w-16 h-1 bg-purple-200 my-4 mx-auto rounded"></div>
+
+                        <!-- Câu tiếng Anh lên trước, câu tiếng Việt xuống dưới -->
+                        <p class="text-xl md:text-2xl text-gray-700 font-medium mb-3 leading-relaxed" id="word-ex"></p>
+                        <p class="text-gray-500 italic text-base md:text-lg mb-6" id="word-exVi"></p>
+
+                        <div class="w-full flex flex-col items-center gap-4">
+                            <div id="letter-inputs-container" class="flex flex-wrap justify-center gap-x-1 gap-y-3">
+                            </div>
+
+                            <!-- Bảng điều khiển nút -->
+                            <div class="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+                                <button onclick="speakCurrentWord()"
+                                    class="flex items-center justify-center w-9 h-9 bg-violet-100 hover:bg-violet-200 text-violet-700 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-violet-400 shadow-sm"
+                                    title="Nghe phát âm (Phím tắt: Shift + Enter)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <button id="hint-btn" onclick="giveHint()" title="Gợi ý (Phím tắt: Shift + F12)"
+                                    class="text-sm px-4 py-1.5 h-9 bg-fuchsia-100 text-fuchsia-700 hover:bg-fuchsia-200 font-medium rounded-full transition-colors flex items-center gap-1 shadow-sm border border-fuchsia-200">
+                                    Hint
+                                </button>
+                                <button id="review-btn" onclick="markForReview()"
+                                    title="Học lại ở cuối bài (Phím tắt: Shift + R)"
+                                    class="hidden text-sm px-4 py-1.5 h-9 bg-purple-100 text-purple-700 hover:bg-purple-200 font-medium rounded-full transition-colors items-center gap-1 shadow-sm border border-purple-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Học lại
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="checkAnswer()"
+                        class="mt-4 w-full py-3 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center gap-2">
+                        Check Answer
+                    </button>
+                    <p class="text-xs text-center text-purple-400/80 italic mt-4">&copy; Copyright by Hoang Truong
+                        English</p>
+                </div>
+
+                <!-- Mặt sau: Kết quả -->
+                <div class="flip-card-back p-6 md:p-8 flex flex-col border-t-4 border-purple-500">
+                    <div id="result-header" class="text-center py-2 rounded-lg font-bold text-lg mb-4"></div>
+
+                    <div class="flex-grow flex flex-col justify-center items-center text-center">
+                        <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2" id="back-word"></h2>
+
+                        <div
+                            class="flex items-center gap-2 mb-4 bg-violet-50 border border-violet-100 px-3 py-1.5 rounded-full">
+                            <p class="text-xl text-violet-700 font-mono font-medium" id="back-phonetic"></p>
+                            <button onclick="speakCurrentWord()"
+                                class="flex items-center justify-center w-8 h-8 bg-violet-200 hover:bg-violet-300 text-violet-800 rounded-full transition-colors focus:outline-none"
+                                title="Nghe phát âm (Phím tắt: Shift + Enter)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-center gap-3 mb-3">
+                            <p class="text-xl text-gray-700 font-bold" id="back-mean"></p>
+                            <div id="back-word-type-container"></div>
+                        </div>
+
+                        <!-- Thêm khối hiển thị câu ví dụ trọn vẹn -->
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 w-full max-w-md mt-2">
+                            <p class="text-gray-800 text-xl md:text-2xl font-medium leading-relaxed" id="back-ex"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 mt-4">
+                        <button onclick="prevCard()"
+                            class="flex-1 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors">Quay
+                            lại</button>
+                        <button onclick="nextCard()" id="next-btn"
+                            class="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md transition-colors">Tiếp
+                            theo</button>
+                    </div>
+                    <p class="text-xs text-center text-purple-400/80 italic mt-4">&copy; Copyright by Hoang Truong
+                        English</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Màn hình chuyển tiếp sang phần Học lại -->
+        <div id="review-transition-screen"
+            class="hidden bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-14 border border-purple-100 w-full flex flex-col items-center justify-center relative overflow-hidden">
+            <!-- Background blobs -->
+            <div
+                class="absolute -top-20 -right-20 w-56 h-56 bg-purple-300 rounded-full mix-blend-multiply filter blur-2xl opacity-40 animate-blob">
+            </div>
+            <div
+                class="absolute -bottom-20 -left-20 w-56 h-56 bg-fuchsia-300 rounded-full mix-blend-multiply filter blur-2xl opacity-40 animate-blob animation-delay-2000">
+            </div>
+
+            <!-- Icon -->
+            <div class="relative mb-8 group z-10">
+                <div
+                    class="absolute inset-0 bg-purple-300 rounded-full blur opacity-60 group-hover:opacity-100 transition duration-500">
+                </div>
+                <div
+                    class="relative w-28 h-28 bg-gradient-to-tr from-purple-600 to-fuchsia-500 rounded-full flex items-center justify-center text-white shadow-xl transform transition-transform duration-500 group-hover:scale-105 group-hover:rotate-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="z-10 text-center w-full">
+                <h2
+                    class="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-fuchsia-600 mb-2 uppercase tracking-wider">
+                    Giai đoạn ôn tập
+                </h2>
+
+                <div
+                    class="bg-white/80 border border-purple-100 shadow-sm rounded-xl p-6 my-8 max-w-xs mx-auto backdrop-blur-md">
+                    <p class="text-purple-400 text-xs font-bold uppercase tracking-widest mb-2">Số lượng thẻ</p>
+                    <div class="flex items-center justify-center gap-4">
+                        <span id="review-count" class="text-7xl font-black text-purple-700 drop-shadow-sm">0</span>
+                        <span class="text-lg font-semibold text-gray-500 text-left leading-tight">Từ vựng<br>cần luyện
+                            tập</span>
+                    </div>
+                </div>
+
+                <p class="text-gray-600 font-medium mb-10 max-w-sm mx-auto leading-relaxed italic text-lg">
+                    "Sự lặp lại là chìa khóa của trí nhớ. Hãy cùng nhau chinh phục những từ khó này."
+                </p>
+
+                <button onclick="startReviewPhase()"
+                    class="group relative px-10 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-full shadow-[0_10px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_15px_25px_rgba(147,51,234,0.4)] transition-all duration-300 flex items-center justify-center gap-3 text-lg mx-auto overflow-hidden border border-purple-500">
+                    <span
+                        class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-20 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+                    <span class="relative">Bắt đầu ôn tập</span>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 relative transform transition-transform group-hover:translate-x-1" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-xs text-center text-purple-400/80 italic mt-8 z-10">&copy; Copyright by Hoang Truong English
+            </p>
+        </div>
+
+        <!-- Điểm số (hiện khi kết thúc) -->
+        <div id="final-screen"
+            class="hidden bg-white rounded-2xl shadow-xl p-8 text-center border-t-4 border-purple-500">
+            <h2 class="text-3xl font-bold text-purple-800 mb-4">Hoàn thành bài tập!</h2>
+            <p class="text-lg text-gray-600 mb-6">Bạn đã ôn tập xong toàn bộ danh sách từ vựng.</p>
+            <div class="text-6xl mb-6">🏆</div>
+            <button onclick="resetQuiz()"
+                class="px-8 py-3 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg shadow-md transition-colors">Học
+                lại từ đầu</button>
+            <p class="text-xs text-center text-purple-400/80 italic mt-6">&copy; Copyright by Hoang Truong English</p>
+        </div>
+
+    </div>
+
+    <script>
+        const flashcards = [
+            // UNIT 1 WORD LIST
+            { topic: "Book 1 - Unit 1", word: "afraid", phonetic: "/əˈfreɪd/", type: "adj", mean: "sợ hãi", ex: "The woman was _______ of what she saw.", exVi: "Người phụ nữ sợ hãi trước những gì mình nhìn thấy." },
+            { topic: "Book 1 - Unit 1", word: "agree", phonetic: "/əˈɡriː/", type: "v", mean: "đồng ý", ex: "A: The food is very good in that restaurant. B: I _______ with you.", exVi: "A: Đồ ăn ở nhà hàng đó rất ngon. B: Tôi đồng ý với bạn." },
+            { topic: "Book 1 - Unit 1", word: "angry", phonetic: "/ˈæŋ.ɡri/", type: "adj", mean: "tức giận", ex: "She didn't do her homework, so her father is _______.", exVi: "Cô ấy không làm bài tập về nhà, vì vậy bố cô ấy rất tức giận." },
+            { topic: "Book 1 - Unit 1", word: "arrive", phonetic: "/əˈraɪv/", type: "v", mean: "đến, đến nơi", ex: "The bus always _______ at the corner of my street at 4:00.", exFull: "The bus always <span class=\"font-bold text-purple-700\">arrives</span> at the corner of my street at 4:00.", exVi: "Xe buýt luôn đến góc phố của tôi lúc 4:00." },
+            { topic: "Book 1 - Unit 1", word: "attack", phonetic: "/əˈtæk/", type: "v", mean: "tấn công", ex: "The man with the sword _______ the other man first.", exFull: "The man with the sword <span class=\"font-bold text-purple-700\">attacked</span> the other man first.", exVi: "Người đàn ông cầm kiếm đã tấn công người kia trước." },
+            { topic: "Book 1 - Unit 1", word: "bottom", phonetic: "/ˈbɒt.əm/", type: "n", mean: "đáy, phần dưới cùng", ex: "The _______ of my shoe has a hole in it.", exVi: "Đế giày của tôi có một lỗ thủng." },
+            { topic: "Book 1 - Unit 1", word: "clever", phonetic: "/ˈklev.ər/", type: "adj", mean: "thông minh, lanh lợi", ex: "The _______ boy thought of a good idea.", exVi: "Cậu bé thông minh đã nghĩ ra một ý tưởng hay." },
+            { topic: "Book 1 - Unit 1", word: "cruel", phonetic: "/ˈkruː.əl/", type: "adj", mean: "độc ác, tàn nhẫn", ex: "The _______ man yelled at his sister.", exVi: "Người đàn ông tàn nhẫn đã hét vào mặt em gái mình." },
+            { topic: "Book 1 - Unit 1", word: "finally", phonetic: "/ˈfaɪ.nəl.i/", type: "adv", mean: "cuối cùng", ex: "He _______ crossed the finish line after five hours of running.", exVi: "Cuối cùng anh ấy cũng vượt qua vạch đích sau năm giờ chạy." },
+            { topic: "Book 1 - Unit 1", word: "hide", phonetic: "/haɪd/", type: "v", mean: "trốn, trốn tránh", ex: "The other children will _______ while you count to 100.", exVi: "Những đứa trẻ khác sẽ đi trốn trong khi bạn đếm đến 100." },
+            { topic: "Book 1 - Unit 1", word: "hunt", phonetic: "/hʌnt/", type: "v", mean: "săn bắn", ex: "Long ago, people _______ with bows and arrows.", exFull: "Long ago, people <span class=\"font-bold text-purple-700\">hunted</span> with bows and arrows.", exVi: "Từ xa xưa, con người đã săn bắn bằng cung và tên." },
+            { topic: "Book 1 - Unit 1", word: "lot", phonetic: "/lɒt/", type: "n", mean: "nhiều, số lượng lớn", ex: "There are a _______ of apples in the basket.", exVi: "Có rất nhiều táo trong rổ." },
+            { topic: "Book 1 - Unit 1", word: "middle", phonetic: "/ˈmɪd.əl/", type: "n", mean: "ở giữa, trung tâm", ex: "The Canadian flag has a maple leaf in the _______ of it.", exVi: "Quốc kỳ Canada có một chiếc lá phong ở giữa." },
+            { topic: "Book 1 - Unit 1", word: "moment", phonetic: "/ˈməʊ.mənt/", type: "n", mean: "khoảnh khắc, chốc lát", ex: "I was only a few _______ late for the meeting.", exFull: "I was only a few <span class=\"font-bold text-purple-700\">moments</span> late for the meeting.", exVi: "Tôi chỉ đến muộn cuộc họp một lát." },
+            { topic: "Book 1 - Unit 1", word: "pleased", phonetic: "/pliːzd/", type: "adj", mean: "hài lòng, vui vẻ", ex: "She was _______ with the phone call she received.", exVi: "Cô ấy rất hài lòng với cuộc điện thoại mà mình nhận được." },
+            { topic: "Book 1 - Unit 1", word: "promise", phonetic: "/ˈprɒm.ɪs/", type: "v", mean: "hứa, hứa hẹn", ex: "He _______ to return my key by tomorrow.", exFull: "He <span class=\"font-bold text-purple-700\">promised</span> to return my key by tomorrow.", exVi: "Anh ấy hứa sẽ trả lại chìa khóa cho tôi vào ngày mai." },
+            { topic: "Book 1 - Unit 1", word: "reply", phonetic: "/rɪˈplaɪ/", type: "v", mean: "trả lời, đáp lại", ex: "She asked him what time his meeting was. He _______, \"at three.\"", exFull: "She asked him what time his meeting was. He <span class=\"font-bold text-purple-700\">replied</span>, \"at three.\"", exVi: "Cô ấy hỏi anh ấy cuộc họp lúc mấy giờ. Anh ấy trả lời, \"lúc ba giờ.\"" },
+            { topic: "Book 1 - Unit 1", word: "safe", phonetic: "/seɪf/", type: "adj", mean: "an toàn", ex: "Put on your seat belt in the car to be _______.", exVi: "Hãy thắt dây an toàn trong ô tô để được an toàn." },
+            { topic: "Book 1 - Unit 1", word: "trick", phonetic: "/trɪk/", type: "n", mean: "trò lừa gạt, ảo thuật", ex: "His card _______ really surprised us.", exVi: "Trò ảo thuật với lá bài của anh ấy thực sự làm chúng tôi ngạc nhiên." },
+            { topic: "Book 1 - Unit 1", word: "well", phonetic: "/wel/", type: "adv", mean: "tốt, giỏi", ex: "The couple can dance quite _______.", exVi: "Cặp đôi này có thể nhảy khá giỏi." }
+        ];
+
+        let currentIndex = 0;
+        let totalCards = flashcards.length;
+        const originalFlashcardsCount = flashcards.length;
+        let canGoNext = false;
+        let hasShownReviewTransition = false;
+
+        // Quản lý chuỗi Hint
+        let hintSequence = [];
+        let currentHintStep = 0;
+
+        const flashcardEl = document.getElementById('flashcard');
+        const inputsContainer = document.getElementById('letter-inputs-container');
+        const finalScreen = document.getElementById('final-screen');
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSuccessSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(987.77, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.4);
+        }
+
+        function playErrorSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(350, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(250, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
+            gainNode.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.1);
+            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.15);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.25);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.25);
+        }
+
+        function playTransitionSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.15);
+            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.3);
+            osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.45);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.1);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.8);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.8);
+        }
+
+        // --- Tính năng Text-to-Speech ---
+        let preferredVoice = null;
+
+        function loadVoices() {
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) return;
+
+            const goodFemaleVoices = [
+                "Google US English",
+                "Google UK English Female",
+                "Samantha",
+                "Victoria",
+                "Karen",
+                "Microsoft Zira",
+                "Microsoft Hazel"
+            ];
+
+            for (let name of goodFemaleVoices) {
+                const voice = voices.find(v => v.name.includes(name));
+                if (voice) {
+                    preferredVoice = voice;
+                    break;
+                }
+            }
+
+            if (!preferredVoice) {
+                preferredVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Female')) ||
+                    voices.find(v => v.lang === 'en-US') || voices[0];
+            }
+        }
+
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+
+        function speakCurrentWord() {
+            if (window.event) window.event.stopPropagation();
+
+            const card = flashcards[currentIndex];
+            const wordToSpeak = card.word.replace(/[\/-]/g, ' ');
+            const utterance = new SpeechSynthesisUtterance(wordToSpeak);
+
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            } else {
+                utterance.lang = 'en-US';
+            }
+
+            utterance.rate = 0.85;
+            utterance.pitch = 1.15;
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showTopicToast(topicName) {
+            const toast = document.getElementById('topic-toast');
+            document.getElementById('toast-message').textContent = `Chủ đề mới: ${topicName}`;
+            toast.classList.remove('translate-y-[-250%]');
+            toast.classList.add('translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0');
+                toast.classList.add('translate-y-[-250%]');
+            }, 2500);
+        }
+
+        function markForReview() {
+            const currentCard = flashcards[currentIndex];
+            if (!currentCard.marked) {
+                currentCard.marked = true;
+
+                // Copy thẻ và đưa xuống cuối
+                const cardCopy = { ...currentCard, marked: false };
+                flashcards.push(cardCopy);
+                totalCards = flashcards.length;
+
+                // Đổi style nút bấm để báo hiệu đã lưu
+                const reviewBtn = document.getElementById('review-btn');
+                reviewBtn.className = "flex text-sm px-4 py-1.5 h-9 bg-purple-600 text-white hover:bg-purple-700 font-medium rounded-full transition-colors items-center gap-1 shadow-sm border border-purple-300";
+
+                // Hiện toast thông báo
+                const toast = document.getElementById('action-toast');
+                toast.classList.remove('translate-y-[-250%]', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-[-250%]', 'opacity-0');
+                }, 2000);
+
+                // Cập nhật lại số lượng card trên Progress Bar
+                document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${totalCards}`;
+                const percent = ((currentIndex + 1) / totalCards) * 100;
+                document.getElementById('progress-bar').style.width = `${percent}%`;
+            }
+
+            // Xóa giá trị các ô gõ và hiện đáp án dạng placeholder chữ mờ
+            const editableInputs = document.querySelectorAll('.editable-input');
+            editableInputs.forEach(input => {
+                if (!input.readOnly) {
+                    input.value = '';
+                    input.placeholder = input.dataset.correctChar;
+                    input.classList.remove('input-error');
+                }
+            });
+
+            // Tự động focus vào ô trống đầu tiên để gõ lại
+            const firstEmpty = Array.from(editableInputs).find(i => !i.readOnly);
+            if (firstEmpty) {
+                firstEmpty.focus();
+            }
+        }
+
+        function renderCard() {
+            const card = flashcards[currentIndex];
+
+            const reviewBtn = document.getElementById('review-btn');
+
+            if (currentIndex >= originalFlashcardsCount) {
+                document.getElementById('main-topic-title').textContent = `ÔN TẬP TỪ VỰNG`;
+                reviewBtn.classList.add('hidden');
+                reviewBtn.classList.remove('flex');
+            } else {
+                document.getElementById('main-topic-title').textContent = `BOOK 1`;
+
+                // Luôn ẩn nút Học lại lúc mới mở thẻ (chờ Hint hết hiệu lực)
+                if (card.marked) {
+                    reviewBtn.className = "hidden text-sm px-4 py-1.5 h-9 bg-purple-600 text-white hover:bg-purple-700 font-medium rounded-full transition-colors items-center gap-1 shadow-sm border border-purple-300";
+                } else {
+                    reviewBtn.className = "hidden text-sm px-4 py-1.5 h-9 bg-purple-100 text-purple-700 hover:bg-purple-200 font-medium rounded-full transition-colors items-center gap-1 shadow-sm border border-purple-200";
+                }
+            }
+
+            document.getElementById('word-type-container').innerHTML = getShapeHTML(card.type);
+            document.getElementById('word-mean').textContent = card.mean;
+            document.getElementById('word-exVi').textContent = card.exVi;
+
+            const blankedEx = card.ex.replace('_______', `<span class="text-purple-600 border-b-2 border-purple-600 inline-block w-24"></span>`);
+            document.getElementById('word-ex').innerHTML = blankedEx;
+
+            inputsContainer.innerHTML = '';
+            const words = card.word.split(' ');
+
+            words.forEach((w, wordIndex) => {
+                const wordGroup = document.createElement('div');
+                wordGroup.className = 'flex gap-1';
+
+                for (let i = 0; i < w.length; i++) {
+                    if (w[i] === '-' || w[i] === '/' || w[i] === "'") {
+                        const symbol = document.createElement('span');
+                        symbol.textContent = w[i];
+                        symbol.className = 'text-xl font-bold text-gray-400 self-center px-1';
+                        wordGroup.appendChild(symbol);
+                        continue;
+                    }
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.maxLength = 1;
+
+                    if (i === 0) {
+                        // Chữ cái đầu hiển thị theo mặc định
+                        input.value = w[i].toLowerCase();
+                        input.dataset.correctChar = w[i].toLowerCase();
+                        input.readOnly = true;
+                        input.className = 'char-input hint-input w-9 h-11 md:w-10 md:h-12 text-center text-xl font-bold border-2 border-purple-200 bg-purple-100 text-purple-700 rounded-lg cursor-not-allowed select-none shadow-sm';
+                    } else {
+                        // Các ô còn lại trống (hiển thị mờ khi bấm Học lại nhờ class placeholder-purple-300)
+                        input.placeholder = '';
+                        input.dataset.correctChar = w[i].toLowerCase();
+                        input.className = 'char-input editable-input w-9 h-11 md:w-10 md:h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:bg-purple-50 transition-colors bg-white text-purple-800 shadow-inner placeholder-purple-300';
+
+                        input.addEventListener('input', function () {
+                            this.value = this.value.toLowerCase();
+                            this.classList.remove('input-error');
+
+                            const editableInputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const currentIdx = editableInputs.indexOf(this);
+                            if (this.value && currentIdx < editableInputs.length - 1) {
+                                editableInputs[currentIdx + 1].focus();
+                            }
+                        });
+
+                        input.addEventListener('keydown', function (e) {
+                            if (e.shiftKey && e.key === 'F12') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                giveHint();
+                                return;
+                            }
+                            if (e.shiftKey && e.key.toLowerCase() === 'r') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const reviewBtn = document.getElementById('review-btn');
+                                if (reviewBtn && !reviewBtn.classList.contains('hidden')) {
+                                    markForReview();
+                                }
+                                return;
+                            }
+                            if ((e.shiftKey && e.key === 'Enter') || (e.ctrlKey && e.code === 'Space')) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                speakCurrentWord();
+                                return;
+                            }
+
+                            const editableInputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const currentIdx = editableInputs.indexOf(this);
+
+                            if (e.key === 'Backspace' && !this.value && currentIdx > 0) {
+                                editableInputs[currentIdx - 1].focus();
+                            } else if (e.key === 'Enter') {
+                                if (!e.shiftKey) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    checkAnswer();
+                                }
+                            } else if (e.key === 'ArrowLeft' && currentIdx > 0) {
+                                editableInputs[currentIdx - 1].focus();
+                                e.preventDefault();
+                            } else if (e.key === 'ArrowRight' && currentIdx < editableInputs.length - 1) {
+                                editableInputs[currentIdx + 1].focus();
+                                e.preventDefault();
+                            }
+                        });
+                    }
+                    wordGroup.appendChild(input);
+                }
+                inputsContainer.appendChild(wordGroup);
+
+                if (wordIndex < words.length - 1) {
+                    const space = document.createElement('div');
+                    space.className = 'w-3 md:w-4';
+                    inputsContainer.appendChild(space);
+                }
+            });
+
+            setTimeout(() => {
+                const firstEditableInput = document.querySelector('.editable-input');
+                if (firstEditableInput) firstEditableInput.focus();
+            }, 100);
+
+            document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${totalCards}`;
+            const percent = ((currentIndex + 1) / totalCards) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+
+            const nextBtn = document.getElementById('next-btn');
+            if (currentIndex === totalCards - 1) {
+                nextBtn.textContent = "Hoàn thành";
+                nextBtn.className = "flex-1 py-3 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-lg shadow-md transition-colors";
+            } else {
+                nextBtn.textContent = "Tiếp theo";
+                nextBtn.className = "flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md transition-colors";
+            }
+
+            // Khởi tạo tiến trình Hint
+            buildHintSequence();
+        }
+
+        function buildHintSequence() {
+            const allInputs = Array.from(document.querySelectorAll('.char-input'));
+            const editableInputs = Array.from(document.querySelectorAll('.editable-input'));
+            const totalChars = allInputs.length;
+
+            hintSequence = [];
+            currentHintStep = 0;
+
+            // Bật lại nút Hint nếu trước đó bị vô hiệu hóa
+            const hintBtn = document.getElementById('hint-btn');
+            if (hintBtn) {
+                hintBtn.disabled = false;
+                hintBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            // Xác định số lần hint tối đa dựa trên độ dài của từ
+            let maxHints = totalChars >= 6 ? 3 : 2;
+            maxHints = Math.min(maxHints, editableInputs.length);
+
+            if (editableInputs.length > 0) {
+                // 1. Reveal Second Character (Kế bên chữ cái đầu tiên)
+                if (editableInputs.length >= 1) {
+                    hintSequence.push(() => revealInput(editableInputs[0]));
+                }
+
+                // 2. Reveal Last Character
+                if (editableInputs.length > 1) {
+                    const lastInput = editableInputs[editableInputs.length - 1];
+                    hintSequence.push(() => revealInput(lastInput));
+                }
+
+                // 3. First random middle character
+                let midInputs = [];
+                if (editableInputs.length > 2) {
+                    midInputs = editableInputs.slice(1, editableInputs.length - 1);
+                    midInputs.sort(() => Math.random() - 0.5);
+                }
+
+                if (midInputs.length > 0) {
+                    const mid1 = midInputs.pop();
+                    hintSequence.push(() => revealInput(mid1));
+                }
+            }
+
+            // Cắt mảng hintSequence cho bằng đúng số lần maxHints
+            hintSequence = hintSequence.slice(0, maxHints);
+
+            // TÍNH NĂNG MỚI DÀNH RIÊNG CHO PHẦN ÔN TẬP: 
+            // Thêm 1 lần Hint cuối cùng để xóa các chữ gõ sai và hiện toàn bộ chữ mờ
+            if (currentIndex >= originalFlashcardsCount) {
+                hintSequence.push(() => {
+                    const editableInputs = document.querySelectorAll('.editable-input');
+                    editableInputs.forEach(input => {
+                        if (!input.readOnly) {
+                            input.value = '';
+                            input.placeholder = input.dataset.correctChar;
+                            input.classList.remove('input-error');
+                        }
+                    });
+
+                    const firstEmpty = Array.from(editableInputs).find(i => !i.readOnly);
+                    if (firstEmpty) {
+                        firstEmpty.focus();
+                    }
+                });
+            }
+
+            // Nếu từ quá ngắn không có hint nào, hiện nút Học lại ngay
+            if (hintSequence.length === 0 && currentIndex < originalFlashcardsCount) {
+                const reviewBtn = document.getElementById('review-btn');
+                reviewBtn.classList.remove('hidden');
+                reviewBtn.classList.add('flex');
+            }
+        }
+
+        function revealInput(input) {
+            if (!input || input.readOnly) return;
+            input.value = input.dataset.correctChar;
+            input.readOnly = true;
+            input.classList.remove('input-error', 'bg-white', 'text-purple-800', 'border-gray-300', 'editable-input');
+            input.classList.add('bg-fuchsia-100', 'border-fuchsia-400', 'text-fuchsia-800');
+
+            // Focus sang ô trống tiếp theo
+            const remainingEditable = Array.from(document.querySelectorAll('.editable-input'));
+            const nextEmpty = remainingEditable.find(i => i.value === '');
+            if (nextEmpty) nextEmpty.focus();
+            else if (remainingEditable.length > 0) remainingEditable[remainingEditable.length - 1].focus();
+        }
+
+        function giveHint() {
+            if (currentHintStep < hintSequence.length) {
+                hintSequence[currentHintStep]();
+                currentHintStep++;
+            }
+
+            // Vô hiệu hóa nút Hint nếu đã dùng hết quyền trợ giúp
+            if (currentHintStep >= hintSequence.length) {
+                const hintBtn = document.getElementById('hint-btn');
+                if (hintBtn) {
+                    hintBtn.disabled = true;
+                    hintBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+
+                // Khi Hint hết hiệu lực thì mới hiện nút Học lại
+                if (currentIndex < originalFlashcardsCount) {
+                    const reviewBtn = document.getElementById('review-btn');
+                    reviewBtn.classList.remove('hidden');
+                    reviewBtn.classList.add('flex');
+                }
+            }
+        }
+
+        function checkAnswer() {
+            const card = flashcards[currentIndex];
+            const allInputs = document.querySelectorAll('.char-input');
+
+            const userAnswer = Array.from(allInputs).map(inp => inp.value).join('').toLowerCase();
+            const correctAnswer = card.word.replace(/[\s-\/']/g, '').toLowerCase();
+
+            if (userAnswer === correctAnswer) {
+                playSuccessSound();
+
+                const resultHeader = document.getElementById('result-header');
+                resultHeader.textContent = "🎉 Chính xác!";
+                resultHeader.className = "text-center py-2 rounded-lg font-bold text-lg mb-4 bg-purple-100 text-purple-800";
+
+                document.getElementById('back-word').textContent = card.word;
+                document.getElementById('back-phonetic').textContent = card.phonetic;
+                document.getElementById('back-mean').textContent = card.mean;
+                document.getElementById('back-word-type-container').innerHTML = getShapeHTML(card.type);
+
+                const fullSentence = card.exFull ? card.exFull : card.ex.replace('_______', `<span class="font-bold text-purple-700">${card.word}</span>`);
+                document.getElementById('back-ex').innerHTML = fullSentence;
+
+                flashcardEl.classList.add('flipped');
+
+                canGoNext = false;
+                setTimeout(() => { canGoNext = true; }, 500);
+
+                if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                    document.activeElement.blur();
+                }
+            } else {
+                playErrorSound();
+                inputsContainer.classList.add('shake');
+                setTimeout(() => inputsContainer.classList.remove('shake'), 400);
+
+                let firstEmptyOrWrongInput = null;
+
+                for (let i = 0; i < allInputs.length; i++) {
+                    if (!allInputs[i].readOnly) {
+                        if (allInputs[i].value !== '' && allInputs[i].value.toLowerCase() !== correctAnswer[i]) {
+                            allInputs[i].value = '';
+                            allInputs[i].classList.add('input-error');
+                            if (!firstEmptyOrWrongInput) firstEmptyOrWrongInput = allInputs[i];
+                        } else if (allInputs[i].value === '') {
+                            allInputs[i].classList.add('input-error');
+                            if (!firstEmptyOrWrongInput) firstEmptyOrWrongInput = allInputs[i];
+                        }
+                    }
+                }
+
+                if (firstEmptyOrWrongInput) {
+                    firstEmptyOrWrongInput.focus();
+                }
+            }
+        }
+
+        function nextCard() {
+            flashcardEl.classList.remove('flipped');
+
+            setTimeout(() => {
+                if (currentIndex === originalFlashcardsCount - 1 && totalCards > originalFlashcardsCount && !hasShownReviewTransition) {
+                    flashcardEl.classList.add('hidden');
+                    const reviewScreen = document.getElementById('review-transition-screen');
+                    document.getElementById('review-count').textContent = totalCards - originalFlashcardsCount;
+                    reviewScreen.classList.remove('hidden');
+                    playTransitionSound();
+                    return;
+                }
+
+                if (currentIndex < totalCards - 1) {
+                    const currentTopic = flashcards[currentIndex].topic;
+                    const nextTopicCard = flashcards[currentIndex + 1].topic;
+
+                    currentIndex++;
+
+                    if (currentTopic !== nextTopicCard && currentIndex < originalFlashcardsCount) {
+                        showTopicToast(nextTopicCard);
+                        playTransitionSound();
+                    }
+
+                    renderCard();
+                } else {
+                    flashcardEl.classList.add('hidden');
+                    finalScreen.classList.remove('hidden');
+                }
+            }, 300);
+        }
+
+        function startReviewPhase() {
+            hasShownReviewTransition = true;
+            document.getElementById('review-transition-screen').classList.add('hidden');
+            flashcardEl.classList.remove('hidden');
+
+            currentIndex++;
+            renderCard();
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                flashcardEl.classList.remove('flipped');
+                setTimeout(() => {
+                    currentIndex--;
+                    renderCard();
+                }, 300);
+            } else {
+                flashcardEl.classList.remove('flipped');
+            }
+        }
+
+        function resetQuiz() {
+            currentIndex = 0;
+
+            flashcards.length = originalFlashcardsCount;
+            flashcards.forEach(c => c.marked = false);
+            totalCards = flashcards.length;
+            hasShownReviewTransition = false;
+
+            finalScreen.classList.add('hidden');
+            document.getElementById('review-transition-screen').classList.add('hidden');
+            flashcardEl.classList.remove('hidden');
+            renderCard();
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.shiftKey && e.key === 'F12') {
+                e.preventDefault();
+                giveHint();
+                return;
+            }
+
+            if (e.shiftKey && e.key.toLowerCase() === 'r') {
+                e.preventDefault();
+                const reviewBtn = document.getElementById('review-btn');
+                if (reviewBtn && !reviewBtn.classList.contains('hidden')) {
+                    markForReview();
+                }
+                return;
+            }
+
+            if ((e.shiftKey && e.key === 'Enter') || (e.ctrlKey && e.code === 'Space')) {
+                e.preventDefault();
+                speakCurrentWord();
+                return;
+            }
+
+            if (e.key === 'Enter' && !e.shiftKey && flashcardEl.classList.contains('flipped') && canGoNext) {
+                e.preventDefault();
+                nextCard();
+            }
+        });
+
+        // Hàm thiết kế giao diện động cho các từ loại
+        function getShapeHTML(type) {
+            const t = type.toLowerCase().trim();
+
+            if (t === 'n' || t === 'noun') {
+                // Danh từ: Đám mây / Blob / Viên đá mềm (Xanh dương)
+                return `<span class="inline-flex items-center justify-center px-4 py-1 bg-sky-100 text-sky-800 font-bold text-sm uppercase tracking-wider shadow-sm border border-sky-300 transition-transform hover:scale-105" style="border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; min-width: 2.5rem; transform: rotate(-2deg);">${type}</span>`;
+            }
+            else if (t === 'v' || t === 'verb') {
+                // Động từ: Bông hoa / Cánh xòe (Hồng)
+                const svgFlower = `<svg class="absolute inset-0 w-full h-full text-rose-100 drop-shadow-sm" preserveAspectRatio="none" viewBox="0 0 100 60">
+                    <path fill="currentColor" stroke="#fda4af" stroke-width="2" d="M50 5 C75 -10 95 10 75 30 C95 50 75 70 50 55 C25 70 5 50 25 30 C5 10 25 -10 50 5 Z"/>
+                </svg>`;
+                return `<div class="relative inline-flex items-center justify-center px-5 py-1 min-w-[3.5rem] transition-transform hover:scale-105">
+                    ${svgFlower}
+                    <span class="relative z-10 font-bold text-sm uppercase tracking-wider text-rose-800">${type}</span>
+                </div>`;
+            }
+            else if (t === 'adj' || t === 'adjective') {
+                // Tính từ: Lá / Giọt nước (Xanh lá)
+                return `<span class="inline-flex items-center justify-center px-4 py-1 bg-emerald-100 text-emerald-800 font-bold text-sm uppercase tracking-wider shadow-sm border border-emerald-300 transition-transform hover:scale-105" style="border-radius: 0 16px 0 16px; min-width: 3rem;">${type}</span>`;
+            }
+            else if (t === 'adv' || t === 'adverb') {
+                // Trạng từ: Ngôi sao / Spark / Splash (Vàng cam)
+                const svgSpark = `<svg class="absolute inset-0 w-full h-full text-amber-100 drop-shadow-sm" preserveAspectRatio="none" viewBox="0 0 100 60">
+                    <path fill="currentColor" stroke="#fcd34d" stroke-width="2" d="M50,2 Q58,25 96,30 Q58,35 50,58 Q42,35 4,30 Q42,25 50,2 Z"/>
+                </svg>`;
+                return `<div class="relative inline-flex items-center justify-center px-6 py-1 min-w-[3.5rem] transition-transform hover:scale-105">
+                    ${svgSpark}
+                    <span class="relative z-10 font-bold text-sm uppercase tracking-wider text-amber-800">${type}</span>
+                </div>`;
+            }
+
+            // Mặc định (Nếu là từ vựng ngoại lệ như Phrasal Verbs, Prepositions,...)
+            return `<span class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full font-semibold text-sm uppercase shadow-sm">${type}</span>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCard);
+
+    </script>
+</body>
+
+</html>
