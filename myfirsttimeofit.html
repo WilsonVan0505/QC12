@@ -1442,10 +1442,14 @@
                                     Translate this sentence to English:</p>
                                 <div class="w-full bg-black/20 p-4 sm:p-5 rounded-2xl border border-white/10 relative transition-all duration-300"
                                     id="sent-box-1">
+                                    <button id="hint-btn-1" onclick="useTranslationHint(1)"
+                                        class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-gradient-to-r from-white/10 to-white/5 border border-white/30 backdrop-blur-md rounded-xl px-2 py-1 sm:px-3 sm:py-1.5 text-sm sm:text-base font-bold shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:scale-105 transition-all text-white flex gap-1 items-center z-10 opacity-0 pointer-events-none">
+                                        <span class="hint-emoji drop-shadow-md"></span> <span class="text-[0.65rem] sm:text-xs text-white/80 mx-0.5">x</span><span class="hint-count-text text-yellow-300">0</span>
+                                    </button>
                                     <p id="label-word-1"
-                                        class="text-[0.8rem] sm:text-sm md:text-base font-semibold text-purple-300 mb-1.5">
+                                        class="text-[0.8rem] sm:text-sm md:text-base font-semibold text-purple-300 mb-1.5 mt-4 sm:mt-0 pr-16 sm:pr-20">
                                         Sentence with Word 1:</p>
-                                    <p id="vi-ex-1" class="text-base sm:text-lg md:text-xl text-white italic mb-3"></p>
+                                    <p id="vi-ex-1" class="text-base sm:text-lg md:text-xl text-white italic mb-3 pr-10 sm:pr-16"></p>
                                     <input type="text" id="sent-input-1"
                                         class="glass-input-editable w-full px-4 py-2.5 md:py-3 rounded-xl text-base sm:text-lg outline-none placeholder-white/20 transition-all border border-transparent"
                                         placeholder="Type the English sentence..." autocomplete="off"
@@ -1460,10 +1464,14 @@
                                     One more to go! Translate this:</p>
                                 <div class="w-full bg-black/20 p-4 sm:p-5 rounded-2xl border border-white/10 relative transition-all duration-300"
                                     id="sent-box-2">
+                                    <button id="hint-btn-2" onclick="useTranslationHint(2)"
+                                        class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-gradient-to-r from-white/10 to-white/5 border border-white/30 backdrop-blur-md rounded-xl px-2 py-1 sm:px-3 sm:py-1.5 text-sm sm:text-base font-bold shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:scale-105 transition-all text-white flex gap-1 items-center z-10 opacity-0 pointer-events-none">
+                                        <span class="hint-emoji drop-shadow-md"></span> <span class="text-[0.65rem] sm:text-xs text-white/80 mx-0.5">x</span><span class="hint-count-text text-yellow-300">0</span>
+                                    </button>
                                     <p id="label-word-2"
-                                        class="text-[0.8rem] sm:text-sm md:text-base font-semibold text-purple-300 mb-1.5">
+                                        class="text-[0.8rem] sm:text-sm md:text-base font-semibold text-purple-300 mb-1.5 mt-4 sm:mt-0 pr-16 sm:pr-20">
                                         Sentence with Word 2:</p>
-                                    <p id="vi-ex-2" class="text-base sm:text-lg md:text-xl text-white italic mb-3"></p>
+                                    <p id="vi-ex-2" class="text-base sm:text-lg md:text-xl text-white italic mb-3 pr-10 sm:pr-16"></p>
                                     <input type="text" id="sent-input-2"
                                         class="glass-input-editable w-full px-4 py-2.5 md:py-3 rounded-xl text-base sm:text-lg outline-none placeholder-white/20 transition-all border border-transparent"
                                         placeholder="Type the English sentence..." autocomplete="off"
@@ -1609,6 +1617,8 @@
         let currentWord2 = '';
         let transitionedToPart3 = false;
         let transitionedToPart4 = false;
+        let selectedZodiacEmoji = '';
+        let remainingHints = 0;
 
         let appleGameStarted = false;
         let isAppleSortingPhase = false;
@@ -1944,6 +1954,7 @@
 
         function selectZodiac(emoji) {
             playTransitionSound();
+            selectedZodiacEmoji = emoji;
             document.getElementById('score-icon').textContent = emoji;
             
             const zodiacScreen = document.getElementById('zodiac-screen');
@@ -3565,6 +3576,55 @@
             document.getElementById('vi-ex-2').textContent = card2 ? card2.exVi : "";
             origNorm1 = normalizeString(getPlainSentence(w1));
             origNorm2 = normalizeString(getPlainSentence(w2));
+
+            if (totalScore < 60) remainingHints = 0;
+            else if (totalScore <= 70) remainingHints = 1;
+            else if (totalScore <= 80) remainingHints = 2;
+            else if (totalScore <= 90) remainingHints = 3;
+            else if (totalScore <= 100) remainingHints = 4;
+            else remainingHints = 5;
+
+            updateHintButtonsUI();
+        }
+
+        function updateHintButtonsUI() {
+            const btn1 = document.getElementById('hint-btn-1');
+            const btn2 = document.getElementById('hint-btn-2');
+            if(!btn1 || !btn2) return;
+
+            const iconStr = selectedZodiacEmoji || '⭐';
+
+            [btn1, btn2].forEach(btn => {
+                btn.querySelector('.hint-emoji').textContent = iconStr;
+                btn.querySelector('.hint-count-text').textContent = remainingHints;
+                btn.classList.remove('opacity-0', 'pointer-events-none');
+                
+                if(remainingHints <= 0) {
+                    btn.classList.add('opacity-50', 'pointer-events-none');
+                    btn.classList.remove('hover:scale-105', 'hover:bg-white/20');
+                } else {
+                    btn.classList.remove('opacity-50', 'pointer-events-none');
+                    btn.classList.add('hover:scale-105', 'hover:bg-white/20');
+                }
+            });
+        }
+
+        function useTranslationHint(partNum) {
+            if (remainingHints <= 0) return;
+            
+            remainingHints--;
+            updateHintButtonsUI();
+            
+            let textToSpeak = '';
+            if (partNum === 1) textToSpeak = getPlainSentence(currentWord1);
+            else textToSpeak = getPlainSentence(currentWord2);
+
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            if (preferredVoice) utterance.voice = preferredVoice;
+            else utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            utterance.pitch = 1.15;
+            window.speechSynthesis.speak(utterance);
         }
 
         function startAppleSortingGame() {
