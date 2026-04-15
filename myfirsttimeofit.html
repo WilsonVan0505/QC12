@@ -1777,7 +1777,7 @@
             </div>
 
             <div id="baskets-container"
-                class="flex flex-row justify-center items-end flex-wrap gap-4 sm:gap-8 md:gap-12 mt-6 sm:mt-8 z-20 w-full px-2 opacity-50 pointer-events-none grayscale transition-all duration-700">
+                class="hidden flex-row justify-center items-end flex-wrap gap-4 sm:gap-8 md:gap-12 mt-6 sm:mt-8 z-20 w-full px-2 opacity-50 pointer-events-none grayscale transition-all duration-700">
                 <button id="basket-n" onclick="harvest('n', this)"
                     class="relative flex flex-col items-center group transition-transform hover:-translate-y-2 cursor-pointer bg-transparent border-none focus:outline-none">
                     <span
@@ -2870,7 +2870,10 @@
 
             setTimeout(() => {
                 const basketsContainer = document.getElementById('baskets-container');
-                if (basketsContainer) basketsContainer.classList.remove('opacity-50', 'pointer-events-none', 'grayscale');
+                if (basketsContainer) {
+                    basketsContainer.classList.remove('hidden', 'opacity-50', 'pointer-events-none', 'grayscale');
+                    basketsContainer.classList.add('flex');
+                }
             }, (baseCards.length * 120) + 800);
         }
 
@@ -4189,7 +4192,8 @@
 
             const basketsContainer = document.getElementById('baskets-container');
             if (basketsContainer) {
-                basketsContainer.classList.add('opacity-50', 'pointer-events-none', 'grayscale');
+                basketsContainer.classList.add('hidden', 'opacity-50', 'pointer-events-none', 'grayscale');
+                basketsContainer.classList.remove('flex');
                 const basketTypes = ['n', 'v', 'adj', 'adv'];
                 basketTypes.forEach(t => {
                     const b = document.getElementById(`basket-${t}`);
