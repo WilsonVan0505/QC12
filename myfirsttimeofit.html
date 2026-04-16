@@ -5370,11 +5370,10 @@
                     <p class="text-[0.7rem] font-bold tracking-widest uppercase text-white/80">Tap to reveal</p>
                 </div>`;
 
-            // Card 1 – Quote face (requires Name to flip)
+            // Card 1 – Quote face
             const q = getNextQuote();
             globalQuoteWordCount = q.en.split(/\s+/).filter(w => w.length > 0).length;
 
-            // Card 1 – Quote face
             document.getElementById('card-front-1').innerHTML = `
                 <div class="crystal-glass-purple w-full h-full flex flex-col items-center justify-center p-4 text-center">
                     <span class="text-3xl mb-2">💬</span>
@@ -5388,8 +5387,6 @@
                     <input type="text" id="quote-name-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold text-white text-sm" placeholder="YOUR NAME?" autocomplete="off" onkeydown="if(event.key==='Enter') checkQuoteUnlock(event)" onclick="event.stopPropagation()">
                 </div>`;
 
-            // Card 0 – Magical Orb (Ordinal 3)
-            document.getElementById('card-front-0').innerHTML = `
             // Card 0 – Magical Orb
             document.getElementById('card-front-0').innerHTML = `
                 <div class="crystal-glass-purple w-full h-full flex flex-col items-center justify-center p-3">
@@ -5405,8 +5402,8 @@
                 <div class="flex flex-col items-center gap-3 w-full z-10 p-2">
                     <span class="text-3xl" style="filter:drop-shadow(0 0 10px rgba(167,139,250,0.5))">🔮</span>
                     <div class="flex flex-col gap-2 w-full">
-                        <input type="text" id="orb-code-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold text-white text-sm" placeholder="SECRET CODE" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock(event)" onclick="event.stopPropagation()">
-                        <input type="text" id="orb-word-count-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold text-white text-sm" placeholder="WORD COUNT" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock(event)" onclick="event.stopPropagation()">
+                        <input type="number" id="orb-code-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold text-white text-sm" placeholder="SECRET CODE" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock(event)" onclick="event.stopPropagation()">
+                        <input type="number" id="orb-word-count-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold text-white text-sm" placeholder="WORD COUNT" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock(event)" onclick="event.stopPropagation()">
                     </div>
                 </div>`;
         }
