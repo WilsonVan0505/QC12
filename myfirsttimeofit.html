@@ -2370,35 +2370,26 @@
                         <!-- Card Tray (3 cards, hidden until box opens) -->
                         <div id="mystery-card-tray"
                             class="hidden items-center justify-center gap-4 sm:gap-6 w-full max-w-xl pointer-events-auto">
+                            <!-- Card 0: Secret Code -->
                             <div class="mystery-card-wrapper"
                                 style="--deal-delay:.1s;--card-rot:-6deg;height:290px;width:140px;flex-shrink:0;"
                                 onclick="revealCard(0)">
                                 <div class="mystery-card-inner" id="card-inner-0">
-                                    <div class="mystery-card-face mystery-card-back flex flex-col items-center justify-center p-3"
-                                        id="card-back-0">
+                                    <div class="mystery-card-face mystery-card-back" id="card-back-0">
                                         <div class="absolute inset-0 opacity-20"
                                             style="background:radial-gradient(circle at 50% 50%,rgba(196,181,253,.6) 0%,transparent 70%);">
                                         </div>
-                                        <div class="flex flex-col items-center gap-2 w-full z-10">
-                                            <span
-                                                style="font-size:1.8rem;filter:drop-shadow(0 0 12px rgba(196,181,253,1))"
-                                                id="orb-card-icon">🔮</span>
-                                            <div id="orb-unlock-container"
-                                                class="flex flex-col items-center gap-1.5 w-full mt-0.5">
-                                                <input type="number" id="orb-final-input"
-                                                    class="mystical-input no-spinners w-full p-2.5 rounded-xl text-center font-bold text-white text-sm"
-                                                    placeholder="" autocomplete="off"
-                                                    onclick="event.stopPropagation()"
-                                                    onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkOrbUnlock(event); }">
-                                            </div>
-                                            <p id="orb-hint-text"
-                                                class="text-[0.4rem] font-bold tracking-widest uppercase mt-0.5"
-                                                style="color:rgba(196,181,253,.5)">Dual Authentication Required</p>
+                                        <div class="flex flex-col items-center gap-3">
+                                            <span style="font-size:3rem;filter:drop-shadow(0 0 12px rgba(251,191,36,1))">🗝️</span>
+                                            <p class="text-[0.65rem] font-bold tracking-widest uppercase"
+                                                style="color:rgba(196,181,253,.7)">Tap to reveal</p>
                                         </div>
                                     </div>
                                     <div class="mystery-card-face mystery-card-front" id="card-front-0"></div>
                                 </div>
                             </div>
+
+                            <!-- Card 1: Space Quote -->
                             <div class="mystery-card-wrapper"
                                 style="--deal-delay:.3s;--card-rot:0deg;height:290px;width:140px;flex-shrink:0;"
                                 onclick="revealCard(1)">
@@ -2406,40 +2397,47 @@
                                     <div class="mystery-card-face mystery-card-back flex flex-col items-center justify-center p-3"
                                         id="card-back-1">
                                         <div class="absolute inset-0 opacity-20"
-                                            style="background:radial-gradient(circle at 50% 50%,rgba(196,181,253,.6) 0%,transparent 70%);">
+                                            style="background:radial-gradient(circle at 50% 50%,rgba(167,139,250,.6) 0%,transparent 70%);">
                                         </div>
                                         <div class="flex flex-col items-center gap-2 w-full z-10">
-                                            <span
-                                                style="font-size:2.5rem;filter:drop-shadow(0 0 12px rgba(251,191,36,1))">💬</span>
-                                            <div id="quote-unlock-container"
-                                                class="flex flex-col items-center gap-2 w-full mt-1">
-                                                <input type="text" id="quote-name-input"
-                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1.5 text-center text-white text-[0.8rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50"
-                                                    placeholder="YOUR NAME?" autocomplete="off"
+                                            <span style="font-size:2.5rem;filter:drop-shadow(0 0 12px rgba(251,191,36,1))">💬</span>
+                                            <div id="quote-unlock-container" class="flex flex-col items-center gap-2 w-full mt-1">
+                                                <input type="number" id="quote-cipher-input"
+                                                    class="mystical-input no-spinners w-full p-2 rounded-xl text-center font-bold text-white text-sm"
+                                                    placeholder="" autocomplete="off"
                                                     onclick="event.stopPropagation()"
-                                                    onkeydown="if(event.key==='Enter') checkQuoteUnlock(event)">
+                                                    onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkQuoteUnlock(event); }">
                                             </div>
-                                            <p id="quote-hint-text"
-                                                class="text-[0.45rem] font-bold tracking-widest uppercase mt-1"
-                                                style="color:rgba(196,181,253,.5)">Identity Verification</p>
+                                            <p class="text-[0.45rem] font-bold tracking-widest uppercase mt-1"
+                                                style="color:rgba(196,181,253,.5)">ENTER SECRET CODE</p>
                                         </div>
                                     </div>
                                     <div class="mystery-card-face mystery-card-front" id="card-front-1"></div>
                                 </div>
                             </div>
+
+                            <!-- Card 2: Magical Orb -->
                             <div class="mystery-card-wrapper"
                                 style="--deal-delay:.5s;--card-rot:6deg;height:290px;width:140px;flex-shrink:0;"
                                 onclick="revealCard(2)">
                                 <div class="mystery-card-inner" id="card-inner-2">
-                                    <div class="mystery-card-face mystery-card-back" id="card-back-2">
+                                    <div class="mystery-card-face mystery-card-back flex flex-col items-center justify-center p-3"
+                                        id="card-back-2">
                                         <div class="absolute inset-0 opacity-20"
                                             style="background:radial-gradient(circle at 50% 50%,rgba(196,181,253,.6) 0%,transparent 70%);">
                                         </div>
-                                        <div class="flex flex-col items-center gap-3">
-                                            <span
-                                                style="font-size:3rem;filter:drop-shadow(0 0 12px rgba(251,191,36,1))">🗝️</span>
-                                            <p class="text-[0.65rem] font-bold tracking-widest uppercase"
-                                                style="color:rgba(196,181,253,.7)">Tap to reveal</p>
+                                        <div class="flex flex-col items-center gap-2 w-full z-10">
+                                            <span style="font-size:1.8rem;filter:drop-shadow(0 0 12px rgba(196,181,253,1))"
+                                                id="orb-card-icon">🔮</span>
+                                            <div id="orb-unlock-container" class="flex flex-col items-center gap-1.5 w-full mt-0.5">
+                                                <input type="number" id="orb-final-input"
+                                                    class="mystical-input no-spinners w-full p-2.5 rounded-xl text-center font-bold text-white text-sm"
+                                                    placeholder="" autocomplete="off"
+                                                    onclick="event.stopPropagation()"
+                                                    onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkOrbUnlock(event); }">
+                                            </div>
+                                            <p class="text-[0.4rem] font-bold tracking-widest uppercase mt-0.5"
+                                                style="color:rgba(196,181,253,.5)">ENTER FINAL ACCESS KEY</p>
                                         </div>
                                     </div>
                                     <div class="mystery-card-face mystery-card-front" id="card-front-2"></div>
@@ -5383,7 +5381,6 @@
         // Global Ritual State
         let globalMysteryCode = 0;
         let firstRitualCode = 0;
-        let globalQuoteWordCount = 0;
         let isQuoteUnlocked = false;
         let isOrbUnlocked = false;
         let cardsFlippedCount = 0;
@@ -5418,13 +5415,13 @@
             const nameLen = userName.length;
             const wordsLen = ((currentWord1||"").length + (currentWord2||"").length + (currentWord3||"").length + (currentWord4||"").length);
             const mysteryCode = (nameLen + totalScore + wordsLen) * 5;
-            globalMysteryCode = mysteryCode;
+            globalMysteryCode = 0; // Will be calculated on card 1 flip
             firstRitualCode = mysteryCode;
 
             const magic = zodiacMagicMap[selectedZodiacEmoji] || zodiacMagicMap['♏'];
 
-            // Card 2 – Secret Code (Space Cipher)
-            document.getElementById('card-front-2').innerHTML = `
+            // Card 0 – Secret Code (Space Cipher)
+            document.getElementById('card-front-0').innerHTML = `
                 <div class="space-card-bg" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;padding:15px;box-sizing:border-box;border:none;">
                     <div class="space-card-nebula" style="background:radial-gradient(circle,rgba(74,222,128,0.1),transparent 60%);"></div>
                     <p style="font-size:.55rem;font-weight:900;letter-spacing:.4em;color:#4ade80;text-transform:uppercase;margin:0;opacity:0.7;">Orbital Cipher</p>
@@ -5433,41 +5430,22 @@
                     <div style="font-size:0.6rem;color:rgba(74,222,128,0.5);text-transform:uppercase;letter-spacing:0.2em;">Data Verified</div>
                 </div>`;
 
-            document.getElementById('card-back-2').innerHTML = `
-                <div class="space-card-bg" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.1);">
-                    <div class="mystery-card-ordinal" style="color:rgba(255,255,255,0.1)">1</div>
-                    <div style="font-size:3rem;filter:drop-shadow(0 0 15px #4ade80)">🛰️</div>
-                    <p style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.2em;margin-top:10px;">Deep Space Scan</p>
-                </div>`;
-
-            // Card 1 – Quote face (requires Name to flip)
             // Card 1 – Space Quote
             const q = getNextQuote();
-            globalQuoteWordCount = q.en.split(/\s+/).filter(w => w.length > 0).length;
-            
             document.getElementById('card-front-1').innerHTML = `
                 <div class="space-card-bg" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px;box-sizing:border-box;border:none;position:relative;">
                     <div class="space-card-nebula" style="background:radial-gradient(circle,rgba(167,139,250,0.15),transparent 70%);"></div>
                     <div style="display:flex;align-items:center;gap:10px;">
                         <span style="font-size:1.6rem;filter:drop-shadow(0 0 8px #a78bfa)">🌌</span>
-                        <button onclick="event.stopPropagation(); speakQuote(this, '${q.en.replace(/'/g, "\\'")}')" class="text-purple-300 hover:text-white transition-colors cursor-pointer" title="Listen to the quote" style="background:none;border:none;padding:5px;font-size:1.2rem;">🔊</button>
                     </div>
-                    <p style="font-size:.7rem;color:#f5f3ff;font-weight:600;text-align:center;line-height:1.4;margin:0;padding:0 2px;">"${q.en}"</p>
+                    <p style="font-size:.7rem;color:#f5f3ff;font-weight:600;text-align:center;line-height:1.4;margin:0;padding:0 2px;" data-quote-text="${q.en.replace(/"/g, '&quot;')}">"${q.en}"</p>
                     <div style="width:40%;height:1px;background:rgba(167,139,250,0.3);margin:2px 0;"></div>
                     <p style="font-size:.65rem;color:rgba(196,181,253,0.7);font-style:italic;text-align:center;line-height:1.3;margin:0;">${q.vi}</p>
                     <div class="revealed-orb-code-container" style="opacity:0;transition:opacity 0.8s ease;text-align:center;margin-top:2px;"></div>
                 </div>`;
 
-            document.getElementById('card-back-1').innerHTML = `
-                <div class="space-card-bg" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;border:2px solid rgba(167,139,250,0.2);">
-                    <div class="mystery-card-ordinal" style="color:rgba(255,255,255,0.1)">2</div>
-                    <div style="font-size:2rem;margin-bottom:15px;filter:drop-shadow(0 0 10px #a78bfa)">🔑</div>
-                    <input type="number" id="quote-cipher-input" class="mystical-input no-spinners w-full p-2.5 rounded-xl text-center font-bold text-white text-sm" placeholder="" autocomplete="off" onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkQuoteUnlock(event); }" onclick="event.stopPropagation()">
-                    <p class="input-subnote">ENTER SECRET CODE (FROM CARD 1)</p>
-                </div>`;
-
-            // Card 0 – Space Orb
-            document.getElementById('card-front-0').innerHTML = `
+            // Card 2 – Space Orb (Cosmic Anomaly)
+            document.getElementById('card-front-2').innerHTML = `
                 <div class="space-card-bg" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;box-sizing:border-box;border:none;">
                     <div class="space-card-nebula" style="background:radial-gradient(circle,rgba(236,72,153,0.15),transparent 70%);"></div>
                     <p style="font-size:.55rem;font-weight:900;letter-spacing:.3em;color:#f472b6;text-transform:uppercase;margin:0;">Cosmic Anomaly</p>
@@ -5478,18 +5456,6 @@
                     </div>
                     <p style="font-size:.75rem;font-weight:900;color:#fff;margin:0;text-shadow:0 0 10px ${magic.orbGlow}">${magic.skill}</p>
                     <p style="font-size:.55rem;color:rgba(255,255,255,0.6);text-align:center;line-height:1.3;padding:0 4px;">${magic.desc}</p>
-                </div>`;
-
-            document.getElementById('card-back-0').innerHTML = `
-                <div class="space-card-bg" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:12px;border:none;">
-                    <div class="mystery-card-ordinal" style="color:rgba(255,255,255,0.1)">3</div>
-                    <div style="font-size:1.8rem;filter:drop-shadow(0 0 12px #f472b6)">💫</div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div style="position:relative;">
-                            <input type="number" id="orb-final-input" class="mystical-input no-spinners w-full p-3 rounded-xl text-center font-bold text-white text-base" style="letter-spacing:0.2em;" placeholder="" autocomplete="off" onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkOrbUnlock(event); }" onclick="event.stopPropagation()">
-                            <p class="input-subnote text-center mt-2">REVEAL FINAL ACCESS KEY</p>
-                        </div>
-                    </div>
                 </div>`;
         }
 
@@ -5562,39 +5528,6 @@
             }, 3000);
         }
 
-        function speakQuote(btn, text) {
-            if (!("speechSynthesis" in window)) {
-                alert("Speech Synthesis not supported in this browser.");
-                return;
-            }
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            
-            btn.classList.add('animate-pulse', 'text-yellow-400');
-            
-            utterance.onend = () => {
-                btn.classList.remove('animate-pulse', 'text-yellow-400');
-                const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
-                const digitSum = firstRitualCode.toString().split('').reduce((sum, d) => sum + (parseInt(d) || 0), 0);
-                const code = wordCount + digitSum;
-                globalMysteryCode = code; 
-
-                const containers = document.querySelectorAll('.revealed-orb-code-container');
-                containers.forEach(c => {
-                    c.innerHTML = `
-                        <p style="font-size:0.5rem;color:rgba(167,139,250,0.6);margin:2px 0 0 0;letter-spacing:0.1em;">ORBITAL CODE REVEALED</p>
-                        <p style="font-size:1.1rem;font-weight:900;color:#fff;margin:0;text-shadow:0 0 10px #a78bfa;">${code}</p>
-                    `;
-                    c.style.opacity = '1';
-                });
-            };
-            window.speechSynthesis.speak(utterance);
-        }
-
-
-
         function checkQuoteUnlock(event) {
             if (event) event.stopPropagation();
             const inp = document.getElementById('quote-cipher-input');
@@ -5628,7 +5561,7 @@
                 isOrbUnlocked = true;
                 inp.style.borderColor = "#4ade80";
                 inp.style.boxShadow = "0 0 15px rgba(74, 222, 128, 0.5)";
-                setTimeout(() => revealCard(0), 400);
+                setTimeout(() => revealCard(2), 400);
             } else {
                 inp.classList.add('animate-shake');
                 inp.style.borderColor = "#ef4444";
@@ -5645,9 +5578,10 @@
             const inner = document.getElementById(`card-inner-${idx}`);
             if (!inner || inner.classList.contains('flipped')) return;
 
+            // Seq dependencies: 0 -> 1 -> 2
             if (idx === 1) {
-                if (!document.getElementById('card-inner-2').classList.contains('flipped')) {
-                    const codeCard = document.getElementById('card-inner-2').closest('.mystery-card-wrapper');
+                if (!document.getElementById('card-inner-0').classList.contains('flipped')) {
+                    const codeCard = document.getElementById('card-inner-0').closest('.mystery-card-wrapper');
                     codeCard.classList.add('animate-shake');
                     setTimeout(() => codeCard.classList.remove('animate-shake'), 500);
                     return;
@@ -5663,7 +5597,7 @@
                     return;
                 }
             }
-            if (idx === 0) {
+            if (idx === 2) {
                 if (!document.getElementById('card-inner-1').classList.contains('flipped')) {
                     const quoteCard = document.getElementById('card-inner-1').closest('.mystery-card-wrapper');
                     quoteCard.classList.add('animate-shake');
@@ -5685,9 +5619,32 @@
             inner.classList.add('flipped');
             cardsFlippedCount++;
 
-            if (idx === 0) playMagicSound('orb');
-            else if (idx === 1) playMagicSound('quote');
-            else playMagicSound('code');
+            // Ritual Calculation & Side Effects
+            if (idx === 1) {
+                // Calculate Final Access Key automatically when Quote card flips
+                const quoteParagraph = document.querySelector('#card-inner-1 p[data-quote-text]');
+                const text = quoteParagraph ? quoteParagraph.getAttribute('data-quote-text') : "";
+                const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+                const digitSum = firstRitualCode.toString().split('').reduce((sum, d) => sum + (parseInt(d) || 0), 0);
+                globalMysteryCode = wordCount + digitSum;
+
+                // Show it in all containers
+                setTimeout(() => {
+                    const containers = document.querySelectorAll('.revealed-orb-code-container');
+                    containers.forEach(c => {
+                        c.innerHTML = `
+                            <p style="font-size:0.5rem;color:rgba(167,139,250,0.6);margin:2px 0 0 0;letter-spacing:0.1em;">ORBITAL CODE REVEALED</p>
+                            <p style="font-size:1.1rem;font-weight:900;color:#fff;margin:0;text-shadow:0 0 10px #a78bfa;">${globalMysteryCode}</p>
+                        `;
+                        c.style.opacity = '1';
+                    });
+                }, 600);
+                playMagicSound('quote');
+            } else if (idx === 2) {
+                playMagicSound('orb');
+            } else {
+                playMagicSound('code');
+            }
 
             const magic = zodiacMagicMap[selectedZodiacEmoji] || zodiacMagicMap['♏'];
             const wrapper = inner.closest('.mystery-card-wrapper');
@@ -5697,7 +5654,7 @@
                 const sr = finalScreen.getBoundingClientRect();
                 const cx = rect.left - sr.left + rect.width / 2;
                 const cy = rect.top - sr.top + rect.height / 2;
-                const colors = idx === 0 ? [magic.pColor, magic.ringColor, magic.orbLight]
+                const colors = idx === 2 ? [magic.pColor, magic.ringColor, magic.orbLight]
                     : idx === 1 ? ['#fde047', '#fbbf24', '#fef3c7']
                         : ['#4ade80', '#22d3ee', '#a3e635'];
                 for (let i = 0; i < 12; i++) {
@@ -5718,7 +5675,8 @@
                     setTimeout(() => p.remove(), 900);
                 }
 
-                if (idx === 1 || idx === 2) {
+                // Zoom up cards 0 and 1
+                if (idx === 0 || idx === 1) {
                     setTimeout(() => {
                         const cardFront = document.getElementById(`card-front-${idx}`);
                         const overlay = document.createElement('div');
