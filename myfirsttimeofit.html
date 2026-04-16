@@ -1342,45 +1342,50 @@
         }
 
         .mystery-card-back {
-            background: linear-gradient(135deg, rgba(30, 27, 75, 0.45) 0%, rgba(49, 46, 129, 0.6) 40%, rgba(30, 58, 95, 0.45) 100%);
-            backdrop-filter: blur(12px);
-            border: 1.5px solid rgba(167, 139, 250, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 2;
-            box-shadow: inset 0 0 20px rgba(167, 139, 250, 0.2), 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05);
         }
 
         .mystery-card-ordinal {
             position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.1rem;
             font-weight: 900;
-            color: rgba(255, 255, 255, 0.07);
-            user-select: none;
+            color: rgba(255, 255, 255, 0.4);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            font-family: 'Arial Black', sans-serif;
+            letter-spacing: 0.1em;
+            z-index: 5;
             pointer-events: none;
-            z-index: -1;
         }
 
         .mystical-input {
             background: rgba(0, 0, 0, 0.3) !important;
-            border: 1px solid rgba(167, 139, 250, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
             box-shadow: 0 0 10px rgba(139, 92, 246, 0.1) !important;
             transition: all 0.4s ease !important;
+            color: white !important;
         }
 
         .mystical-input:focus {
             border-color: rgba(167, 139, 250, 0.8) !important;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4) !important;
+            box-shadow: 0 0 18px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
             background: rgba(0, 0, 0, 0.5) !important;
         }
 
         .mystical-input::placeholder {
-            color: rgba(255, 255, 255, 0.15) !important;
+            color: rgba(255, 255, 255, 0.1) !important;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
             font-style: italic;
             transition: opacity 0.4s ease;
         }
@@ -2329,6 +2334,7 @@
                                 <div class="mystery-card-inner" id="card-inner-0">
                                     <div class="mystery-card-face mystery-card-back flex flex-col items-center justify-center p-3"
                                         id="card-back-0">
+                                        <div class="mystery-card-ordinal">3</div>
                                         <div class="absolute inset-0 opacity-20"
                                             style="background:radial-gradient(circle at 50% 50%,rgba(196,181,253,.6) 0%,transparent 70%);">
                                         </div>
@@ -2339,12 +2345,12 @@
                                             <div id="orb-unlock-container"
                                                 class="flex flex-col items-center gap-1.5 w-full mt-0.5">
                                                 <input type="text" id="orb-code-input"
-                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1 text-center text-white text-[0.75rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50"
+                                                    class="mystical-input w-full rounded-lg px-2 py-1 text-center text-white text-[0.75rem] font-bold tracking-widest outline-none"
                                                     placeholder="SECRET CODE" autocomplete="off"
                                                     onclick="event.stopPropagation()"
                                                     onkeydown="if(event.key==='Enter') checkOrbUnlock(event)">
                                                 <input type="text" id="orb-word-count-input"
-                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1 text-center text-white text-[0.75rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50"
+                                                    class="mystical-input w-full rounded-lg px-2 py-1 text-center text-white text-[0.75rem] font-bold tracking-widest outline-none"
                                                     placeholder="WORD COUNT?" autocomplete="off"
                                                     onclick="event.stopPropagation()"
                                                     onkeydown="if(event.key==='Enter') checkOrbUnlock(event)">
@@ -2363,6 +2369,7 @@
                                 <div class="mystery-card-inner" id="card-inner-1">
                                     <div class="mystery-card-face mystery-card-back flex flex-col items-center justify-center p-3"
                                         id="card-back-1">
+                                        <div class="mystery-card-ordinal">2</div>
                                         <div class="absolute inset-0 opacity-20"
                                             style="background:radial-gradient(circle at 50% 50%,rgba(196,181,253,.6) 0%,transparent 70%);">
                                         </div>
@@ -2372,7 +2379,7 @@
                                             <div id="quote-unlock-container"
                                                 class="flex flex-col items-center gap-2 w-full mt-1">
                                                 <input type="text" id="quote-name-input"
-                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1.5 text-center text-white text-[0.8rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50"
+                                                    class="mystical-input w-full rounded-lg px-2 py-1.5 text-center text-white text-[0.8rem] font-bold tracking-widest outline-none"
                                                     placeholder="YOUR NAME?" autocomplete="off"
                                                     onclick="event.stopPropagation()"
                                                     onkeydown="if(event.key==='Enter') checkQuoteUnlock(event)">
@@ -2390,6 +2397,7 @@
                                 onclick="revealCard(2)">
                                 <div class="mystery-card-inner" id="card-inner-2">
                                     <div class="mystery-card-face mystery-card-back" id="card-back-2">
+                                        <div class="mystery-card-ordinal">1</div>
                                         <div class="absolute inset-0 opacity-20"
                                             style="background:radial-gradient(circle at 50% 50%,rgba(196,181,253,.6) 0%,transparent 70%);">
                                         </div>
@@ -4874,7 +4882,7 @@
             if (applesSortedCount >= appleGameQueue.length) {
                 setTimeout(() => {
                     showMysteryBox();
-                    window.completedShown = true;
+                    // window.completedShown = true; // Moved to ritual end
                 }, 500);
                 return;
             }
@@ -5801,14 +5809,20 @@
             setTimeout(() => {
                 overlay.style.transition = 'opacity .8s ease';
                 overlay.style.opacity = '0';
-                setTimeout(() => overlay.remove(), 900);
+                setTimeout(() => {
+                    overlay.remove();
+                    window.completedShown = true; // Now safe to reset
+                }, 900);
             }, 7000);
 
             // Click to dismiss early
             overlay.addEventListener('click', () => {
                 overlay.style.transition = 'opacity .6s ease';
                 overlay.style.opacity = '0';
-                setTimeout(() => overlay.remove(), 700);
+                setTimeout(() => {
+                    overlay.remove();
+                    window.completedShown = true; // Now safe to reset
+                }, 700);
             });
         }
 
