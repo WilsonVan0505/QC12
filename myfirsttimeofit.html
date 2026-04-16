@@ -1115,16 +1115,76 @@
             position:relative;
         }
         .mystery-card-inner.flipped { transform: rotateY(180deg); }
+        .mystery-card-ordinal {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.08); /* Faint mysterious numbering */
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .magic-sparkle {
+            position: fixed;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            will-change: transform, opacity;
+            animation: magic-sparkle-fly 0.8s ease-out forwards;
+        }
+        @keyframes magic-sparkle-fly {
+            0% { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+        }
         .mystery-card-face {
             position:absolute; inset:0; backface-visibility:hidden;
             border-radius:1.25rem; overflow:hidden;
             transform-style: preserve-3d;
         }
         .mystery-card-back {
-            background: linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#1e3a5f 100%);
-            border: 1.5px solid rgba(167,139,250,.5);
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.45) 0%, rgba(49, 46, 129, 0.6) 40%, rgba(30, 58, 95, 0.45) 100%);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(167, 139, 250, 0.4);
             display:flex; align-items:center; justify-content:center;
             z-index: 2;
+            box-shadow: inset 0 0 20px rgba(167, 139, 250, 0.2), 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        . mystery-card-ordinal {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.07);
+            user-select: none;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .mystical-input {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(167, 139, 250, 0.3) !important;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.1) !important;
+            transition: all 0.4s ease !important;
+        }
+        .mystical-input:focus {
+            border-color: rgba(167, 139, 250, 0.8) !important;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4) !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+        }
+        .mystical-input::placeholder {
+            color: rgba(255, 255, 255, 0.15) !important;
+            font-style: italic;
+            transition: opacity 0.4s ease;
+        }
+        .mystical-input:focus::placeholder {
+            opacity: 0.4;
         }
         .mystery-card-front { 
             transform: rotateY(180deg); 
@@ -1734,12 +1794,17 @@
 
         <div id="final-screen"
             class="hidden card-crystal p-4 sm:p-6 md:p-10 w-full max-w-[98%] sm:max-w-3xl lg:max-w-5xl xl:max-w-6xl mx-auto mt-3 md:mt-4 flex-col items-center relative overflow-hidden">
-            <h2 id="tree-title" onclick="triggerFallingFires(this)" title="Click me to reveal the magic!"
-                class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6 text-center uppercase tracking-wider cursor-pointer hover:scale-105 transition-transform select-none z-30 flex justify-center gap-2 sm:gap-3 tree-title-glow">
-                <span class="wave-word" style="animation-delay: 0s;">Your</span>
-                <span class="wave-word" style="animation-delay: 0.2s;">Vocabulary</span>
-                <span class="wave-word" style="animation-delay: 0.4s;">Tree</span>
-            </h2>
+            <div id="tree-title-container" class="relative w-full flex justify-center items-center mb-4 sm:mb-6">
+                <!-- Portal for background hint notifications -->
+                <div id="hint-behind-portal" class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500"></div>
+                
+                <h2 id="tree-title" onclick="triggerFallingFires(this)" title="Click me to reveal the magic!"
+                    class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center uppercase tracking-wider cursor-pointer hover:scale-105 transition-transform select-none z-30 flex justify-center gap-2 sm:gap-3 tree-title-glow relative">
+                    <span class="wave-word" style="animation-delay: 0s;">Your</span>
+                    <span class="wave-word" style="animation-delay: 0.2s;">Vocabulary</span>
+                    <span class="wave-word" style="animation-delay: 0.4s;">Tree</span>
+                </h2>
+            </div>
             <div class="relative w-full flex flex-col items-center mt-2 sm:mt-4 mb-4">
                 <div id="tree-canopy"
                     class="relative flex justify-center items-center w-[320px] sm:w-[480px] md:w-[600px] lg:w-[700px] h-[250px] sm:h-[350px] md:h-[420px] lg:h-[460px] mx-auto z-10">
@@ -1814,7 +1879,7 @@
                                     id="sent-box-1">
                                     <button id="hint-btn-1" onclick="useTranslationHint(1)"
                                         class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-gradient-to-r from-white/10 to-white/5 border border-white/30 backdrop-blur-md rounded-xl px-2 py-1 sm:px-3 sm:py-1.5 text-sm sm:text-base font-bold shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:scale-105 transition-all text-white flex gap-1 items-center z-10 opacity-0 pointer-events-none">
-                                        <span class="hint-emoji drop-shadow-md"></span> <span class="text-[0.65rem] sm:text-xs text-white/80 mx-0.5">x</span><span class="hint-count-text text-yellow-300">0</span>
+                                        <span class="hint-emoji drop-shadow-md"></span> <span class="hint-count-text text-yellow-300 ml-1">0</span>
                                     </button>
                                     <p id="label-word-1"
                                         class="text-[0.8rem] sm:text-sm md:text-base font-semibold text-purple-300 mb-1.5 mt-4 sm:mt-0 pr-16 sm:pr-20">
@@ -1836,7 +1901,7 @@
                                     id="sent-box-2">
                                     <button id="hint-btn-2" onclick="useTranslationHint(2)"
                                         class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-gradient-to-r from-white/10 to-white/5 border border-white/30 backdrop-blur-md rounded-xl px-2 py-1 sm:px-3 sm:py-1.5 text-sm sm:text-base font-bold shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:scale-105 transition-all text-white flex gap-1 items-center z-10 opacity-0 pointer-events-none">
-                                        <span class="hint-emoji drop-shadow-md"></span> <span class="text-[0.65rem] sm:text-xs text-white/80 mx-0.5">x</span><span class="hint-count-text text-yellow-300">0</span>
+                                        <span class="hint-emoji drop-shadow-md"></span> <span class="hint-count-text text-yellow-300 ml-1">0</span>
                                     </button>
                                     <p id="label-word-2"
                                         class="text-[0.8rem] sm:text-sm md:text-base font-semibold text-purple-300 mb-1.5 mt-4 sm:mt-0 pr-16 sm:pr-20">
@@ -1858,7 +1923,7 @@
                                     id="sent-box-3">
                                     <button id="hint-btn-3" onclick="useTranslationHint(3)"
                                         class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-gradient-to-r from-white/10 to-white/5 border border-white/30 backdrop-blur-md rounded-xl px-2 py-1 sm:px-3 sm:py-1.5 text-sm sm:text-base font-bold shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:scale-105 transition-all text-white flex gap-1 items-center z-10 opacity-0 pointer-events-none">
-                                        <span class="hint-emoji drop-shadow-md"></span> <span class="text-[0.65rem] sm:text-xs text-white/80 mx-0.5">x</span><span class="hint-count-text text-yellow-300">0</span>
+                                        <span class="hint-emoji drop-shadow-md"></span> <span class="hint-count-text text-yellow-300 ml-1">0</span>
                                     </button>
                                     <p id="label-word-3"
                                         class="text-[0.8rem] sm:text-sm md:text-base font-semibold text-purple-300 mb-1.5 mt-4 sm:mt-0 pr-16 sm:pr-20">
@@ -1880,7 +1945,7 @@
                                     id="sent-box-4">
                                     <button id="hint-btn-4" onclick="useTranslationHint(4)"
                                         class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-gradient-to-r from-white/10 to-white/5 border border-white/30 backdrop-blur-md rounded-xl px-2 py-1 sm:px-3 sm:py-1.5 text-sm sm:text-base font-bold shadow-[0_4px_10px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:scale-105 transition-all text-white flex gap-1 items-center z-10 opacity-0 pointer-events-none">
-                                        <span class="hint-emoji drop-shadow-md"></span> <span class="text-[0.65rem] sm:text-xs text-white/80 mx-0.5">x</span><span class="hint-count-text text-yellow-300">0</span>
+                                        <span class="hint-emoji drop-shadow-md"></span> <span class="hint-count-text text-yellow-300 ml-1">0</span>
                                     </button>
                                     <p id="label-word-4"
                                         class="text-[0.8rem] sm:text-sm md:text-base font-semibold text-purple-300 mb-1.5 mt-4 sm:mt-0 pr-16 sm:pr-20">
@@ -3126,20 +3191,27 @@
             });
         }
         function createMagicSparkle(x, y) {
+            // Optimization: Limit total sparkles to prevent lag
+            if (document.querySelectorAll('.magic-sparkle').length > 15) return;
+            
             const sparkle = document.createElement('div');
             sparkle.className = 'magic-sparkle';
             sparkle.style.left = x + 'px';
             sparkle.style.top = y + 'px';
-            const rx = (Math.random() - 0.5) * 20;
-            const ry = (Math.random() - 0.5) * 20;
+            
+            // Random varied directions
+            const rx = (Math.random() - 0.5) * 80;
+            const ry = (Math.random() - 0.5) * 80;
             sparkle.style.setProperty('--dx', rx + 'px');
             sparkle.style.setProperty('--dy', ry + 'px');
+            
             const colors = ['#f5d0fe', '#f0abfc', '#e879f9', '#ffffff', '#c084fc'];
             const color = colors[Math.floor(Math.random() * colors.length)];
             sparkle.style.backgroundColor = color;
             sparkle.style.boxShadow = `0 0 10px ${color}`;
+            
             document.body.appendChild(sparkle);
-            setTimeout(() => sparkle.remove(), 600);
+            setTimeout(() => sparkle.remove(), 800);
         }
 
         function triggerFallingFires(titleElement) {
@@ -4941,18 +5013,38 @@
                     <p style="font-size:.6rem;color:rgba(196,181,253,.5);margin:0;font-style:normal;">${q.author}</p>
                 </div>`;
 
-            // Card 2 – Secret Code
-            document.getElementById('card-front-2').innerHTML = `
-                <div style="width:100%;height:100%;background:linear-gradient(160deg,#0a0014,#1a1a2e,#030712);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;box-sizing:border-box;position:relative;overflow:hidden;">
-                    <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(34,197,94,.03) 0,rgba(34,197,94,.03) 1px,transparent 1px,transparent 16px);pointer-events:none;"></div>
-                    <p style="font-size:.65rem;font-weight:900;letter-spacing:.2em;color:rgba(74,222,128,.8);text-transform:uppercase;margin:0;drop-shadow: 0 0 5px rgba(34,197,94,0.3);">Mật mã bí ẩn</p>
-                    <p style="font-size:.9rem;margin:0;line-height:1;">🗝️</p>
-                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(0,0,0,.55);border:1px solid rgba(74,222,128,.25);border-radius:8px;padding:7px 10px;width:calc(100% - 8px);box-sizing:border-box;">
-                        <p style="font-size:.42rem;color:rgba(74,222,128,.6);margin:0;letter-spacing:.12em;white-space:nowrap;">MẬT MÃ MỞ UNIT 2</p>
-                        <p class="secret-code shimmer-text" style="font-size:1.6rem;font-weight:900;margin:0;letter-spacing:.1em;filter:none;line-height:1.1;">${mysteryCode}</p>
-                        <p style="font-size:.38rem;color:rgba(74,222,128,.45);margin:0;letter-spacing:.08em;white-space:nowrap;">▓▒░ CLASSIFIED ░▒▓</p>
+            // Card 0 – Magical Orb
+            document.getElementById('card-back-0').innerHTML = `
+                <div class="mystery-card-ordinal">3</div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;z-index:10;">
+                    <div style="font-size:1.8rem;filter:drop-shadow(0 0 10px rgba(167,139,250,0.5))">🔮</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;width:85%;">
+                        <input type="number" id="orb-code-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="SECRET CODE" onkeydown="if(event.key==='Enter') checkOrbUnlock()" onclick="event.stopPropagation()">
+                        <input type="number" id="orb-word-count-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="WORD COUNT" onkeydown="if(event.key==='Enter') checkOrbUnlock()" onclick="event.stopPropagation()">
                     </div>
-                    <p style="font-size:.42rem;color:rgba(74,222,128,.45);text-align:center;margin:0;line-height:1.45;">Ghi nhớ để mở<br>bài học tiếp theo 🔓</p>
+                </div>`;
+
+            // Card 1 – Quote
+            const q = getNextQuote();
+            globalQuoteWordCount = q.en.split(/\s+/).filter(w => w.length > 0).length;
+            
+            document.getElementById('card-back-1').innerHTML = `
+                <div class="mystery-card-ordinal">2</div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:15px;width:100%;z-index:10;">
+                    <div style="font-size:1.8rem;filter:drop-shadow(0 0 10px rgba(251,191,36,0.5))">📜</div>
+                    <div style="width:85%;">
+                        <input type="text" id="quote-name-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm uppercase" placeholder="YOUR NAME?" onkeydown="if(event.key==='Enter') checkQuoteUnlock()" onclick="event.stopPropagation()">
+                    </div>
+                </div>`;
+
+            // Card 2 – Secret Code
+            document.getElementById('card-back-2').innerHTML = `
+                <div class="mystery-card-ordinal">1</div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;z-index:10;">
+                    <div style="font-size:2rem;filter:drop-shadow(0 0 10px #4ade80)">🔐</div>
+                    <div style="padding:4px 10px;border:1px solid rgba(74,222,128,0.3);border-radius:12px;background:rgba(0,0,0,0.2)">
+                       <span style="font-size:0.6rem;color:rgba(74,222,128,0.6);text-transform:uppercase;letter-spacing:0.1em;">Tap to Unlock</span>
+                    </div>
                 </div>`;
         }
 
@@ -5007,19 +5099,27 @@
         }
 
         function showHintToast() {
-            const toast = document.createElement('div');
-            toast.className = 'fixed top-24 left-1/2 -translate-x-1/2 glass-morphism crystal-glass-purple px-6 py-3 rounded-2xl font-bold shadow-2xl z-[1000] animate-bounce flex items-center gap-3 scale-110';
-            toast.innerHTML = `<span class="text-xl">🔮</span> 1 HINT ADDED! <span class="text-xl">🔮</span>`;
-            document.body.appendChild(toast);
-            
+            const portal = document.getElementById('hint-behind-portal');
+            if (!portal) return;
+
             // Immediately update UI
             updateHintButtonsUI();
 
+            portal.innerHTML = `
+                <div class="glass-morphism crystal-glass-purple px-10 py-5 rounded-3xl font-black shadow-2xl flex items-center gap-4 scale-125 transition-all duration-700" style="background: linear-gradient(135deg, rgba(88, 28, 135, 0.6) 0%, rgba(107, 33, 168, 0.8) 100%);">
+                    <span class="text-3xl">🔮</span>
+                    <span class="text-2xl tracking-widest uppercase text-white shadow-sm">1 HINT ADDED!</span>
+                    <span class="text-3xl">🔮</span>
+                </div>
+            `;
+            
+            portal.classList.remove('opacity-0');
+            portal.classList.add('opacity-100');
+
             setTimeout(() => {
-                toast.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                toast.style.opacity = '0';
-                toast.style.transform = 'translate(-50%, -20px) scale(0.9)';
-                setTimeout(() => toast.remove(), 600);
+                portal.classList.remove('opacity-100');
+                portal.classList.add('opacity-0');
+                setTimeout(() => { portal.innerHTML = ''; }, 500);
             }, 3000);
         }
 
