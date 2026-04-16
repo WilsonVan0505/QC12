@@ -1727,7 +1727,7 @@
                         class="text-4xl sm:text-5xl md:text-7xl font-black text-white leading-none drop-shadow-md">1</span>
                 </div>
                 <div id="header-name-container"
-                    class="absolute left-[58%] top-[48%] -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center z-30 pointer-events-auto">
+                    class="absolute left-[58%] top-[50%] sm:top-[48%] -translate-x-1/2 -translate-y-1/2 flex items-center z-30 pointer-events-auto">
                     <div
                         class="glass-panel px-3 sm:px-6 py-2 sm:py-2.5 rounded-full border border-white/30 flex items-center gap-3 backdrop-blur-md shadow-2xl transition-all hover:scale-105">
                         <span
@@ -5404,7 +5404,7 @@
                 <div style="display:flex;flex-direction:column;align-items:center;gap:15px;width:100%;z-index:10;">
                     <div style="font-size:2rem;filter:drop-shadow(0 0 12px rgba(251,191,36,0.5))">📜</div>
                     <div style="width:85%;">
-                        <input type="text" id="quote-name-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="YOUR NAME?" autocomplete="off" onkeydown="if(event.key==='Enter') checkQuoteUnlock()" onclick="event.stopPropagation()">
+                        <input type="text" id="quote-name-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="YOUR NAME?" autocomplete="off" onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkQuoteUnlock(event); }" onclick="event.stopPropagation()">
                     </div>
                 </div>`;
 
@@ -5425,8 +5425,8 @@
                 <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;z-index:10;">
                     <div style="font-size:1.8rem;filter:drop-shadow(0 0 10px rgba(167,139,250,0.5))">🔮</div>
                     <div style="display:flex;flex-direction:column;gap:6px;width:85%;">
-                        <input type="number" id="orb-code-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="SECRET CODE" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock()" onclick="event.stopPropagation()">
-                        <input type="number" id="orb-word-count-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="WORD COUNT" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock()" onclick="event.stopPropagation()">
+                        <input type="number" id="orb-code-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="SECRET CODE" autocomplete="off" onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkOrbUnlock(event); }" onclick="event.stopPropagation()">
+                        <input type="number" id="orb-word-count-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="WORD COUNT" autocomplete="off" onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkOrbUnlock(event); }" onclick="event.stopPropagation()">
                     </div>
                 </div>`;
         }
@@ -5511,20 +5511,28 @@
         function checkQuoteUnlock(event) {
             if (event) event.stopPropagation();
             const inp = document.getElementById('quote-name-input');
+            if (!inp) return;
             const enteredName = inp.value.trim().toLowerCase();
-            const actualName = document.getElementById('user-name-input').value.trim().toLowerCase();
+            
+            const nameInput = document.getElementById('user-name-input');
+            let actualName = nameInput ? nameInput.value.trim().toLowerCase() : "";
+            
+            // Fallback to "explorer" if the header name was left blank
+            if (actualName === "") actualName = "explorer";
 
-            if (enteredName === actualName && actualName !== "") {
+            if (enteredName === actualName) {
                 isQuoteUnlocked = true;
                 inp.style.borderColor = "#4ade80";
-                inp.style.boxShadow = "0 0 15px #4ade80";
+                inp.style.boxShadow = "0 0 15px rgba(74, 222, 128, 0.5)";
                 setTimeout(() => revealCard(1), 400);
             } else {
                 inp.classList.add('animate-shake');
                 inp.style.borderColor = "#ef4444";
+                inp.style.boxShadow = "0 0 15px rgba(239, 68, 68, 0.3)";
                 setTimeout(() => {
                     inp.classList.remove('animate-shake');
                     inp.style.borderColor = "";
+                    inp.style.boxShadow = "";
                 }, 500);
             }
         }
