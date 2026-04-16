@@ -2377,18 +2377,8 @@
                                             <span
                                                 style="font-size:1.8rem;filter:drop-shadow(0 0 12px rgba(196,181,253,1))"
                                                 id="orb-card-icon">🔮</span>
-                                            <div id="orb-unlock-container"
-                                                class="flex flex-col items-center gap-1.5 w-full mt-0.5">
-                                                <input type="text" id="orb-code-input"
-                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1 text-center text-white text-[0.75rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50"
-                                                    placeholder="SECRET CODE" autocomplete="off"
-                                                    onclick="event.stopPropagation()"
-                                                    onkeydown="if(event.key==='Enter') checkOrbUnlock(event)">
-                                                <input type="text" id="orb-word-count-input"
-                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1 text-center text-white text-[0.75rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50"
-                                                    placeholder="WORD COUNT?" autocomplete="off"
-                                                    onclick="event.stopPropagation()"
-                                                    onkeydown="if(event.key==='Enter') checkOrbUnlock(event)">
+                                            <div id="orb-unlock-container" class="w-full mt-0.5">
+                                                <!-- Populated by prepareMysteryCards -->
                                             </div>
                                             <p id="orb-hint-text"
                                                 class="text-[0.4rem] font-bold tracking-widest uppercase mt-0.5"
@@ -2410,13 +2400,8 @@
                                         <div class="flex flex-col items-center gap-2 w-full z-10">
                                             <span
                                                 style="font-size:2.5rem;filter:drop-shadow(0 0 12px rgba(251,191,36,1))">💬</span>
-                                            <div id="quote-unlock-container"
-                                                class="flex flex-col items-center gap-2 w-full mt-1">
-                                                <input type="text" id="quote-name-input"
-                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1.5 text-center text-white text-[0.8rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50"
-                                                    placeholder="YOUR NAME?" autocomplete="off"
-                                                    onclick="event.stopPropagation()"
-                                                    onkeydown="if(event.key==='Enter') checkQuoteUnlock(event)">
+                                            <div id="quote-unlock-container" class="w-full mt-1">
+                                                <!-- Populated by prepareMysteryCards -->
                                             </div>
                                             <p id="quote-hint-text"
                                                 class="text-[0.45rem] font-bold tracking-widest uppercase mt-1"
@@ -5434,7 +5419,6 @@
                     <p style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.2em;margin-top:10px;">Deep Space Scan</p>
                 </div>`;
 
-            // Card 1 – Quote face (requires Name to flip)
             // Card 1 – Space Quote
             const q = getNextQuote();
             globalQuoteWordCount = q.en.split(/\s+/).filter(w => w.length > 0).length;
@@ -5453,10 +5437,10 @@
                 </div>`;
 
             document.getElementById('card-back-1').innerHTML = `
-                <div class="space-card-bg" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;border:2px solid rgba(167,139,250,0.2);">
+                <div class="space-card-bg" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;gap:10px;border:none;">
                     <div class="mystery-card-ordinal" style="color:rgba(255,255,255,0.1)">2</div>
-                    <div style="font-size:2rem;margin-bottom:15px;filter:drop-shadow(0 0 10px #a78bfa)">👤</div>
-                    <input type="text" id="quote-name-input" class="mystical-input w-full p-2.5 rounded-xl text-center font-bold text-white text-sm" placeholder="" autocomplete="off" onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkQuoteUnlock(event); }" onclick="event.stopPropagation()">
+                    <div style="font-size:2rem;margin-bottom:15px;filter:drop-shadow(0 0 10px #fbbf24)">👤</div>
+                    <input type="text" id="quote-name-input" class="mystical-input w-full p-2.5 rounded-xl text-center font-bold text-white text-sm" placeholder="IDENTITY NAME..." autocomplete="off" onkeydown="if(event.key==='Enter'||event.keyCode===13){event.preventDefault();checkQuoteUnlock(event);}" onclick="event.stopPropagation()">
                     <p class="input-subnote">ENTER YOUR EXPLORER IDENTITY</p>
                 </div>`;
 
@@ -5480,11 +5464,11 @@
                     <div style="font-size:1.6rem;filter:drop-shadow(0 0 10px #f472b6)">💫</div>
                     <div class="w-full flex flex-col gap-2">
                         <div>
-                            <input type="number" id="orb-code-input" class="mystical-input no-spinners w-full p-2 rounded-xl text-center font-bold text-white text-sm" placeholder="" autocomplete="off" onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkOrbUnlock(event); }" onclick="event.stopPropagation()">
+                            <input type="number" id="orb-code-input" class="mystical-input no-spinners w-full p-2 rounded-xl text-center font-bold text-white text-sm" placeholder="CIPHER CODE..." autocomplete="off" onkeydown="if(event.key==='Enter'||event.keyCode===13){event.preventDefault();checkOrbUnlock(event);}" onclick="event.stopPropagation()">
                             <p class="input-subnote text-center">ORBITAL CIPHER</p>
                         </div>
                         <div>
-                            <input type="number" id="orb-dynamic-code-input" class="mystical-input no-spinners w-full p-2 rounded-xl text-center font-bold text-white text-sm" placeholder="" autocomplete="off" onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); checkOrbUnlock(event); }" onclick="event.stopPropagation()">
+                            <input type="number" id="orb-dynamic-code-input" class="mystical-input no-spinners w-full p-2 rounded-xl text-center font-bold text-white text-sm" placeholder="COSMIC CODE..." autocomplete="off" onkeydown="if(event.key==='Enter'||event.keyCode===13){event.preventDefault();checkOrbUnlock(event);}" onclick="event.stopPropagation()">
                             <p class="input-subnote text-center">COSMIC ACCESS CODE</p>
                         </div>
                     </div>
@@ -5622,23 +5606,20 @@
             
             const nameInput = document.getElementById('user-name-input');
             let actualName = nameInput ? nameInput.value.trim().toLowerCase() : "";
-            
-            // Fallback to "explorer" if the header name was left blank
             if (actualName === "") actualName = "explorer";
 
-            if (enteredName === actualName) {
+            if (enteredName === actualName && enteredName !== "") {
                 isQuoteUnlocked = true;
                 inp.style.borderColor = "#4ade80";
-                inp.style.boxShadow = "0 0 15px rgba(74, 222, 128, 0.5)";
-                setTimeout(() => revealCard(1), 400);
+                inp.style.boxShadow = "0 0 20px rgba(74, 222, 128, 0.6)";
+                setTimeout(() => revealCard(1), 500);
             } else {
                 inp.classList.add('animate-shake');
                 inp.style.borderColor = "#ef4444";
-                inp.style.boxShadow = "0 0 15px rgba(239, 68, 68, 0.3)";
+                inp.style.boxShadow = "0 0 20px rgba(239, 68, 68, 0.5)";
+                playErrorSound();
                 setTimeout(() => {
                     inp.classList.remove('animate-shake');
-                    inp.style.borderColor = "";
-                    inp.style.boxShadow = "";
                 }, 500);
             }
         }
@@ -5647,33 +5628,37 @@
             if (event) event.stopPropagation();
             const inpCode = document.getElementById('orb-code-input');
             const inpDyn = document.getElementById('orb-dynamic-code-input');
+            if (!inpCode || !inpDyn) return;
 
             const enteredCode = parseInt(inpCode.value.trim());
             const enteredDyn = parseInt(inpDyn.value.trim());
 
             let success = true;
-            // Validate Secret Code from Card 1
-            if (enteredCode !== globalMysteryCode) {
+            if (isNaN(enteredCode) || enteredCode !== globalMysteryCode) {
                 inpCode.classList.add('animate-shake');
                 inpCode.style.borderColor = "#ef4444";
+                inpCode.style.boxShadow = "0 0 20px rgba(239, 68, 68, 0.5)";
                 success = false;
             } else {
                 inpCode.style.borderColor = "#4ade80";
+                inpCode.style.boxShadow = "0 0 20px rgba(74, 222, 128, 0.4)";
             }
 
-            // Validate Dynamic Code from Card 2 (Speech)
-            if (enteredDyn !== globalDynamicCode) {
+            if (isNaN(enteredDyn) || enteredDyn !== globalDynamicCode) {
                 inpDyn.classList.add('animate-shake');
                 inpDyn.style.borderColor = "#ef4444";
+                inpDyn.style.boxShadow = "0 0 20px rgba(239, 68, 68, 0.5)";
                 success = false;
             } else {
                 inpDyn.style.borderColor = "#4ade80";
+                inpDyn.style.boxShadow = "0 0 20px rgba(74, 222, 128, 0.4)";
             }
 
             if (success) {
                 isOrbUnlocked = true;
-                setTimeout(() => revealCard(0), 400);
+                setTimeout(() => revealCard(0), 500);
             } else {
+                playErrorSound();
                 setTimeout(() => {
                     inpCode.classList.remove('animate-shake');
                     inpDyn.classList.remove('animate-shake');
