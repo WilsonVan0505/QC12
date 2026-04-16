@@ -1930,15 +1930,20 @@
                                     <div class="mystery-card-face mystery-card-back flex flex-col items-center justify-center p-3">
                                         <div class="absolute inset-0 opacity-20" style="background:radial-gradient(circle at 50% 50%,rgba(196,181,253,.6) 0%,transparent 70%);"></div>
                                         <div class="flex flex-col items-center gap-2 w-full z-10">
-                                            <span style="font-size:2.2rem;filter:drop-shadow(0 0 12px rgba(196,181,253,1))" id="orb-card-icon">🔮</span>
-                                            <div id="orb-unlock-container" class="flex flex-col items-center gap-2 w-full mt-1">
+                                            <span style="font-size:1.8rem;filter:drop-shadow(0 0 12px rgba(196,181,253,1))" id="orb-card-icon">🔮</span>
+                                            <div id="orb-unlock-container" class="flex flex-col items-center gap-1.5 w-full mt-0.5">
                                                 <input type="text" id="orb-code-input" 
-                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-1 py-1 text-center text-white text-base font-black tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 shadow-inner" 
-                                                    placeholder="ENTER CODE" autocomplete="off"
+                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1 text-center text-white text-[0.75rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50" 
+                                                    placeholder="SECRET CODE" autocomplete="off"
+                                                    onclick="event.stopPropagation()"
+                                                    onkeydown="if(event.key==='Enter') checkOrbUnlock(event)">
+                                                <input type="text" id="orb-word-count-input" 
+                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1 text-center text-white text-[0.75rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50" 
+                                                    placeholder="WORD COUNT?" autocomplete="off"
                                                     onclick="event.stopPropagation()"
                                                     onkeydown="if(event.key==='Enter') checkOrbUnlock(event)">
                                             </div>
-                                            <p id="orb-hint-text" class="text-[0.45rem] font-bold tracking-widest uppercase mt-1" style="color:rgba(196,181,253,.5)">Magical Protection</p>
+                                            <p id="orb-hint-text" class="text-[0.4rem] font-bold tracking-widest uppercase mt-0.5" style="color:rgba(196,181,253,.5)">Dual Authentication Required</p>
                                         </div>
                                     </div>
                                     <div class="mystery-card-face mystery-card-front" id="card-front-0"></div>
@@ -1946,11 +1951,18 @@
                             </div>
                             <div class="mystery-card-wrapper" style="--deal-delay:.3s;--card-rot:0deg;height:290px;width:140px;flex-shrink:0;" onclick="revealCard(1)">
                                 <div class="mystery-card-inner" id="card-inner-1">
-                                    <div class="mystery-card-face mystery-card-back">
+                                    <div class="mystery-card-face mystery-card-back flex flex-col items-center justify-center p-3">
                                         <div class="absolute inset-0 opacity-20" style="background:radial-gradient(circle at 50% 50%,rgba(196,181,253,.6) 0%,transparent 70%);"></div>
-                                        <div class="flex flex-col items-center gap-3">
-                                            <span style="font-size:3rem;filter:drop-shadow(0 0 12px rgba(251,191,36,1))">💬</span>
-                                            <p class="text-[0.65rem] font-bold tracking-widest uppercase" style="color:rgba(196,181,253,.7)">Tap to reveal</p>
+                                        <div class="flex flex-col items-center gap-2 w-full z-10">
+                                            <span style="font-size:2.5rem;filter:drop-shadow(0 0 12px rgba(251,191,36,1))">💬</span>
+                                            <div id="quote-unlock-container" class="flex flex-col items-center gap-2 w-full mt-1">
+                                                <input type="text" id="quote-name-input" 
+                                                    class="w-full bg-black/40 border border-purple-500/30 rounded-lg px-2 py-1.5 text-center text-white text-[0.8rem] font-bold tracking-widest outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50" 
+                                                    placeholder="YOUR NAME?" autocomplete="off"
+                                                    onclick="event.stopPropagation()"
+                                                    onkeydown="if(event.key==='Enter') checkQuoteUnlock(event)">
+                                            </div>
+                                            <p id="quote-hint-text" class="text-[0.45rem] font-bold tracking-widest uppercase mt-1" style="color:rgba(196,181,253,.5)">Identity Verification</p>
                                         </div>
                                     </div>
                                     <div class="mystery-card-face mystery-card-front" id="card-front-1"></div>
@@ -3138,7 +3150,7 @@
                 flyingFire.style.top = startY + 'px';
                 flyingFire.style.zIndex = 2000 + index;
                 flyingFire.innerHTML = `
-                    <svg viewBox="0 0 24 24" class="w-4 h-4 sm:w-5 sm:h-5" style="fill: url(#purple-fire); filter: drop-shadow(0 0 10px rgba(217, 70, 239, 1));">
+                    <svg viewBox="0 0 24 24" class="w-7 h-7 sm:w-8 sm:h-8" style="fill: url(#purple-fire); filter: drop-shadow(0 0 10px rgba(217, 70, 239, 1));">
                         <path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 00-1.071-.136 9.742 9.742 0 00-3.539 6.177A7.547 7.547 0 016.648 6.61a.75.75 0 00-1.152-.082A9 9 0 1015.68 4.534a7.46 7.46 0 01-2.717-2.248zM15.75 14.25a3.75 3.75 0 11-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 011.925-3.545 3.75 3.75 0 013.255 3.717z" clip-rule="evenodd" />
                     </svg>
                 `;
@@ -4132,6 +4144,7 @@
                         transitionPage('step-1-container', 'step2-part-1');
                         remainingHints++;
                         updateHintButtonsUI();
+                        showHintToast(); // New visual notification
                         initStep2(vals[0], vals[1], vals[2], vals[3]);
                     }, 500);
                 }
@@ -4860,7 +4873,8 @@
         }
 
         function prepareMysteryCards() {
-            const userName = document.getElementById('user-name-input').value.trim();
+            const userNameInput = document.getElementById('user-name-input');
+            const userName = userNameInput ? userNameInput.value.trim() : "";
             const nameLen = userName.length;
             const wordsLen = (currentWord1.length + currentWord2.length + currentWord3.length + currentWord4.length);
             const mysteryCode = (nameLen + totalScore + wordsLen) * 5;
@@ -4889,6 +4903,9 @@
 
             // Card 1 – Quote
             const q = getNextQuote();
+            // Calculate English words (simple split by spaces)
+            globalQuoteWordCount = q.en.split(/\s+/).filter(w => w.length > 0).length;
+            
             document.getElementById('card-front-1').innerHTML = `
                 <div style="width:100%;height:100%;background:linear-gradient(160deg,#0f172a,#1e1b4b,#0f172a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;box-sizing:border-box;position:relative;overflow:hidden;">
                     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.25) 0%,transparent 70%);pointer-events:none;"></div>
@@ -4964,22 +4981,72 @@
             }
         }
 
-        function checkOrbUnlock(event) {
+        function showHintToast() {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-24 left-1/2 -translate-x-1/2 bg-green-500/90 text-white px-6 py-3 rounded-full font-bold shadow-lg z-[1000] border border-white/20 animate-bounce flex items-center gap-2';
+            toast.innerHTML = `<span>✨</span> 1 HINT ADDED! <span>✨</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.6s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 600);
+            }, 2500);
+        }
+
+        let isQuoteUnlocked = false;
+        function checkQuoteUnlock(event) {
             if (event) event.stopPropagation();
-            const inp = document.getElementById('orb-code-input');
-            const code = inp.value.trim();
-            if (parseInt(code) === globalMysteryCode) {
-                isOrbUnlocked = true;
-                // Success visual on input
+            const inp = document.getElementById('quote-name-input');
+            const enteredName = inp.value.trim().toLowerCase();
+            const actualName = document.getElementById('user-name-input').value.trim().toLowerCase();
+            
+            if (enteredName === actualName && actualName !== "") {
+                isQuoteUnlocked = true;
                 inp.style.borderColor = "#4ade80";
                 inp.style.boxShadow = "0 0 15px #4ade80";
-                setTimeout(() => revealCard(0), 400);
+                setTimeout(() => revealCard(1), 400);
             } else {
                 inp.classList.add('animate-shake');
                 inp.style.borderColor = "#ef4444";
                 setTimeout(() => {
                     inp.classList.remove('animate-shake');
                     inp.style.borderColor = "";
+                }, 500);
+            }
+        }
+
+        function checkOrbUnlock(event) {
+            if (event) event.stopPropagation();
+            const inpCode = document.getElementById('orb-code-input');
+            const inpCount = document.getElementById('orb-word-count-input');
+            
+            const enteredCode = parseInt(inpCode.value.trim());
+            const enteredCount = parseInt(inpCount.value.trim());
+            
+            let success = true;
+            if (enteredCode !== globalMysteryCode) {
+                inpCode.classList.add('animate-shake');
+                inpCode.style.borderColor = "#ef4444";
+                success = false;
+            } else {
+                inpCode.style.borderColor = "#4ade80";
+            }
+            
+            if (enteredCount !== globalQuoteWordCount) {
+                inpCount.classList.add('animate-shake');
+                inpCount.style.borderColor = "#ef4444";
+                success = false;
+            } else {
+                inpCount.style.borderColor = "#4ade80";
+            }
+            
+            if (success) {
+                isOrbUnlocked = true;
+                setTimeout(() => revealCard(0), 400);
+            } else {
+                setTimeout(() => {
+                    inpCode.classList.remove('animate-shake');
+                    inpCount.classList.remove('animate-shake');
                 }, 500);
             }
         }
