@@ -5357,64 +5357,56 @@
 
             const magic = zodiacMagicMap[selectedZodiacEmoji] || zodiacMagicMap['♏'];
 
-            // Card 2 – Secret Code (Ordinal 1)
+            // Card 2 – Secret Code
             document.getElementById('card-front-2').innerHTML = `
-                <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(139,92,246,.2) 0%,rgba(30,27,75,.8) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:15px;box-sizing:border-box;">
-                    <p style="font-size:.6rem;font-weight:900;letter-spacing:.3em;color:rgba(196,181,253,.8);text-transform:uppercase;margin:0;">Mystery Ritual</p>
-                    <div style="width:50px;height:2px;background:rgba(167,139,250,.4);"></div>
-                    <p style="font-size:.7rem;color:rgba(196,181,253,.6);text-transform:uppercase;letter-spacing:.1em;margin:0;">Secret Code</p>
-                    <p style="font-size:1.8rem;font-weight:900;color:#fff;margin:0;filter:drop-shadow(0 0 12px rgba(167,139,250,.8));"># ${mysteryCode}</p>
+                <div class="crystal-glass-purple w-full h-full flex flex-col items-center justify-center p-4">
+                    <p class="text-[0.65rem] font-bold tracking-widest uppercase text-white/70 mb-1">Secret Code</p>
+                    <p class="text-2xl font-black text-white drop-shadow"># ${mysteryCode}</p>
                 </div>`;
 
             document.getElementById('card-back-2').innerHTML = `
-                <div class="mystery-card-ordinal">1</div>
-                <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;z-index:10;">
-                    <div style="font-size:2rem;filter:drop-shadow(0 0 10px #4ade80)">🔐</div>
-                    <div style="padding:4px 10px;border:1px solid rgba(74,222,128,0.3);border-radius:12px;background:rgba(0,0,0,0.2)">
-                       <span style="font-size:0.6rem;color:rgba(74,222,128,0.6);text-transform:uppercase;letter-spacing:0.1em;">Reveal Code</span>
-                    </div>
+                <div class="flex flex-col items-center gap-3 w-full z-10">
+                    <span class="text-4xl" style="filter:drop-shadow(0 0 10px rgba(167,139,250,0.5))">🗝️</span>
+                    <p class="text-[0.7rem] font-bold tracking-widest uppercase text-white/80">Tap to reveal</p>
                 </div>`;
 
             // Card 1 – Quote face (requires Name to flip)
             const q = getNextQuote();
             globalQuoteWordCount = q.en.split(/\s+/).filter(w => w.length > 0).length;
 
+            // Card 1 – Quote face
             document.getElementById('card-front-1').innerHTML = `
-                <div style="width:100%;height:100%;background:linear-gradient(160deg,#0f172a,#1e1b4b,#0f172a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;box-sizing:border-box;position:relative;overflow:hidden;">
-                    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.25) 0%,transparent 70%);pointer-events:none;"></div>
-                    <p style="font-size:1.6rem;margin:0;filter:drop-shadow(0 0 10px rgba(251,191,36,1))">💬</p>
-                    <p style="font-size:.7rem;color:#e0e7ff;font-style:italic;font-weight:700;text-align:center;line-height:1.5;margin:0;padding:0 2px;">${q.en}</p>
-                    <p style="font-size:.65rem;color:rgba(196,181,253,.7);text-align:center;margin:0;">${q.author}</p>
+                <div class="crystal-glass-purple w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                    <span class="text-3xl mb-2">💬</span>
+                    <p class="text-[0.75rem] font-bold text-white italic leading-relaxed mb-2">"${q.en}"</p>
+                    <p class="text-[0.6rem] text-white/60 tracking-widest uppercase">— ${q.author}</p>
                 </div>`;
 
             document.getElementById('card-back-1').innerHTML = `
-                <div class="mystery-card-ordinal">2</div>
-                <div style="display:flex;flex-direction:column;align-items:center;gap:15px;width:100%;z-index:10;">
-                    <div style="font-size:2rem;filter:drop-shadow(0 0 12px rgba(251,191,36,0.5))">📜</div>
-                    <div style="width:85%;">
-                        <input type="text" id="quote-name-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="YOUR NAME?" autocomplete="off" onkeydown="if(event.key==='Enter') checkQuoteUnlock()" onclick="event.stopPropagation()">
-                    </div>
+                <div class="flex flex-col items-center gap-4 w-full z-10 p-2">
+                    <span class="text-4xl" style="filter:drop-shadow(0 0 10px rgba(251,191,36,1))">📜</span>
+                    <input type="text" id="quote-name-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold text-white text-sm" placeholder="YOUR NAME?" autocomplete="off" onkeydown="if(event.key==='Enter') checkQuoteUnlock(event)" onclick="event.stopPropagation()">
                 </div>`;
 
             // Card 0 – Magical Orb (Ordinal 3)
             document.getElementById('card-front-0').innerHTML = `
-                <div style="width:100%;height:100%;background:linear-gradient(160deg,#0f0a1e,#1e1b4b,#0d1a2e);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;box-sizing:border-box;">
-                    <p style="font-size:.55rem;font-weight:900;letter-spacing:.25em;color:rgba(196,181,253,.7);text-transform:uppercase;margin:0;">The Orb</p>
-                    <div class="magic-orb-scene" style="transform: scale(0.5); margin: -20px 0;">
+            // Card 0 – Magical Orb
+            document.getElementById('card-front-0').innerHTML = `
+                <div class="crystal-glass-purple w-full h-full flex flex-col items-center justify-center p-3">
+                    <div class="magic-orb-scene scale-[0.55] -my-4">
                         <div class="magic-orb" style="--orb-light:${magic.orbLight};--orb-mid:${magic.orbMid};--orb-dark:${magic.orbDark};--orb-glow:${magic.orbGlow};--ring-color:${magic.ringColor};--ring-color2:${magic.ringColor2};">
                             <div class="orb-ball"></div>
                         </div>
                     </div>
-                    <p style="font-size:.7rem;color:rgba(196,181,253,.6);margin:0;text-align:center;">${magic.skill}</p>
+                    <p class="text-[0.7rem] font-bold text-white tracking-widest uppercase mt-2">${magic.skill}</p>
                 </div>`;
 
             document.getElementById('card-back-0').innerHTML = `
-                <div class="mystery-card-ordinal">3</div>
-                <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;z-index:10;">
-                    <div style="font-size:1.8rem;filter:drop-shadow(0 0 10px rgba(167,139,250,0.5))">🔮</div>
-                    <div style="display:flex;flex-direction:column;gap:6px;width:85%;">
-                        <input type="number" id="orb-code-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="SECRET CODE" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock()" onclick="event.stopPropagation()">
-                        <input type="number" id="orb-word-count-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold outline-none text-white text-sm" placeholder="WORD COUNT" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock()" onclick="event.stopPropagation()">
+                <div class="flex flex-col items-center gap-3 w-full z-10 p-2">
+                    <span class="text-3xl" style="filter:drop-shadow(0 0 10px rgba(167,139,250,0.5))">🔮</span>
+                    <div class="flex flex-col gap-2 w-full">
+                        <input type="text" id="orb-code-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold text-white text-sm" placeholder="SECRET CODE" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock(event)" onclick="event.stopPropagation()">
+                        <input type="text" id="orb-word-count-input" class="mystical-input w-full px-3 py-2 rounded-lg text-center font-bold text-white text-sm" placeholder="WORD COUNT" autocomplete="off" onkeydown="if(event.key==='Enter') checkOrbUnlock(event)" onclick="event.stopPropagation()">
                     </div>
                 </div>`;
         }
