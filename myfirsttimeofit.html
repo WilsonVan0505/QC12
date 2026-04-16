@@ -575,6 +575,26 @@
             50% { transform: scale(1.03); filter: brightness(1.15); }
         }
 
+        .firefly-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fde047;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #fef3c7, 0 0 12px #fde047;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 5;
+            animation: firefly-float infinite ease-in-out;
+        }
+
+        @keyframes firefly-float {
+            0%, 100% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; }
+            50% { transform: translate(var(--dx), var(--dy)) scale(1.2); opacity: 1; }
+            80% { opacity: 0.8; }
+        }
+
         .crystal-crescent {
             background: linear-gradient(135deg, rgba(168, 85, 247, 0.5) 0%, rgba(56, 189, 248, 0.6) 100%);
             backdrop-filter: blur(8px);
@@ -1244,8 +1264,8 @@
                             class="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold font-rounded tracking-wide uppercase leading-tight text-white m-0">
                             BOOK 1</h1>
                     </div>
-                    <!-- Score/Zodiac Circle next to banner -->
-                    <div class="crystal-circle-score w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full -ml-1 sm:-ml-2 z-20">
+                    <!-- Score/Zodiac Circle next to banner (separated) -->
+                    <div class="crystal-circle-score w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full ml-3 sm:ml-5 z-20">
                         <span id="score-icon" class="text-xl sm:text-2xl md:text-3xl drop-shadow-md leading-none"></span>
                         <span id="total-score-display" class="text-white font-black font-mono text-xs sm:text-sm md:text-base leading-none mt-1">0</span>
                         <div id="floating-score-container" class="absolute -top-10 left-1/2 transform -translate-x-1/2 pointer-events-none z-50 whitespace-nowrap"></div>
@@ -1405,12 +1425,11 @@
                         </div>
 
                         <!-- Câu ví dụ tiếng Anh -->
-                        <p class="text-base sm:text-lg md:text-xl lg:text-3xl font-medium leading-snug sm:leading-relaxed m-0 shrink-0 px-2 ex-glow-en"
-                            id="word-ex"></p>
-
-                        <!-- Câu ví dụ tiếng Việt (Glow) -->
-                        <p class="text-xs sm:text-sm md:text-base lg:text-lg m-0 shrink-0 px-2 ex-glow-vi mt-1"
-                            id="word-ex-vi"></p>
+                        <div class="relative w-full">
+                            <p class="text-base sm:text-lg md:text-xl lg:text-3xl font-medium leading-snug sm:leading-relaxed m-0 shrink-0 px-2 ex-glow-en"
+                                id="word-ex"></p>
+                            <div id="firefly-container" class="absolute inset-0 pointer-events-none overflow-visible"></div>
+                        </div>
 
                         <!-- Các ô input nhập chữ -->
                         <div class="w-full flex justify-center shrink-0 min-h-[40px] sm:min-h-[50px] mt-2 sm:mt-3">
@@ -2927,6 +2946,7 @@
                     flyingFire.style.top = (sourceRect.top + sourceRect.height / 2 - 12) + 'px';
                     flyingFire.style.zIndex = zIndexCounter++;
                     document.body.appendChild(flyingFire);
+                    playTransitionSound();
 
                     sourceFire.style.opacity = '0.1';
                     sourceFire.classList.remove('fire-burning');
@@ -3393,8 +3413,9 @@
 
 
             const blankedEx = card.ex.replace('_______', `<span class="text-fuchsia-300 border-b-2 border-fuchsia-300 inline-block w-16 sm:w-20 md:w-24"></span>`);
-            document.getElementById('word-ex').innerHTML = blankedEx;
-            document.getElementById('word-ex-vi').textContent = card.exVi;
+            const wordExEl = document.getElementById('word-ex');
+            wordExEl.innerHTML = blankedEx;
+            spawnFireflies(document.getElementById('firefly-container'));
 
             inputsContainer.innerHTML = '';
             const words = card.word.split(' ');
@@ -3504,6 +3525,24 @@
             }
 
             buildHintSequence();
+        }
+
+        function spawnFireflies(container) {
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const f = document.createElement('div');
+                f.className = 'firefly-particle';
+                const duration = 2 + Math.random() * 3;
+                const delay = Math.random() * 2;
+                f.style.left = Math.random() * 100 + '%';
+                f.style.top = Math.random() * 100 + '%';
+                f.style.setProperty('--dx', (Math.random() * 40 - 20) + 'px');
+                f.style.setProperty('--dy', (Math.random() * 40 - 20) + 'px');
+                f.style.animationDuration = duration + 's';
+                f.style.animationDelay = delay + 's';
+                container.appendChild(f);
+            }
         }
 
         function checkAnswer() {
@@ -4733,18 +4772,18 @@
                         }
                         // Big card clone
                         const bigCard = document.createElement('div');
-                        bigCard.style.cssText = `width:390px;height:600px;border-radius:1.5rem;overflow:hidden;transform:scale(0);transition:transform .8s cubic-bezier(.34,1.56,.64,1) .2s;flex-shrink:0;box-shadow:0 0 100px ${idx===1 ? 'rgba(251,191,36,.6)' : 'rgba(74,222,128,.6)'},0 40px 80px rgba(0,0,0,.8);border:3px solid ${idx===1 ? 'rgba(251,191,36,.5)' : 'rgba(74,222,128,.4)'};`;
+                        bigCard.style.cssText = `width:480px;height:750px;border-radius:2rem;overflow:hidden;transform:scale(0);transition:transform .8s cubic-bezier(.34,1.56,.64,1) .2s;flex-shrink:0;box-shadow:0 0 120px ${idx===1 ? 'rgba(251,191,36,.6)' : 'rgba(74,222,128,.6)'},0 50px 100px rgba(0,0,0,.8);border:4px solid ${idx===1 ? 'rgba(251,191,36,.5)' : 'rgba(74,222,128,.4)'};`;
                         if (cardFront) {
                             let content = cardFront.innerHTML;
-                            // Scale up internal font sizes
+                            // Scale up internal font sizes (2x scaling)
                             content = content.replace(/font-size:\.?[0-9]*rem/g, (m) => {
                                 const val = parseFloat(m.match(/[0-9.]+/)[0]);
-                                return `font-size:${val * 1.5}rem`;
+                                return `font-size:${val * 2.0}rem`;
                             });
                              // Scale up specific paddings/gaps
                             content = content.replace(/gap:\.?[0-9]*px/g, (m) => {
                                 const val = parseFloat(m.match(/[0-9.]+/)[0]);
-                                return `gap:${val * 1.5}px`;
+                                return `gap:${val * 2.0}px`;
                             });
                             bigCard.innerHTML = content;
                         }
@@ -4828,8 +4867,8 @@
 
             // Build big orb
             const orbWrap = document.createElement('div');
-            orbWrap.style.cssText = `position:relative;width:450px;height:450px;transform:scale(0);transition:transform .8s cubic-bezier(.34,1.56,.64,1) .3s;flex-shrink:0;`;
-            orbWrap.innerHTML = buildOrbHTML(magic, 450);
+            orbWrap.style.cssText = `position:relative;width:600px;height:600px;transform:scale(0);transition:transform .8s cubic-bezier(.34,1.56,.64,1) .3s;flex-shrink:0;`;
+            orbWrap.innerHTML = buildOrbHTML(magic, 600);
             overlay.appendChild(orbWrap);
 
             // Zodiac + skill label
