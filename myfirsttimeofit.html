@@ -1315,12 +1315,12 @@
                     <span
                         class="text-4xl sm:text-5xl md:text-7xl font-black text-white leading-none drop-shadow-md">1</span>
                 </div>
-                <div id="header-name-container" class="absolute left-1/2 top-[48%] -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center z-30 pointer-events-auto">
+                <div id="header-name-container" class="absolute left-[58%] top-[48%] -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center z-30 pointer-events-auto">
                     <div class="glass-panel px-3 sm:px-6 py-2 sm:py-2.5 rounded-full border border-white/30 flex items-center gap-3 backdrop-blur-md shadow-2xl transition-all hover:scale-105">
                         <span class="text-[0.55rem] sm:text-[0.65rem] font-black text-purple-200/70 tracking-[0.3em] uppercase drop-shadow-sm mt-0.5">Explorer</span>
                         <input type="text" id="user-name-input" 
                                class="bg-transparent border-none text-sm sm:text-base md:text-lg font-black text-white focus:outline-none w-24 sm:w-32 md:w-48 text-center placeholder-white/20 tracking-wider drop-shadow-md"
-                               placeholder="Your name..." value="Thỏ Béo Béo" autocomplete="off" spellcheck="false">
+                               placeholder="Enter Name..." value="" autocomplete="off" spellcheck="false">
                     </div>
                 </div>
                 <div class="flex items-center mb-2 md:mb-3">
@@ -1491,7 +1491,7 @@
 
                         <!-- Câu ví dụ tiếng Anh -->
                         <div class="relative w-full">
-                            <p class="text-base sm:text-lg md:text-xl lg:text-3xl font-medium leading-snug sm:leading-relaxed m-0 shrink-0 px-2 ex-glow-en"
+                            <p class="text-lg sm:text-xl md:text-2xl lg:text-4xl font-black leading-snug sm:leading-relaxed m-0 shrink-0 px-2 ex-glow-en"
                                 id="word-ex"></p>
                             <div id="firefly-container" class="absolute inset-0 pointer-events-none overflow-visible"></div>
                         </div>
@@ -1958,7 +1958,7 @@
             class="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-widest uppercase drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] opacity-0 transform translate-y-4 transition-all duration-500 text-center px-4 z-[10001] mb-2 shrink-0">
             Beautiful Mind</h2>
         <h3 id="review-reminder-text"
-            class="absolute top-[50%] left-0 w-full text-xl md:text-3xl lg:text-4xl font-bold text-fuchsia-200 tracking-wide drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] opacity-0 transform -translate-y-1/2 scale-90 transition-all duration-700 text-center px-4 z-[10002] pointer-events-none">
+            class="absolute top-[50%] left-0 w-full text-2xl md:text-4xl lg:text-5xl font-black text-fuchsia-200 tracking-[0.15em] uppercase drop-shadow-[0_0_15px_rgba(232,121,249,0.9)] opacity-0 transform -translate-y-1/2 scale-90 transition-all duration-700 text-center px-4 z-[10002] pointer-events-none">
             Let's review the words you may not remember</h3>
         <div id="flower-container"
             class="relative w-full h-[75vh] flex items-center justify-center transition-all duration-1000"></div>
@@ -4728,7 +4728,7 @@
             document.getElementById('card-front-0').innerHTML = `
                 <div style="width:100%;height:100%;background:linear-gradient(160deg,#0f0a1e,#1e1b4b,#0d1a2e);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;box-sizing:border-box;">
                     <p style="font-size:.55rem;font-weight:900;letter-spacing:.25em;color:rgba(196,181,253,.7);text-transform:uppercase;margin:0;">Magical Orb</p>
-                    <div class="magic-orb-scene">
+                    <div class="magic-orb-scene" style="transform: scale(0.5); margin: -20px 0;">
                         <div class="magic-orb" style="--orb-light:${magic.orbLight};--orb-mid:${magic.orbMid};--orb-dark:${magic.orbDark};--orb-glow:${magic.orbGlow};--ring-color:${magic.ringColor};--ring-color2:${magic.ringColor2};">
                             <div class="orb-ball"></div>
                             <div class="orb-ring"></div>
@@ -4749,18 +4749,18 @@
             document.getElementById('card-front-1').innerHTML = `
                 <div style="width:100%;height:100%;background:linear-gradient(160deg,#0f172a,#1e1b4b,#0f172a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;box-sizing:border-box;position:relative;overflow:hidden;">
                     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.25) 0%,transparent 70%);pointer-events:none;"></div>
-                    <p style="font-size:1.4rem;margin:0;filter:drop-shadow(0 0 10px rgba(251,191,36,1))">💬</p>
-                    <p style="font-size:.58rem;color:#e0e7ff;font-style:italic;text-align:center;line-height:1.5;margin:0;padding:0 2px;">${q.en}</p>
+                    <p style="font-size:1.8rem;margin:0;filter:drop-shadow(0 0 10px rgba(251,191,36,1))">💬</p>
+                    <p style="font-size:.75rem;color:#e0e7ff;font-style:italic;font-weight:700;text-align:center;line-height:1.5;margin:0;padding:0 2px;">${q.en}</p>
                     <div style="width:60%;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.5),transparent);"></div>
-                    <p style="font-size:.53rem;color:rgba(196,181,253,.75);font-style:italic;text-align:center;line-height:1.4;margin:0;padding:0 2px;">${q.vi}</p>
-                    <p style="font-size:.5rem;color:rgba(196,181,253,.5);margin:0;font-style:normal;">${q.author}</p>
+                    <p style="font-size:.65rem;color:rgba(196,181,253,.75);font-style:italic;text-align:center;line-height:1.4;margin:0;padding:0 2px;">${q.vi}</p>
+                    <p style="font-size:.6rem;color:rgba(196,181,253,.5);margin:0;font-style:normal;">${q.author}</p>
                 </div>`;
 
             // Card 2 – Secret Code
             document.getElementById('card-front-2').innerHTML = `
                 <div style="width:100%;height:100%;background:linear-gradient(160deg,#0a0014,#1a1a2e,#030712);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;box-sizing:border-box;position:relative;overflow:hidden;">
                     <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(34,197,94,.03) 0,rgba(34,197,94,.03) 1px,transparent 1px,transparent 16px);pointer-events:none;"></div>
-                    <p style="font-size:.48rem;font-weight:900;letter-spacing:.18em;color:rgba(74,222,128,.55);text-transform:uppercase;margin:0;">Mật mã bí ẩn</p>
+                    <p style="font-size:.65rem;font-weight:900;letter-spacing:.2em;color:rgba(74,222,128,.8);text-transform:uppercase;margin:0;drop-shadow: 0 0 5px rgba(34,197,94,0.3);">Mật mã bí ẩn</p>
                     <p style="font-size:.9rem;margin:0;line-height:1;">🗝️</p>
                     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(0,0,0,.55);border:1px solid rgba(74,222,128,.25);border-radius:8px;padding:7px 10px;width:calc(100% - 8px);box-sizing:border-box;">
                         <p style="font-size:.42rem;color:rgba(74,222,128,.6);margin:0;letter-spacing:.12em;white-space:nowrap;">MẬT MÃ MỞ UNIT 2</p>
