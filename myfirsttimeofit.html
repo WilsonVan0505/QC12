@@ -6034,9 +6034,8 @@
         function showSummary() {
             ritualEndTime = Date.now();
             const totalMs = ritualEndTime - ritualStartTime;
-            const totalSec = Math.floor(totalMs / 1000);
-            const m = Math.floor(totalSec / 60);
-            const s = totalSec % 60;
+            const totalMin = totalMs / 60000;
+            const formattedTime = totalMin.toFixed(2) + 'm';
 
             // Date & Time: Ngày 17/04/2026 | 04:21:45
             const now = new Date();
@@ -6051,7 +6050,7 @@
 
             // Stats
             document.getElementById('stat-correct').textContent = solvedFirstTryCount;
-            document.getElementById('stat-time').textContent = `${m}m ${s}s`;
+            document.getElementById('stat-time').textContent = formattedTime;
             document.getElementById('stat-score').textContent = totalScore;
 
             // Review List
@@ -6082,12 +6081,15 @@
             badge.textContent = label;
             badge.style.cssText = colors;
 
-            // Orb Display (Using 🔮 as the Magical Orb icon)
+            // Orb Display (Using Animated Magical Orb)
             const magic = zodiacMagicMap[selectedZodiacEmoji] || zodiacMagicMap['♏'];
+            const orbSize = 180;
             document.getElementById('summary-orb-container').innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-                    <div style="font-size:4.5rem; filter:drop-shadow(0 0 25px ${magic.orbGlow});">🔮</div>
-                    <p style="font-size:1.1rem; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:0.15em; margin:0;">${magic.skill}</p>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
+                    <div style="position:relative; width:${orbSize}px; height:${orbSize}px; margin-bottom:10px;">
+                        ${buildOrbHTML(magic, orbSize)}
+                    </div>
+                    <p style="font-size:1.1rem; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:0.15em; margin:0; filter:drop-shadow(0 0 10px ${magic.orbGlow});">${magic.skill}</p>
                 </div>
             `;
 
