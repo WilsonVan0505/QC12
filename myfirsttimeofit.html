@@ -655,7 +655,6 @@
         }
 
         @keyframes star-twinkle {
-
             0%,
             100% {
                 transform: scale(0.3);
@@ -665,6 +664,32 @@
             50% {
                 transform: scale(1.1);
                 opacity: 0.9;
+            }
+        }
+
+        @property --wipe-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 0deg;
+        }
+
+        .clock-wipe {
+            mask-image: conic-gradient(black var(--wipe-angle), transparent 0deg);
+            -webkit-mask-image: conic-gradient(black var(--wipe-angle), transparent 0deg);
+            animation: clock-wipe-anim 1s ease-in-out forwards;
+            pointer-events: auto !important;
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            filter: blur(0px) !important;
+            z-index: 50 !important; /* Ensure it stays above the outgoing screen */
+        }
+
+        @keyframes clock-wipe-anim {
+            from {
+                --wipe-angle: 0deg;
+            }
+            to {
+                --wipe-angle: 360deg;
             }
         }
 
@@ -3194,17 +3219,18 @@
             playTransitionSound();
             const startScreen = document.getElementById('start-screen');
             const zodiacScreen = document.getElementById('zodiac-screen');
-            startScreen.classList.remove('screen-active');
-            startScreen.classList.add('screen-hidden');
+            
+            // Apply clock wipe to the NEW screen
+            zodiacScreen.classList.remove('hidden');
+            zodiacScreen.classList.add('clock-wipe');
+            updateHeaderState('zodiac-screen');
 
             setTimeout(() => {
-                startScreen.classList.add('hidden');
-                zodiacScreen.classList.remove('hidden');
-                void zodiacScreen.offsetWidth;
-                zodiacScreen.classList.remove('screen-hidden');
+                startScreen.classList.add('hidden', 'screen-hidden');
+                startScreen.classList.remove('screen-active');
+                zodiacScreen.classList.remove('clock-wipe', 'screen-hidden');
                 zodiacScreen.classList.add('screen-active');
-                updateHeaderState('zodiac-screen');
-            }, 800);
+            }, 1000);
         }
 
         function selectZodiac(emoji) {
@@ -3215,22 +3241,22 @@
             const zodiacScreen = document.getElementById('zodiac-screen');
             const flashcardEl = document.getElementById('flashcard');
 
-            zodiacScreen.classList.remove('screen-active');
-            zodiacScreen.classList.add('screen-hidden');
+            // Apply clock wipe to the NEW screen
+            flashcardEl.classList.remove('hidden');
+            flashcardEl.classList.add('clock-wipe');
+            updateHeaderState('flashcard');
+
+            renderCard();
+            startTimer();
+            const firstEditableInput = document.querySelector('.editable-input');
+            if (firstEditableInput) firstEditableInput.focus();
 
             setTimeout(() => {
-                zodiacScreen.classList.add('hidden');
-                flashcardEl.classList.remove('hidden');
-                void flashcardEl.offsetWidth;
-                flashcardEl.classList.remove('screen-hidden');
+                zodiacScreen.classList.add('hidden', 'screen-hidden');
+                zodiacScreen.classList.remove('screen-active');
+                flashcardEl.classList.remove('clock-wipe', 'screen-hidden');
                 flashcardEl.classList.add('screen-active');
-                updateHeaderState('flashcard');
-
-                renderCard();
-                startTimer();
-                const firstEditableInput = document.querySelector('.editable-input');
-                if (firstEditableInput) firstEditableInput.focus();
-            }, 800);
+            }, 1000);
         }
 
         function startLearning() {
@@ -3238,22 +3264,23 @@
             playTransitionSound();
             const startScreen = document.getElementById('start-screen');
             const flashcardEl = document.getElementById('flashcard');
-            startScreen.classList.remove('screen-active');
-            startScreen.classList.add('screen-hidden');
+            
+            // Apply clock wipe to the NEW screen
+            flashcardEl.classList.remove('hidden');
+            flashcardEl.classList.add('clock-wipe');
+            updateHeaderState('flashcard');
+
+            renderCard();
+            startTimer();
+            const firstEditableInput = document.querySelector('.editable-input');
+            if (firstEditableInput) firstEditableInput.focus();
 
             setTimeout(() => {
-                startScreen.classList.add('hidden');
-                flashcardEl.classList.remove('hidden');
-                void flashcardEl.offsetWidth;
-                flashcardEl.classList.remove('screen-hidden');
+                startScreen.classList.add('hidden', 'screen-hidden');
+                startScreen.classList.remove('screen-active');
+                flashcardEl.classList.remove('clock-wipe', 'screen-hidden');
                 flashcardEl.classList.add('screen-active');
-                updateHeaderState('flashcard');
-
-                renderCard();
-                startTimer();
-                const firstEditableInput = document.querySelector('.editable-input');
-                if (firstEditableInput) firstEditableInput.focus();
-            }, 800);
+            }, 1000);
         }
 
         function startTimer() {
