@@ -671,29 +671,29 @@
             }
         }
 
-        @property --wipe-angle {
-            syntax: '<angle>';
+        @property --ripple-percent {
+            syntax: '<percentage>';
             inherits: false;
-            initial-value: 0deg;
+            initial-value: 0%;
         }
 
-        .clock-wipe {
-            mask-image: conic-gradient(black var(--wipe-angle), transparent 0deg);
-            -webkit-mask-image: conic-gradient(black var(--wipe-angle), transparent 0deg);
-            animation: clock-wipe-anim 1s ease-in-out forwards;
+        .ripple-wipe {
+            mask-image: radial-gradient(circle at center, black var(--ripple-percent), transparent 0%);
+            -webkit-mask-image: radial-gradient(circle at center, black var(--ripple-percent), transparent 0%);
+            animation: ripple-wipe-anim 1s ease-in-out forwards;
             pointer-events: auto !important;
             opacity: 1 !important;
             transform: scale(1) !important;
             filter: blur(0px) !important;
-            z-index: 50 !important; /* Ensure it stays above the outgoing screen */
+            z-index: 50 !important;
         }
 
-        @keyframes clock-wipe-anim {
+        @keyframes ripple-wipe-anim {
             from {
-                --wipe-angle: 0deg;
+                --ripple-percent: 0%;
             }
             to {
-                --wipe-angle: 360deg;
+                --ripple-percent: 150%;
             }
         }
 
@@ -3224,15 +3224,15 @@
             const startScreen = document.getElementById('start-screen');
             const zodiacScreen = document.getElementById('zodiac-screen');
             
-            // Apply clock wipe to the NEW screen
+            // Apply ripple wipe to the NEW screen
             zodiacScreen.classList.remove('hidden');
-            zodiacScreen.classList.add('clock-wipe');
+            zodiacScreen.classList.add('ripple-wipe');
             updateHeaderState('zodiac-screen');
 
             setTimeout(() => {
                 startScreen.classList.add('hidden', 'screen-hidden');
                 startScreen.classList.remove('screen-active');
-                zodiacScreen.classList.remove('clock-wipe', 'screen-hidden');
+                zodiacScreen.classList.remove('ripple-wipe', 'screen-hidden');
                 zodiacScreen.classList.add('screen-active');
             }, 1000);
         }
@@ -3245,9 +3245,9 @@
             const zodiacScreen = document.getElementById('zodiac-screen');
             const flashcardEl = document.getElementById('flashcard');
 
-            // Apply clock wipe to the NEW screen
+            // Apply ripple wipe to the NEW screen
             flashcardEl.classList.remove('hidden');
-            flashcardEl.classList.add('clock-wipe');
+            flashcardEl.classList.add('ripple-wipe');
             updateHeaderState('flashcard');
 
             renderCard();
@@ -3258,7 +3258,7 @@
             setTimeout(() => {
                 zodiacScreen.classList.add('hidden', 'screen-hidden');
                 zodiacScreen.classList.remove('screen-active');
-                flashcardEl.classList.remove('clock-wipe', 'screen-hidden');
+                flashcardEl.classList.remove('ripple-wipe', 'screen-hidden');
                 flashcardEl.classList.add('screen-active');
             }, 1000);
         }
@@ -3269,9 +3269,9 @@
             const startScreen = document.getElementById('start-screen');
             const flashcardEl = document.getElementById('flashcard');
             
-            // Apply clock wipe to the NEW screen
+            // Apply ripple wipe to the NEW screen
             flashcardEl.classList.remove('hidden');
-            flashcardEl.classList.add('clock-wipe');
+            flashcardEl.classList.add('ripple-wipe');
             updateHeaderState('flashcard');
 
             renderCard();
@@ -3282,7 +3282,7 @@
             setTimeout(() => {
                 startScreen.classList.add('hidden', 'screen-hidden');
                 startScreen.classList.remove('screen-active');
-                flashcardEl.classList.remove('clock-wipe', 'screen-hidden');
+                flashcardEl.classList.remove('ripple-wipe', 'screen-hidden');
                 flashcardEl.classList.add('screen-active');
             }, 1000);
         }
