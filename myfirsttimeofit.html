@@ -7416,8 +7416,8 @@
                 if (!isBackgroundMode) {
                     if (isGathering) {
                         let flyT = gatherRatio; // easing from 0 to 1
-                        orbLeft.position.lerpVectors(new THREE.Vector3(-3, 1.5, 0), new THREE.Vector3(0, 0, -3), flyT);
-                        orbRight.position.lerpVectors(new THREE.Vector3(3, 1.5, 0), new THREE.Vector3(0, 0, -3), flyT);
+                        orbLeft.position.lerpVectors(new THREE.Vector3(-3, 1.5, 0), new THREE.Vector3(0, 0.5, 0), flyT);
+                        orbRight.position.lerpVectors(new THREE.Vector3(3, 1.5, 0), new THREE.Vector3(0, 0.5, 0), flyT);
                         orbLeft.scale.setScalar(1 - flyT * 0.8);
                         orbRight.scale.setScalar(1 - flyT * 0.8);
 
