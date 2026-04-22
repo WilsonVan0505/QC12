@@ -6688,6 +6688,19 @@
             overlay.style.cssText = `position:fixed;inset:0;z-index:99999;background:rgba(5,2,20,0);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;transition:background .8s ease;pointer-events:auto;overflow-y:auto;overflow-x:hidden;`;
             document.body.appendChild(overlay);
 
+            const ritualBg = document.createElement('div');
+            ritualBg.id = 'showcase-ritual-bg';
+            ritualBg.style.cssText = `position:absolute;inset:0;z-index:0;opacity:0;transition:opacity 2s ease;`;
+            ritualBg.innerHTML = `<div id="showcase-canvas" style="width:100%;height:100%;"></div>`;
+            overlay.appendChild(ritualBg);
+
+            // Start the 3D ritual immediately as background
+            let showcaseCleanup;
+            startRitual3D(ritualBg.querySelector('#showcase-canvas'), magic, magic).then(cleanup => {
+                showcaseCleanup = cleanup;
+                ritualBg.style.opacity = '1';
+            });
+
             for (let i = 0; i < 40; i++) {
                 const s = document.createElement('div');
                 const sz = 1 + Math.random() * 2.5;
@@ -6779,6 +6792,7 @@
             closeBtn.style.transitionDelay = "1.5s";
             closeBtn.textContent = "Collect & Return";
             closeBtn.onclick = () => {
+                if (showcaseCleanup) showcaseCleanup();
                 overlay.style.transition = 'opacity .6s ease';
                 overlay.style.opacity = '0';
                 setTimeout(() => overlay.remove(), 700);
@@ -6805,7 +6819,13 @@
                 bonusInputWrap.style.opacity = '0';
                 mainPanel.style.opacity = '0';
                 closeBtn.style.opacity = '0';
-                closeBtn.style.pointerEvents = 'none';
+                if (showcaseCleanup) {
+                    ritualBg.style.opacity = '0';
+                    setTimeout(() => {
+                        if (showcaseCleanup) showcaseCleanup();
+                        ritualBg.remove();
+                    }, 1000);
+                }
 
                 setTimeout(() => {
                     layout.style.display = 'none';
@@ -6883,7 +6903,10 @@
 
                             arena.style.zIndex = '90';
 
-                            const cleanup3D = startRitual3D(ritual3D.querySelector('#ritual-3d-canvas'), magic, chosenOrbData);
+                            let cleanup3D;
+                            startRitual3D(ritual3D.querySelector('#ritual-3d-canvas'), magic, chosenOrbData).then(fn => {
+                                cleanup3D = fn;
+                            });
                             ritual3D.style.opacity = '1';
 
                             setTimeout(() => {
