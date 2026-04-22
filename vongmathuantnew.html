@@ -552,30 +552,44 @@
             });
 
             // 3. Animate Orbs & Symbols
-            // Gentle float
-            orbLeft.position.y = 1.5 + Math.sin(t * 2) * 0.1;
-            orbRight.position.y = 1.5 + Math.cos(t * 2) * 0.1;
+            if (isGathering) {
+                let flyT = gatherRatio; // easing from 0 to 1
+                orbLeft.position.lerpVectors(new THREE.Vector3(-3, 1.5, 0), new THREE.Vector3(0, 0.5, 0), flyT);
+                orbRight.position.lerpVectors(new THREE.Vector3(3, 1.5, 0), new THREE.Vector3(0, 0.5, 0), flyT);
+                orbLeft.scale.setScalar(1 - flyT * 0.8);
+                orbRight.scale.setScalar(1 - flyT * 0.8);
+
+                energyLine.material.opacity = gatherRatio * 0.8;
+                energyLine.scale.set(1 + Math.random() * gatherRatio, 1, 1 + Math.random() * gatherRatio);
+            } else if (isExploding || t > T_BURST) {
+                orbLeft.visible = false;
+                orbRight.visible = false;
+                energyLine.material.opacity = 0;
+            } else {
+                orbLeft.visible = true;
+                orbRight.visible = true;
+                orbLeft.scale.setScalar(1);
+                orbRight.scale.setScalar(1);
+                orbLeft.position.x = -3;
+                orbRight.position.x = 3;
+                orbLeft.position.z = 0;
+                orbRight.position.z = 0;
+                orbLeft.position.y = 1.5 + Math.sin(t * 2) * 0.1;
+                orbRight.position.y = 1.5 + Math.cos(t * 2) * 0.1;
+                energyLine.material.opacity = 0;
+            }
 
             // Billboard inner symbols/glows to face camera
             symbolLeft.quaternion.copy(camera.quaternion);
             symbolRight.quaternion.copy(camera.quaternion);
-            orbLeft.children.find(c => c.name === "glow").quaternion.copy(camera.quaternion);
-            orbRight.children.find(c => c.name === "glow").quaternion.copy(camera.quaternion);
+            if (orbLeft.visible) orbLeft.children.find(c => c.name === "glow").quaternion.copy(camera.quaternion);
+            if (orbRight.visible) orbRight.children.find(c => c.name === "glow").quaternion.copy(camera.quaternion);
 
             // Orb Brightness/Pulse
             let pulse = 1.0 + Math.sin(t * 5) * 0.3;
             if (isGathering) { pulse += gatherRatio * 5.0; } // Intensify
             symbolLeft.material.color.setHSL(0.08, 1, Math.min(1.0, 0.5 * pulse)); // Orange
             symbolRight.material.color.setHSL(0.75, 1, Math.min(1.0, 0.5 * pulse)); // Purple
-
-            // 4. Energy Line
-            if (isGathering) {
-                energyLine.material.opacity = gatherRatio * 0.8;
-                // Add noise/jitter to scale to simulate energy crackle
-                energyLine.scale.set(1 + Math.random() * gatherRatio, 1, 1 + Math.random() * gatherRatio);
-            } else {
-                energyLine.material.opacity = 0;
-            }
 
             // 5. Particles Timeline Logic
             const positions = particles.geometry.attributes.position.array;
