@@ -6945,6 +6945,10 @@
                                         { transform: `translate(-50%, -50%) scale(${showcaseScale}) translateY(-15px)` },
                                         { transform: `translate(-50%, -50%) scale(${showcaseScale}) translateY(0px)` }
                                     ], { duration: 4000, iterations: Infinity, easing: 'ease-in-out', delay: 1000 });
+
+                                    setTimeout(() => {
+                                        closeBtn.click();
+                                    }, 4000);
                                 };
 
                                 const flash = document.createElement('div');
@@ -6969,9 +6973,13 @@
                                     closeBtn.style.boxShadow = `0 0 20px ${magic.orbLight}`;
 
                                     const oldOnClick = closeBtn.onclick;
+                                    let isClosing = false;
                                     closeBtn.onclick = () => {
+                                        if (isClosing) return;
+                                        isClosing = true;
                                         cleanup3D();
                                         oldOnClick();
+                                        setTimeout(() => showSummary(), 700);
                                     };
                                 }, 1300);
 
