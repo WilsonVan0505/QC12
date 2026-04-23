@@ -6697,7 +6697,7 @@
             const bonusUnlockCode = sumCode1 + sumCode2;
 
             const allOrbs = zodiacMagicMap[selectedZodiacEmoji] || zodiacMagicMap['♈'];
-            const remainingOrbs = allOrbs.filter(orb => orb.skill !== magic.skill).sort(() => 0.5 - Math.random());
+            const remainingOrbs = allOrbs.filter(orb => orb.skill !== magic.skill).sort(() => 0.5 - Math.random()).slice(0, 6);
 
             const layout = document.createElement('div');
             layout.className = "flex flex-col md:flex-row items-center justify-center w-full max-w-6xl min-h-[100svh] py-10 pb-32 md:pb-10 gap-6 md:gap-12 px-4 relative z-10 pointer-events-none";
@@ -6720,11 +6720,11 @@
             sidePanel.appendChild(bonusInputWrap);
 
             const hiddenOrbsWrap = document.createElement('div');
-            hiddenOrbsWrap.className = "grid grid-cols-3 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 w-full shrink-0 justify-items-center";
+            hiddenOrbsWrap.className = "grid grid-cols-2 gap-3 sm:gap-4 md:gap-5 w-full shrink-0 justify-items-center";
 
             remainingOrbs.forEach((orb, i) => {
                 const orbContainer = document.createElement('div');
-                orbContainer.className = "flex flex-col items-center justify-start transition-all duration-500 w-fit";
+                orbContainer.className = "relative flex flex-col items-center justify-start transition-all duration-500 w-fit";
                 orbContainer.id = `bonus-orb-${i}`;
 
                 const wrap = document.createElement('div');
@@ -6735,10 +6735,21 @@
                 wrap.innerHTML = buildOrbHTML(orb, '100%', false);
 
                 const nameLabel = document.createElement('p');
-                nameLabel.className = "text-[0.45rem] sm:text-[0.5rem] md:text-[0.6rem] font-bold text-white/60 uppercase text-center mt-1.5 md:mt-2 leading-tight tracking-wider px-0 w-[60px] sm:w-[70px] md:w-[90px] break-words";
+                nameLabel.className = "text-[0.45rem] sm:text-[0.5rem] md:text-[0.6rem] font-bold text-white/60 uppercase text-center mt-1.5 md:mt-2 leading-tight tracking-wider px-0 w-[60px] sm:w-[70px] md:w-[90px] break-words relative z-10";
                 nameLabel.textContent = orb.skill;
 
+                const brownStar = document.createElement('div');
+                brownStar.innerHTML = '✦'; 
+                brownStar.className = "absolute text-[#d97706] z-50 pointer-events-none flex justify-center w-full top-0 left-0";
+                brownStar.style.cssText = "font-size: 16px; filter: drop-shadow(0 0 4px #d97706) drop-shadow(0 0 8px #b45309);";
+                brownStar.animate([
+                    { transform: 'translateY(-10px) scale(0)', opacity: 0 },
+                    { transform: 'translateY(15px) scale(1.5)', opacity: 1, offset: 0.3 },
+                    { transform: 'translateY(60px) scale(0.5)', opacity: 0 }
+                ], { duration: 1800 + Math.random() * 1200, iterations: Infinity, delay: Math.random() * 2000, easing: 'ease-in' });
+
                 orbContainer.appendChild(wrap);
+                orbContainer.appendChild(brownStar);
                 orbContainer.appendChild(nameLabel);
                 hiddenOrbsWrap.appendChild(orbContainer);
             });
