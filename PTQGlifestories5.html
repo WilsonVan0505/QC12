@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Từ Vựng: Life Stories 5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #2e1065;
+            /* violet-950 */
+        }
+
+        /* --- CSS cho Nền Động Đêm Chữa Lành (Violet Twilight) --- */
+        .scenery-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            background: linear-gradient(to bottom, #170529 0%, #4c1d95 40%, #c026d3 100%);
+            overflow: hidden;
+        }
+
+        .hill {
+            position: absolute;
+            bottom: -50px;
+            width: 120%;
+            height: 40%;
+            background: #2e1065;
+            /* violet-950 */
+            border-radius: 50% 50% 0 0;
+            left: -10%;
+            box-shadow: inset 0px 20px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .hill2 {
+            position: absolute;
+            bottom: -80px;
+            width: 100%;
+            height: 35%;
+            background: #3b0764;
+            /* fuchsia-950 */
+            border-radius: 50% 50% 0 0;
+            right: -20%;
+            box-shadow: inset 0px 20px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .star {
+            position: absolute;
+            color: #fdf4ff;
+            /* fuchsia-50 */
+            animation: twinkle ease-in-out infinite alternate;
+            user-select: none;
+            filter: drop-shadow(0 0 5px rgba(253, 244, 255, 0.8));
+            opacity: 0.6;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.2;
+                transform: scale(0.7);
+            }
+
+            100% {
+                opacity: 0.9;
+                transform: scale(1.2);
+            }
+        }
+
+        .moon {
+            position: absolute;
+            font-size: 5rem;
+            animation: floatMoon 15s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 25px rgba(232, 121, 249, 0.7));
+            user-select: none;
+            top: 12%;
+            right: 18%;
+        }
+
+        @keyframes floatMoon {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-15px) rotate(10deg);
+            }
+        }
+
+        .house {
+            position: absolute;
+            font-size: 3.5rem;
+            bottom: 16%;
+            right: 25%;
+            filter: drop-shadow(0 0 25px rgba(217, 70, 239, 0.5));
+            user-select: none;
+            z-index: -8;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #f0abfc;
+            /* fuchsia-300 */
+            border-radius: 50%;
+            box-shadow: 0 0 15px 5px #d946ef;
+            /* fuchsia-500 */
+            animation: flyFirefly ease-in-out infinite alternate;
+            z-index: -7;
+        }
+
+        @keyframes flyFirefly {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0.2;
+            }
+
+            25% {
+                opacity: 1;
+                transform: translate(25px, -20px);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: translate(-15px, -35px);
+            }
+
+            75% {
+                opacity: 1;
+                transform: translate(-30px, 15px);
+            }
+
+            100% {
+                transform: translate(20px, 25px);
+                opacity: 0.2;
+            }
+        }
+
+        .flip-card {
+            perspective: 1200px;
+            width: 100%;
+            height: 480px;
+        }
+
+        @media (min-width: 640px) {
+            .flip-card {
+                height: 520px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .flip-card {
+                height: 580px;
+            }
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5);
+            background-color: rgba(255, 255, 255, 0.98);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5);
+            /* violet-500 */
+            outline: none;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #8b5cf6;
+            border-radius: 10px;
+        }
+
+        /* violet-500 */
+    </style>
+</head>
+
+<body
+    class="text-violet-950 p-4 md:p-8 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+
+    <div class="scenery-bg">
+        <div class="hill2"></div>
+        <div class="hill"></div>
+        <div class="moon">🌙</div>
+        <div class="star" style="top: 10%; left: 15%; animation-duration: 2.5s;">✨</div>
+        <div class="star" style="top: 5%; left: 45%; animation-duration: 3.5s;">⭐</div>
+        <div class="star" style="top: 25%; left: 75%; animation-duration: 3s;">✨</div>
+        <div class="star" style="top: 15%; left: 90%; animation-duration: 4.5s;">⭐</div>
+        <div class="house">⛺</div>
+        <div class="firefly" style="bottom: 25%; left: 20%; animation-duration: 5s;"></div>
+        <div class="firefly" style="bottom: 15%; left: 45%; animation-duration: 7s; animation-delay: -2s;"></div>
+        <div class="firefly" style="bottom: 30%; left: 70%; animation-duration: 6s; animation-delay: -4s;"></div>
+        <div class="firefly" style="bottom: 20%; left: 85%; animation-duration: 8s; animation-delay: -1s;"></div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="topic-toast"
+        class="absolute top-8 left-1/2 transform -translate-x-1/2 translate-y-[-250%] bg-white/95 backdrop-blur-md border-2 border-violet-500 text-violet-800 px-6 py-3 rounded-full shadow-2xl font-bold text-lg z-50 flex items-center gap-3">
+        <span>⏰</span>
+        <span id="toast-message">Chủ đề mới: Life Stories 5</span>
+        <span>✨</span>
+    </div>
+
+    <div class="max-w-2xl w-full mx-auto relative z-10">
+
+        <!-- TRANG TỔNG HỢP (WELCOME SCREEN) -->
+        <div id="welcome-screen"
+            class="bg-violet-950/90 backdrop-blur-xl rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.6)] p-5 sm:p-8 text-center border-2 border-violet-500/50 flex flex-col max-h-[90vh]">
+            <h1
+                class="text-3xl sm:text-5xl font-black text-white mb-2 tracking-widest drop-shadow-[0_0_15px_rgba(139,92,246,0.8)]">
+                LIFE STORIES 5</h1>
+            <p class="text-violet-200 font-medium mb-5 italic text-sm sm:text-lg border-b border-violet-500/30 pb-3">Nắm
+                vững danh sách từ vựng trước khi thực hành</p>
+
+            <div
+                class="flex-grow overflow-y-auto custom-scrollbar mb-6 border border-violet-500/20 rounded-xl bg-violet-950/50 shadow-inner">
+                <table class="w-full text-left text-xs sm:text-base border-collapse">
+                    <thead class="sticky top-0 bg-violet-700 text-white z-10">
+                        <tr>
+                            <th class="p-4 font-bold uppercase tracking-wider">Cụm từ / Động từ</th>
+                            <th class="p-4 font-bold uppercase tracking-wider">Loại</th>
+                            <th class="p-4 font-bold uppercase tracking-wider">Nghĩa tiếng Việt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="welcome-table-body" class="divide-y divide-violet-900/40 text-violet-50">
+                        <!-- Chèn bằng JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button onclick="startStudy()"
+                class="w-full py-4 bg-violet-600 hover:bg-violet-500 text-white font-black text-xl rounded-xl shadow-[0_0_20px_rgba(139,92,246,0.6)] transform transition hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest">
+                BẮT ĐẦU ÔN TẬP 🚀
+            </button>
+
+            <div class="mt-4 pt-2 border-t border-violet-500/20">
+                <p class="text-[11px] font-bold italic text-violet-400/70 text-center tracking-wide uppercase">&copy;
+                    Copyright by Hoang Truong English</p>
+            </div>
+        </div>
+
+        <!-- PHẦN CHÍNH -->
+        <div id="main-content" class="hidden">
+            <!-- Nút quay lại -->
+            <button id="top-prev-btn" onclick="prevCard()"
+                class="absolute left-0 sm:left-2 top-0 sm:top-2 flex items-center justify-center p-1.5 text-violet-200 hover:text-white hover:bg-white/20 rounded-full transition-colors hidden z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </button>
+
+            <!-- Nút nhạc -->
+            <button onclick="toggleMusic()"
+                class="absolute right-0 sm:right-2 top-0 sm:top-2 flex items-center justify-center p-1.5 text-violet-200 hover:text-white hover:bg-white/20 rounded-full transition-colors z-20">
+                <span id="music-icon" class="text-2xl">🔇</span>
+            </button>
+
+            <!-- Header -->
+            <div
+                class="mb-4 bg-violet-950/70 backdrop-blur-md border border-violet-400/30 rounded-xl px-4 py-2 sm:py-3 shadow-[0_0_20px_rgba(139,92,246,0.5)] mx-10 sm:mx-14">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-0">
+                    <h1 id="main-topic-title"
+                        class="text-base sm:text-lg font-bold text-white tracking-tight uppercase">LIFE STORIES 5</h1>
+                    <div class="flex items-center gap-2">
+                        <div id="live-timer"
+                            class="bg-violet-900/50 px-2 py-0.5 rounded border border-violet-400/30 text-violet-100 font-mono text-xs">
+                            <span id="timer-display">00:00</span>
+                        </div>
+                        <p class="text-violet-200 text-xs font-medium"><span id="progress-text">1 / X</span></p>
+                    </div>
+                </div>
+                <div class="w-full bg-violet-900/50 rounded-full h-1.5 mt-2 overflow-hidden border border-violet-800">
+                    <div id="progress-bar"
+                        class="bg-violet-400 h-full transition-all duration-300 shadow-[0_0_10px_#a78bfa]"
+                        style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Flashcard -->
+            <div class="flip-card" id="flashcard">
+                <div class="flip-card-inner">
+                    <!-- Mặt trước -->
+                    <div class="flip-card-front p-5 sm:p-8 border-2 sm:border-4 border-violet-500">
+                        <div class="flex-grow flex flex-col justify-center items-center text-center">
+                            <div class="flex items-center justify-center gap-2 mb-2 flex-wrap">
+                                <h2 class="text-xl sm:text-3xl font-bold text-violet-950" id="word-mean"></h2>
+                                <span
+                                    class="inline-block px-2 py-0.5 bg-violet-100 text-violet-800 rounded font-semibold text-xs uppercase"
+                                    id="word-type"></span>
+                            </div>
+                            <div class="w-12 h-1 bg-violet-200 my-3 mx-auto rounded"></div>
+                            <p class="text-base sm:text-xl font-medium text-violet-900 mb-2 leading-relaxed"
+                                id="word-ex"></p>
+                            <p class="text-xs sm:text-base text-gray-500 italic mb-4" id="word-exVi"></p>
+
+                            <div class="w-full flex flex-col items-center gap-4">
+                                <div id="letter-inputs-container"
+                                    class="flex flex-wrap justify-center gap-x-1 gap-y-2 w-full"></div>
+                                <div class="flex items-center justify-center gap-3 w-full flex-wrap mt-1">
+                                    <button onclick="speakCurrentWord(event)"
+                                        class="w-10 h-10 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-full flex items-center justify-center transition-colors shadow-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor"
+                                            viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+                                        </svg>
+                                    </button>
+                                    <button id="hint-btn" onclick="giveHint()"
+                                        class="px-5 h-10 bg-amber-100 hover:bg-amber-200 text-amber-700 font-bold rounded-full border border-amber-200 disabled:opacity-50">Hint</button>
+                                    <button onclick="checkAnswer()"
+                                        class="px-6 h-10 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-full shadow-md active:scale-95 transition-colors">Check
+                                        Answer</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-auto w-full pt-4 border-t border-violet-100">
+                            <p
+                                class="text-[10px] sm:text-[11px] font-semibold italic text-violet-400 text-center tracking-wide pointer-events-none">
+                                &copy; Copyright by Hoang Truong English</p>
+                        </div>
+                    </div>
+
+                    <!-- Mặt sau -->
+                    <div class="flip-card-back p-5 sm:p-8 border-2 sm:border-4 border-violet-500">
+                        <div id="result-header" class="text-center py-1.5 rounded-lg font-bold text-lg mb-3"></div>
+                        <div class="flex-grow flex flex-col justify-center items-center text-center">
+                            <h2 class="text-3xl sm:text-5xl font-bold text-violet-900 mb-1" id="back-word"></h2>
+                            <div
+                                class="flex items-center gap-2 mb-3 bg-violet-50 border border-violet-100 px-4 py-1 rounded-full">
+                                <p class="text-lg text-violet-700 font-mono font-medium" id="back-phonetic"></p>
+                                <button onclick="speakCurrentWord(event)" class="text-violet-600 hover:text-violet-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-base sm:text-lg text-gray-600 font-medium mb-3" id="back-mean"></p>
+                            <div class="bg-violet-50 border border-violet-100 rounded-lg p-4 w-full max-w-md shadow-sm">
+                                <p class="text-violet-900 text-sm sm:text-lg font-medium leading-relaxed" id="back-ex">
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-auto w-full pt-4">
+                            <div class="flex gap-3 mb-3">
+                                <button onclick="prevCard()"
+                                    class="flex-1 py-2 bg-violet-100 hover:bg-violet-200 text-violet-800 font-bold rounded-lg transition-colors">Quay
+                                    lại</button>
+                                <button onclick="nextCard()" id="next-btn"
+                                    class="flex-1 py-2 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-lg shadow-md transition-colors">Tiếp
+                                    theo</button>
+                            </div>
+                            <div class="border-t border-violet-100 pt-2">
+                                <p
+                                    class="text-[10px] sm:text-[11px] font-semibold italic text-violet-400 text-center tracking-wide pointer-events-none">
+                                    &copy; Copyright by Hoang Truong English</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng điểm -->
+        <div id="final-screen"
+            class="hidden bg-violet-950/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 text-center border-4 border-violet-600 max-w-md mx-auto w-full flex flex-col">
+            <h2 class="text-2xl sm:text-3xl font-black text-white mb-4">HOÀN THÀNH!</h2>
+            <div class="text-6xl mb-6">🏕️</div>
+            <div
+                class="bg-violet-900/50 border border-violet-500/30 rounded-xl p-5 text-left mb-6 shadow-inner text-sm text-violet-50">
+                <p class="flex justify-between border-b border-violet-500/20 pb-2 mb-2"><span>🕒 Hoàn thành:</span>
+                    <span id="finish-time" class="font-medium text-violet-200"></span></p>
+                <p class="flex justify-between border-b border-violet-500/20 pb-2 mb-2"><span>⏳ Thời gian học:</span>
+                    <span id="elapsed-time" class="font-bold text-violet-300"></span></p>
+                <p class="flex justify-between border-b border-violet-500/20 pb-2 mb-2"><span>✅ Đúng tuyệt đối:</span>
+                    <span id="correct-count" class="font-bold text-emerald-400"></span></p>
+                <p class="flex justify-between"><span>💡 Có dùng Hint:</span> <span id="hint-count"
+                        class="font-bold text-amber-400"></span></p>
+
+                <div id="hint-list-container" class="mt-4 hidden">
+                    <p
+                        class="text-xs text-violet-300 font-bold mb-1 border-t border-violet-500/20 pt-2 uppercase tracking-tighter">
+                        Từ vựng đã xem Hint:</p>
+                    <ul id="hint-words-list"
+                        class="list-disc list-inside text-amber-200 text-xs grid grid-cols-2 gap-1 font-medium"></ul>
+                </div>
+            </div>
+            <button onclick="resetQuizToSummary()"
+                class="py-4 bg-violet-600 hover:bg-violet-500 text-white font-bold text-lg rounded-xl shadow-lg transform transition active:scale-95 uppercase tracking-wider">Học
+                lại từ đầu</button>
+            <div class="border-t border-violet-500/20 pt-3 mt-4">
+                <p
+                    class="text-[10px] sm:text-[11px] font-semibold italic text-violet-400/70 text-center tracking-wide pointer-events-none">
+                    &copy; Copyright by Hoang Truong English</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            { topic: "Life Stories 5", word: "make a difference", phonetic: "/meɪk ə ˈdɪfrəns/", type: "v", mean: "tạo sự khác biệt", ex: "Small actions can _______ in people's lives when they receive support at the right time.", exVi: "Những hành động nhỏ có thể tạo sự khác biệt trong cuộc sống của mọi người khi họ nhận được sự hỗ trợ đúng lúc." },
+            { topic: "Life Stories 5", word: "face up to", phonetic: "/feɪs ʌp tuː/", type: "v", mean: "đối mặt với", ex: "People need to _______ their problems instead of avoiding them in difficult situations.", exVi: "Mọi người cần đối mặt với các vấn đề của mình thay vì lảng tránh chúng trong những tình huống khó khăn." },
+            { topic: "Life Stories 5", word: "push through", phonetic: "/pʊʃ θruː/", type: "v", mean: "vượt qua (khó khăn)", ex: "He tries to _______ challenges by staying focused and believing in himself.", exVi: "Anh ấy cố gắng vượt qua những thử thách bằng cách giữ sự tập trung và tin tưởng vào bản thân." },
+            { topic: "Life Stories 5", word: "break through", phonetic: "/breɪk θruː/", type: "v", mean: "đột phá", ex: "Hard work can help people _______ limits and achieve greater success in life.", exVi: "Làm việc chăm chỉ có thể giúp mọi người đột phá những giới hạn và đạt được thành công lớn hơn trong cuộc sống." },
+            { topic: "Life Stories 5", word: "stand out", phonetic: "/stænd aʊt/", type: "v", mean: "nổi bật", ex: "She wants to _______ by showing her unique skills and creative ideas in class.", exVi: "Cô ấy muốn trở nên nổi bật bằng cách thể hiện những kỹ năng độc đáo và ý tưởng sáng tạo của mình trong lớp." },
+            { topic: "Life Stories 5", word: "get over", phonetic: "/ɡet ˈəʊvə/", type: "v", mean: "vượt qua (cảm xúc)", ex: "It takes time to _______ failure, but people can learn valuable lessons from it.", exVi: "Cần có thời gian để vượt qua thất bại, nhưng mọi người có thể học được những bài học quý giá từ đó." },
+            { topic: "Life Stories 5", word: "turn back", phonetic: "/tɜːn bæk/", type: "v", mean: "quay lại, bỏ cuộc", ex: "Even when facing difficulties, he refuses to _______ and continues his journey.", exVi: "Ngay cả khi đối mặt với những khó khăn, anh ấy vẫn từ chối quay lại và tiếp tục cuộc hành trình của mình." },
+            { topic: "Life Stories 5", word: "catch up with", phonetic: "/kætʃ ʌp wɪð/", type: "v", mean: "bắt kịp", ex: "She works hard to _______ her classmates after missing several lessons.", exVi: "Cô ấy làm việc chăm chỉ để bắt kịp với các bạn cùng lớp sau khi bỏ lỡ vài bài học." },
+            { topic: "Life Stories 5", word: "get through", phonetic: "/ɡet θruː/", type: "v", mean: "vượt qua", ex: "Support from family helps people _______ difficult times in life.", exVi: "Sự hỗ trợ từ gia đình giúp mọi người vượt qua những khoảng thời gian khó khăn trong cuộc sống." },
+            { topic: "Life Stories 5", word: "look out for", phonetic: "/lʊk aʊt fɔː/", type: "v", mean: "quan tâm, để ý", ex: "Good friends always _______ each other and offer help when needed.", exVi: "Những người bạn tốt luôn quan tâm đến nhau và đề nghị giúp đỡ khi cần thiết." },
+            { topic: "Life Stories 5", word: "come up with", phonetic: "/kʌm ʌp wɪð/", type: "v", mean: "nghĩ ra", ex: "He tries to _______ new ideas to solve problems in a creative way.", exVi: "Anh ấy cố gắng nghĩ ra những ý tưởng mới để giải quyết các vấn đề một cách sáng tạo." },
+            { topic: "Life Stories 5", word: "put up with", phonetic: "/pʊt ʌp wɪð/", type: "v", mean: "chịu đựng", ex: "Many people _______ stress at work because they want to support their families.", exVi: "Nhiều người chịu đựng sự căng thẳng trong công việc vì họ muốn hỗ trợ cho gia đình mình." },
+            { topic: "Life Stories 5", word: "fit in", phonetic: "/fɪt ɪn/", type: "v", mean: "hòa nhập", ex: "Students sometimes find it hard to _______ when they move to a new school.", exVi: "Đôi khi học sinh cảm thấy khó hòa nhập khi họ chuyển đến một ngôi trường mới." },
+            { topic: "Life Stories 5", word: "stand by", phonetic: "/stænd baɪ/", type: "v", mean: "ủng hộ", ex: "True friends always _______ each other during both good and bad times.", exVi: "Những người bạn thực sự luôn ủng hộ nhau trong cả những lúc tốt đẹp lẫn khó khăn." },
+            { topic: "Life Stories 5", word: "let go of", phonetic: "/let ɡəʊ əv/", type: "v", mean: "buông bỏ", ex: "People need to _______ negative thoughts to live a happier life.", exVi: "Con người cần buông bỏ những suy nghĩ tiêu cực để sống một cuộc đời hạnh phúc hơn." },
+            { topic: "Life Stories 5", word: "tear up", phonetic: "/tɪə(r) ʌp/", type: "v", mean: "rơi nước mắt", ex: "She starts to _______ when she talks about her emotional life story.", exVi: "Cô ấy bắt đầu rơi nước mắt khi kể về câu chuyện cuộc đời đầy xúc động của mình." },
+            { topic: "Life Stories 5", word: "back away", phonetic: "/bæk əˈweɪ/", type: "v", mean: "lùi lại", ex: "Some people _______ from challenges because they feel afraid of failure.", exVi: "Một số người lùi lại trước những thử thách vì họ cảm thấy sợ hãi sự thất bại." },
+            { topic: "Life Stories 5", word: "run away from", phonetic: "/rʌn əˈweɪ frɒm/", type: "v", mean: "trốn tránh", ex: "People should not _______ problems but try to solve them step by step.", exVi: "Mọi người không nên trốn tránh các vấn đề mà hãy cố gắng giải quyết chúng từng bước một." },
+            { topic: "Life Stories 5", word: "stick with", phonetic: "/stɪk wɪð/", type: "v", mean: "kiên trì với", ex: "He decides to _______ his plan even when others doubt his ability.", exVi: "Anh ấy quyết định kiên trì với kế hoạch của mình ngay cả khi những người khác nghi ngờ khả năng của anh." },
+            { topic: "Life Stories 5", word: "stick to", phonetic: "/stɪk tuː/", type: "v", mean: "tuân theo", ex: "It is important to _______ your goals and not get distracted by small problems.", exVi: "Điều quan trọng là phải tuân theo các mục tiêu của bạn và không bị phân tâm bởi những vấn đề nhỏ." },
+            { topic: "Life Stories 5", word: "look after", phonetic: "/lʊk ˈɑːftə/", type: "v", mean: "chăm sóc", ex: "She needs to _______ her younger brother while her parents are busy.", exVi: "Cô ấy cần chăm sóc người em trai của mình trong khi bố mẹ đang bận rộn." },
+            { topic: "Life Stories 5", word: "take after", phonetic: "/teɪk ˈɑːftə/", type: "v", mean: "giống ai", ex: "He seems to _______ his mother in personality and way of thinking.", exVi: "Cậu ấy dường như giống mẹ mình về tính cách và cách suy nghĩ." }
+        ];
+
+        let currentIndex = 0;
+        let hintedWords = new Set();
+        let hintUsedThisCard = false;
+        let startTime = null;
+        let timerId = null;
+        let isMusicPlaying = false;
+        let currentFallbackAudio = null;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.25;
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'start') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.4);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.15, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
+                osc.start(now);
+                osc.stop(now + 1.0);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(783.99, now);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.1);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'error') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(349.23, now);
+                osc.frequency.exponentialRampToValueAtTime(261.63, now + 0.2);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        function populateWelcomeTable() {
+            const tbody = document.getElementById('welcome-table-body');
+            tbody.innerHTML = flashcards.map(item => `
+                <tr class="border-b border-violet-900/40 hover:bg-violet-500/20 transition-colors">
+                    <td class="p-4 font-black text-violet-300 sm:text-lg tracking-wide">${item.word}</td>
+                    <td class="p-4"><span class="px-2 py-1 bg-violet-500/40 text-white rounded-md text-[10px] uppercase font-black border border-violet-400/30">${item.type}</span></td>
+                    <td class="p-4 text-violet-100 font-medium leading-relaxed">${item.mean}</td>
+                </tr>
+            `).join('');
+        }
+
+        function startStudy() {
+            playSound('start');
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            startTimer();
+            renderCard();
+        }
+
+        function toggleMusic() {
+            const icon = document.getElementById('music-icon');
+            if (isMusicPlaying) { bgMusic.pause(); icon.textContent = '🔇'; }
+            else { bgMusic.play().catch(e => console.log(e)); icon.textContent = '🎵'; }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        function startTimer() {
+            if (timerId) clearInterval(timerId);
+            startTime = Date.now();
+            timerId = setInterval(() => {
+                const diff = Math.floor((Date.now() - startTime) / 1000);
+                const m = Math.floor(diff / 60).toString().padStart(2, '0');
+                const s = (diff % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function speakCurrentWord(e) {
+            if (e) e.stopPropagation();
+            window.speechSynthesis.cancel();
+            if (currentFallbackAudio) { currentFallbackAudio.pause(); }
+
+            const word = flashcards[currentIndex].word.replace(/[\s-]/g, ' ');
+            const utter = new SpeechSynthesisUtterance(word);
+            utter.lang = 'en-US';
+            utter.rate = 0.9;
+
+            let started = false;
+            utter.onstart = () => started = true;
+            utter.onerror = () => playFallback(word);
+            window.speechSynthesis.speak(utter);
+            setTimeout(() => { if (!started) { window.speechSynthesis.cancel(); playFallback(word); } }, 500);
+        }
+
+        function playFallback(word) {
+            currentFallbackAudio = new Audio(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=2`);
+            currentFallbackAudio.play().catch(e => console.log(e));
+        }
+
+        function renderCard() {
+            const card = flashcards[currentIndex];
+            hintUsedThisCard = false;
+            document.getElementById('hint-btn').disabled = false;
+            document.getElementById('word-mean').textContent = card.mean;
+            document.getElementById('word-type').textContent = card.type;
+            document.getElementById('word-ex').innerHTML = card.ex.replace('_______', `<span class="text-violet-600 border-b-2 border-violet-600 inline-block w-24"></span>`);
+            document.getElementById('word-exVi').textContent = card.exVi;
+
+            const container = document.getElementById('letter-inputs-container');
+            container.innerHTML = '';
+
+            const words = card.word.split(' ');
+            words.forEach((w, wordIndex) => {
+                const group = document.createElement('div');
+                group.className = 'flex gap-0.5 sm:gap-1';
+
+                w.split('').forEach((char, i) => {
+                    if (char === '-') {
+                        const dash = document.createElement('span');
+                        dash.textContent = '-';
+                        dash.className = 'text-xl font-bold text-violet-300 self-center px-0.5';
+                        group.appendChild(dash);
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text'; input.maxLength = 1;
+                        input.className = 'char-input editable-input w-6 h-8 sm:w-8 sm:h-10 text-center text-base sm:text-lg font-bold border-2 border-violet-200 rounded-lg focus:border-violet-500 bg-white text-violet-800 shadow-inner transition-all';
+
+                        input.addEventListener('input', function () {
+                            this.value = this.value.toLowerCase();
+                            const inputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const idx = inputs.indexOf(this);
+                            if (this.value && idx < inputs.length - 1) {
+                                let next = idx + 1;
+                                while (next < inputs.length && inputs[next].readOnly) next++;
+                                if (next < inputs.length) inputs[next].focus();
+                            }
+                        });
+
+                        input.addEventListener('keydown', function (e) {
+                            const inputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const idx = inputs.indexOf(this);
+                            if (e.key === 'Backspace' && !this.value && idx > 0) {
+                                let prev = idx - 1;
+                                while (prev >= 0 && inputs[prev].readOnly) prev--;
+                                if (prev >= 0) inputs[prev].focus();
+                            } else if (e.key === 'Enter') checkAnswer();
+                        });
+                        group.appendChild(input);
+                    }
+                });
+
+                container.appendChild(group);
+                if (wordIndex < words.length - 1) {
+                    const s = document.createElement('div'); s.className = 'w-2 sm:w-3'; container.appendChild(s);
+                }
+            });
+
+            setTimeout(() => document.querySelector('.editable-input')?.focus(), 100);
+            document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${flashcards.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / flashcards.length) * 100}%`;
+            document.getElementById('top-prev-btn').classList.toggle('hidden', currentIndex === 0);
+        }
+
+        function giveHint() {
+            if (hintUsedThisCard) return;
+            const target = flashcards[currentIndex].word.replace(/[\s-]/g, '').toLowerCase();
+            const inputs = document.querySelectorAll('.char-input');
+            let pool = [];
+            for (let i = 0; i < inputs.length; i++) if (!inputs[i].readOnly && inputs[i].value.toLowerCase() !== target[i]) pool.push(i);
+
+            if (pool.length === 0) return;
+            const count = target.length <= 6 ? 1 : (target.length >= 15 ? 3 : 2);
+            for (let i = 0; i < Math.min(count, pool.length); i++) {
+                const rand = Math.floor(Math.random() * pool.length);
+                const idx = pool.splice(rand, 1)[0];
+                inputs[idx].value = target[idx];
+                inputs[idx].readOnly = true;
+                inputs[idx].className = 'char-input w-6 h-8 sm:w-8 sm:h-10 text-center font-bold border-2 border-amber-400 bg-amber-50 text-amber-800 rounded-lg';
+            }
+            hintUsedThisCard = true;
+            hintedWords.add(flashcards[currentIndex].word);
+            document.getElementById('hint-btn').disabled = true;
+        }
+
+        function checkAnswer() {
+            const card = flashcards[currentIndex];
+            const target = card.word.replace(/[\s-]/g, '').toLowerCase();
+            const inputs = document.querySelectorAll('.char-input');
+            const user = Array.from(inputs).map(i => i.value).join('').toLowerCase();
+
+            if (user === target) {
+                playSound('success');
+                const header = document.getElementById('result-header');
+                header.textContent = "🎉 TUYỆT VỜI!";
+                header.className = "text-center py-2 rounded-lg font-bold text-lg mb-4 bg-violet-100 text-violet-800 uppercase tracking-widest";
+
+                document.getElementById('back-word').textContent = card.word;
+                document.getElementById('back-phonetic').textContent = card.phonetic;
+                document.getElementById('back-mean').textContent = `${card.mean} (${card.type})`;
+                document.getElementById('back-ex').innerHTML = card.ex.replace('_______', `<span class="font-black text-violet-700 underline decoration-2">${card.word}</span>`);
+
+                document.getElementById('flashcard').classList.add('flipped');
+            } else {
+                playSound('error');
+                document.getElementById('letter-inputs-container').classList.add('shake');
+                setTimeout(() => document.getElementById('letter-inputs-container').classList.remove('shake'), 400);
+            }
+        }
+
+        function nextCard() {
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => {
+                if (currentIndex < flashcards.length - 1) { currentIndex++; renderCard(); }
+                else showFinal();
+            }, 300);
+        }
+
+        function prevCard() {
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => { if (currentIndex > 0) { currentIndex--; renderCard(); } }, 300);
+        }
+
+        function showFinal() {
+            clearInterval(timerId);
+            const total = Math.floor((Date.now() - startTime) / 1000);
+            const m = Math.floor(total / 60); const s = total % 60;
+            const now = new Date();
+
+            document.getElementById('main-content').classList.add('hidden');
+            document.getElementById('final-screen').classList.remove('hidden');
+            document.getElementById('finish-time').textContent = now.toLocaleTimeString('vi-VN') + " - " + now.toLocaleDateString('vi-VN');
+            document.getElementById('elapsed-time').textContent = (m > 0 ? `${m} phút ` : '') + `${s} giây`;
+            document.getElementById('correct-count').textContent = flashcards.length - hintedWords.size;
+            document.getElementById('hint-count').textContent = hintedWords.size;
+
+            const list = document.getElementById('hint-words-list');
+            list.innerHTML = '';
+            if (hintedWords.size > 0) {
+                document.getElementById('hint-list-container').classList.remove('hidden');
+                hintedWords.forEach(w => { const li = document.createElement('li'); li.textContent = w; list.appendChild(li); });
+            }
+        }
+
+        function resetQuizToSummary() {
+            currentIndex = 0; hintedWords.clear();
+            document.getElementById('final-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            populateWelcomeTable();
+        }
+
+        document.addEventListener('DOMContentLoaded', populateWelcomeTable);
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('main-content').classList.contains('hidden')) return;
+            if (e.altKey && e.key.toLowerCase() === 'h') { e.preventDefault(); giveHint(); }
+            if (e.shiftKey && e.key === 'Enter') { e.preventDefault(); speakCurrentWord(); }
+            if (e.key === 'Enter' && !e.shiftKey) {
+                if (document.getElementById('flashcard').classList.contains('flipped')) nextCard();
+                else checkAnswer();
+            }
+        });
+    </script>
+</body>
+
+</html>
