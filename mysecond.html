@@ -5516,12 +5516,40 @@
             else if (partNum === 3) textToSpeak = getPlainSentence(currentWord3);
             else textToSpeak = getPlainSentence(currentWord4);
 
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            if (preferredVoice) utterance.voice = preferredVoice;
-            else utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            utterance.pitch = 1.15;
-            window.speechSynthesis.speak(utterance);
+            if (!textToSpeak) return;
+
+            // Hủy bất kỳ speech nào đang pending để tránh bị chặn
+            window.speechSynthesis.cancel();
+
+            const doSpeak = () => {
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                utterance.pitch = 1.15;
+
+                // Lấy voice theo thứ tự ưu tiên
+                const voices = window.speechSynthesis.getVoices();
+                const voice = preferredVoice ||
+                    voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('samantha')) ||
+                    voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('female')) ||
+                    voices.find(v => v.lang === 'en-US') ||
+                    voices.find(v => v.lang.startsWith('en'));
+                if (voice) utterance.voice = voice;
+
+                window.speechSynthesis.speak(utterance);
+
+                // Safari/Chrome đôi khi bị pause ngay sau speak — resume nó
+                setTimeout(() => {
+                    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+                }, 150);
+            };
+
+            // Đợi voices load nếu chưa có
+            if (window.speechSynthesis.getVoices().length === 0) {
+                window.speechSynthesis.addEventListener('voiceschanged', doSpeak, { once: true });
+            } else {
+                doSpeak();
+            }
         }
 
         function startAppleSortingGame() {
