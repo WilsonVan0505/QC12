@@ -7216,42 +7216,63 @@
             if (orb1) badgesHTML += buildOrbHTML(orb1, '60px', false);
             if (orb2) badgesHTML += buildOrbHTML(orb2, '60px', false);
 
+            let yesNoAnswer = "Chưa trả lời";
+            if (step2YesNo === 'yes') yesNoAnswer = "Yes";
+            else if (step2YesNo === 'no') yesNoAnswer = "No";
+
+            const whereInputEl = document.getElementById('where-input');
+            let whereAnswer = whereInputEl && whereInputEl.value.trim() ? whereInputEl.value.trim() : "Chưa trả lời";
+
             const content = `
-                <div class="relative w-full max-w-2xl px-6 py-8 md:px-10 md:py-10 bg-gradient-to-br from-indigo-900/80 to-purple-900/80 border-[1.5px] border-fuchsia-400/60 rounded-[3rem] md:rounded-[4rem] shadow-[0_0_50px_rgba(192,132,252,0.5),inset_0_0_30px_rgba(255,255,255,0.15)] backdrop-blur-xl flex flex-col items-center text-white transform scale-95 transition-transform duration-700 my-auto" id="summary-pill">
+                <div class="relative w-full max-w-2xl px-6 py-6 md:px-10 md:py-8 bg-gradient-to-br from-indigo-900/80 to-purple-900/80 border-[1.5px] border-fuchsia-400/60 rounded-[3rem] md:rounded-[4rem] shadow-[0_0_50px_rgba(192,132,252,0.5),inset_0_0_30px_rgba(255,255,255,0.15)] backdrop-blur-xl flex flex-col items-center text-white transform scale-95 transition-transform duration-700 my-auto" id="summary-pill">
                     <h2 class="text-2xl md:text-3xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-cyan-300 mb-6 drop-shadow-md text-center">Bảng Tổng Kết</h2>
                     
-                    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 text-sm md:text-base font-semibold">
+                    ${badgesHTML ? \`
+                    <div class="flex flex-col items-center mb-6 bg-white/5 p-4 rounded-3xl border border-white/10 w-full shadow-inner">
+                        <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold mb-3">Huy Hiệu Hoàn Thành</span>
+                        <div class="flex items-center justify-center gap-6">
+                            \${badgesHTML}
+                        </div>
+                    </div>\` : ''}
+
+                    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-4 text-sm md:text-base font-semibold mb-6">
                         <div class="flex flex-col gap-1.5 bg-white/5 p-4 rounded-3xl border border-white/10 shadow-inner">
                             <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold">Thời gian hiện tại</span>
-                            <span class="text-md md:text-lg tracking-wide">${timeStr} - ${dateStr}</span>
+                            <span class="text-md md:text-lg tracking-wide">\${timeStr} - \${dateStr}</span>
                         </div>
                         <div class="flex flex-col gap-1.5 bg-white/5 p-4 rounded-3xl border border-white/10 shadow-inner">
                             <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold">Thời gian học</span>
-                            <span class="text-md md:text-lg tracking-wide font-timer">${learningTime}</span>
+                            <span class="text-md md:text-lg tracking-wide font-timer">\${learningTime}</span>
                         </div>
-                        <div class="flex flex-col gap-1.5 bg-white/5 p-4 rounded-3xl border border-white/10 shadow-inner">
+                        
+                        <div class="flex flex-col gap-1.5 bg-white/5 p-4 rounded-3xl border border-white/10 shadow-inner md:col-span-2 text-center">
                             <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold">Điểm số / Số từ đúng</span>
-                            <span class="text-md md:text-lg"><span class="font-black text-yellow-300">${totalScore}</span> pts <span class="text-white/30 mx-1">|</span> <span class="text-green-300">${correctCount}</span><span class="text-white/60">/${originalFlashcardsCount} từ</span></span>
+                            <span class="text-md md:text-lg"><span class="font-black text-yellow-300 text-xl">\${totalScore}</span> pts <span class="text-white/30 mx-2">|</span> <span class="text-green-300 text-xl">\${correctCount}</span><span class="text-white/60"> / \${originalFlashcardsCount} từ</span></span>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5 bg-white/5 p-4 rounded-3xl border border-white/10 shadow-inner">
+                            <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold">Will you use these words today?</span>
+                            <span class="text-md md:text-lg tracking-wide text-emerald-300 italic">\${yesNoAnswer}</span>
                         </div>
                         <div class="flex flex-col gap-1.5 bg-white/5 p-4 rounded-3xl border border-white/10 shadow-inner">
-                            <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold">Danh hiệu</span>
-                            <span class="text-lg md:text-xl font-black uppercase tracking-widest ${titleColor}">${titleName}</span>
+                            <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold">Where would you use them?</span>
+                            <span class="text-md md:text-lg tracking-wide text-emerald-300 italic truncate" title="\${whereAnswer}">\${whereAnswer}</span>
                         </div>
+
                         <div class="flex flex-col gap-1.5 bg-white/5 p-4 rounded-3xl border border-white/10 shadow-inner md:col-span-2 text-center md:text-left">
-                            <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold">Số từ cần Review (${reviewWordsList.length})</span>
-                            <span class="text-rose-300 italic font-medium leading-relaxed">${reviewWordsText}</span>
+                            <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold">Số từ cần Review (\${reviewWordsList.length})</span>
+                            <span class="text-rose-300 italic font-medium leading-relaxed">\${reviewWordsText}</span>
                         </div>
                     </div>
 
-                    ${badgesHTML ? `
-                    <div class="flex flex-col items-center mt-6 bg-white/5 p-4 rounded-3xl border border-white/10 w-full shadow-inner">
-                        <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold mb-3">Huy Hiệu Hoàn Thành</span>
-                        <div class="flex items-center justify-center gap-6">
-                            ${badgesHTML}
-                        </div>
-                    </div>` : ''}
+                    <div class="w-full flex flex-col items-center bg-gradient-to-r from-transparent via-fuchsia-900/40 to-transparent py-4 px-2 rounded-3xl border-t border-b border-fuchsia-400/40 shadow-inner mt-2">
+                        <span class="text-fuchsia-300/80 text-[0.65rem] md:text-xs uppercase tracking-widest font-bold mb-2">Danh hiệu</span>
+                        <span class="text-3xl md:text-4xl font-black uppercase tracking-widest \${titleColor} drop-shadow-lg" style="animation: pulse-ritual-text 2s infinite alternate;">
+                            \${titleName}
+                        </span>
+                    </div>
 
-                    <button id="summary-close-btn" class="mt-8 btn-crystal w-full md:w-2/3 py-3.5 rounded-full font-bold text-base md:text-lg uppercase tracking-widest shadow-[0_0_25px_rgba(168,85,247,0.6)]">
+                    <button id="summary-close-btn" class="mt-8 btn-crystal w-full md:w-2/3 py-3.5 rounded-full font-bold text-base md:text-lg uppercase tracking-widest shadow-[0_0_25px_rgba(168,85,247,0.6)] hover:scale-105 transition-transform duration-300">
                         Hoàn Thành
                     </button>
                 </div>
