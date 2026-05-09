@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Từ Vựng: Green Living 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #042f2e;
+            /* teal-950 */
+        }
+
+        /* --- CSS cho Nền Động Pure Eco-Valley (Thung Lũng Sinh Thái) --- */
+        .scenery-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            /* Gradient từ Xanh Cổ Vịt sang Xanh Chanh (Teal to Lime) */
+            background: linear-gradient(to bottom, #042f2e 0%, #0f766e 40%, #84cc16 100%);
+            overflow: hidden;
+        }
+
+        .hill {
+            position: absolute;
+            bottom: -50px;
+            width: 120%;
+            height: 35%;
+            background: #042f2e;
+            /* teal-950 */
+            border-radius: 50% 50% 0 0;
+            left: -10%;
+            box-shadow: inset 0px 20px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .hill2 {
+            position: absolute;
+            bottom: -60px;
+            width: 100%;
+            height: 30%;
+            background: #134e4a;
+            /* teal-900 */
+            border-radius: 50% 50% 0 0;
+            right: -20%;
+            box-shadow: inset 0px 20px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Mưa / Giọt nước tinh khiết (Purify / Filter) */
+        .water-drop {
+            position: absolute;
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(167, 243, 208, 0.8));
+            /* emerald-200 */
+            user-select: none;
+            z-index: -8;
+            animation: fallDrop linear infinite;
+            top: -10%;
+        }
+
+        @keyframes fallDrop {
+            0% {
+                transform: translateY(-10vh) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(110vh) translateX(10vw);
+                opacity: 0;
+            }
+        }
+
+        /* Đom đóm xanh / Ánh sáng tự nhiên */
+        .firefly {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #d9f99d;
+            /* lime-200 */
+            border-radius: 50%;
+            box-shadow: 0 0 12px 4px #84cc16;
+            /* lime-500 */
+            animation: flyFirefly ease-in-out infinite alternate;
+            z-index: -7;
+        }
+
+        @keyframes flyFirefly {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0.2;
+            }
+
+            25% {
+                opacity: 1;
+                transform: translate(25px, -20px);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: translate(-15px, -35px);
+            }
+
+            75% {
+                opacity: 1;
+                transform: translate(-30px, 15px);
+            }
+
+            100% {
+                transform: translate(20px, 25px);
+                opacity: 0.2;
+            }
+        }
+
+        .sun {
+            position: absolute;
+            font-size: 6rem;
+            animation: floatSun 16s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 30px rgba(253, 224, 71, 0.8));
+            /* yellow-300 */
+            user-select: none;
+            top: 10%;
+            right: 15%;
+        }
+
+        @keyframes floatSun {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                transform: translateY(-15px) scale(1.05);
+            }
+        }
+
+        /* Mầm cây đung đưa */
+        .sprout {
+            position: absolute;
+            font-size: 3rem;
+            bottom: 12%;
+            filter: drop-shadow(0 0 15px rgba(132, 204, 22, 0.5));
+            user-select: none;
+            z-index: -6;
+            animation: sway 5s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+        }
+
+        @keyframes sway {
+            0% {
+                transform: rotate(-5deg);
+            }
+
+            100% {
+                transform: rotate(5deg);
+            }
+        }
+
+        .flip-card {
+            perspective: 1200px;
+            width: 100%;
+            height: 480px;
+        }
+
+        @media (min-width: 640px) {
+            .flip-card {
+                height: 520px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .flip-card {
+                height: 580px;
+            }
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6);
+            background-color: rgba(255, 255, 255, 0.98);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.5);
+            /* teal-500 */
+            outline: none;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #14b8a6;
+            border-radius: 10px;
+        }
+
+        /* teal-500 */
+    </style>
+</head>
+
+<body
+    class="text-teal-950 p-2 sm:p-4 md:p-8 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+
+    <div class="scenery-bg">
+        <div class="hill2"></div>
+        <div class="hill"></div>
+        <div class="sun">🌤️</div>
+
+        <!-- Mầm cây tĩnh dưới mặt đất -->
+        <div class="sprout" style="left: 15%; font-size: 2.5rem;">🌱</div>
+        <div class="sprout" style="left: 75%; animation-delay: -2s; font-size: 3.5rem;">🌿</div>
+
+        <!-- Giọt nước tinh khiết rơi -->
+        <div class="water-drop" style="left: 25%; animation-duration: 8s; animation-delay: 0s;">💧</div>
+        <div class="water-drop" style="left: 45%; animation-duration: 10s; animation-delay: 3s; font-size: 1rem;">💧
+        </div>
+        <div class="water-drop" style="left: 65%; animation-duration: 7s; animation-delay: 1s; font-size: 2rem;">💧
+        </div>
+        <div class="water-drop" style="left: 85%; animation-duration: 11s; animation-delay: 5s;">💧</div>
+
+        <!-- Đom đóm -->
+        <div class="firefly" style="top: 40%; left: 20%; animation-duration: 4s;"></div>
+        <div class="firefly" style="top: 60%; left: 50%; animation-duration: 6s; animation-delay: 2s;"></div>
+        <div class="firefly" style="top: 30%; left: 80%; animation-duration: 5s; animation-delay: 1s;"></div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="topic-toast"
+        class="absolute top-8 left-1/2 transform -translate-x-1/2 translate-y-[-250%] bg-white/95 backdrop-blur-md border-2 border-teal-500 text-teal-800 px-6 py-3 rounded-full shadow-2xl font-bold text-lg z-50 flex items-center gap-3">
+        <span>⏰</span>
+        <span id="toast-message">Chủ đề mới: Green Living 2</span>
+        <span>🌍</span>
+    </div>
+
+    <div class="max-w-3xl w-full mx-auto relative z-10">
+
+        <!-- TRANG TỔNG HỢP (WELCOME SCREEN) -->
+        <div id="welcome-screen"
+            class="bg-teal-950/90 backdrop-blur-xl rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.6)] p-4 sm:p-8 text-center border-2 border-teal-500/50 flex flex-col max-h-[90vh]">
+            <h1
+                class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-widest drop-shadow-[0_0_15px_rgba(20,184,166,0.8)] uppercase">
+                GREEN LIVING 2</h1>
+            <p class="text-teal-200 font-medium mb-5 italic text-sm sm:text-lg border-b border-teal-500/30 pb-3">Phát
+                triển bền vững & Bảo vệ Hệ sinh thái</p>
+
+            <div
+                class="flex-grow overflow-y-auto custom-scrollbar mb-6 border border-teal-500/20 rounded-xl bg-slate-900/50 shadow-inner">
+                <table class="w-full text-left text-[11px] sm:text-base border-collapse">
+                    <thead class="sticky top-0 bg-teal-700 text-white z-10">
+                        <tr>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Từ vựng</th>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Loại</th>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Nghĩa tiếng Việt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="welcome-table-body" class="divide-y divide-teal-900/40 text-teal-50">
+                        <!-- Chèn bằng JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button onclick="startStudy()"
+                class="w-full py-4 bg-teal-600 hover:bg-teal-500 text-white font-black text-xl rounded-xl shadow-[0_0_20px_rgba(20,184,166,0.6)] transform transition hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest">
+                BẮT ĐẦU ÔN TẬP 🚀
+            </button>
+
+            <div class="mt-4 pt-2 border-t border-teal-500/20">
+                <p class="text-[11px] font-bold italic text-teal-400/70 text-center tracking-wide uppercase">&copy;
+                    Copyright by Hoang Truong English</p>
+            </div>
+        </div>
+
+        <!-- PHẦN CHÍNH -->
+        <div id="main-content" class="hidden">
+            <!-- Nút quay lại -->
+            <button id="top-prev-btn" onclick="prevCard()"
+                class="absolute left-0 sm:left-2 top-0 sm:top-2 flex items-center justify-center p-1.5 text-teal-200 hover:text-white hover:bg-white/20 rounded-full transition-colors hidden z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </button>
+
+            <!-- Nút nhạc -->
+            <button onclick="toggleMusic()"
+                class="absolute right-0 sm:right-2 top-0 sm:top-2 flex items-center justify-center p-1.5 text-teal-200 hover:text-white hover:bg-white/20 rounded-full transition-colors z-20">
+                <span id="music-icon" class="text-2xl">🔇</span>
+            </button>
+
+            <!-- Header -->
+            <div
+                class="mb-4 bg-teal-950/80 backdrop-blur-md border border-teal-400/30 rounded-xl px-4 py-2 sm:py-3 shadow-[0_0_20px_rgba(20,184,166,0.5)] mx-6 sm:mx-14">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-0">
+                    <h1 id="main-topic-title"
+                        class="text-base sm:text-lg font-bold text-white tracking-tight uppercase">GREEN LIVING 2</h1>
+                    <div class="flex items-center gap-2">
+                        <div id="live-timer"
+                            class="bg-teal-900/50 px-2 py-0.5 rounded border border-teal-400/30 text-teal-100 font-mono text-xs">
+                            <span id="timer-display">00:00</span>
+                        </div>
+                        <p class="text-teal-200 text-xs font-medium"><span id="progress-text">1 / X</span></p>
+                    </div>
+                </div>
+                <div class="w-full bg-teal-900/50 rounded-full h-1.5 mt-2 overflow-hidden border border-teal-800">
+                    <div id="progress-bar"
+                        class="bg-teal-400 h-full transition-all duration-300 shadow-[0_0_10px_#2dd4bf]"
+                        style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Flashcard -->
+            <div class="flip-card" id="flashcard">
+                <div class="flip-card-inner">
+                    <!-- Mặt trước -->
+                    <div class="flip-card-front p-4 sm:p-8 border-2 sm:border-4 border-teal-500">
+                        <div class="flex-grow flex flex-col justify-center items-center text-center">
+                            <div class="flex items-center justify-center gap-2 mb-2 flex-wrap">
+                                <h2 class="text-xl sm:text-3xl font-bold text-teal-950" id="word-mean"></h2>
+                                <span
+                                    class="inline-block px-2 py-0.5 bg-teal-100 text-teal-800 rounded font-semibold text-xs uppercase"
+                                    id="word-type"></span>
+                            </div>
+                            <div class="w-12 h-1 bg-teal-200 my-3 mx-auto rounded"></div>
+                            <p class="text-sm sm:text-xl font-medium text-teal-900 mb-2 leading-relaxed px-2"
+                                id="word-ex"></p>
+                            <p class="text-[11px] sm:text-base text-gray-500 italic mb-4 px-2" id="word-exVi"></p>
+
+                            <div class="w-full flex flex-col items-center gap-4">
+                                <div id="letter-inputs-container"
+                                    class="flex flex-wrap justify-center gap-x-[2px] gap-y-2 w-full"></div>
+                                <div class="flex items-center justify-center gap-2 sm:gap-3 w-full flex-wrap mt-1">
+                                    <button onclick="speakCurrentWord(event)"
+                                        class="w-9 h-9 sm:w-10 sm:h-10 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-full flex items-center justify-center transition-colors shadow-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5"
+                                            fill="currentColor" viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+                                        </svg>
+                                    </button>
+                                    <button id="hint-btn" onclick="giveHint()"
+                                        class="px-4 sm:px-5 h-9 sm:h-10 bg-lime-100 hover:bg-lime-200 text-lime-700 font-bold rounded-full border border-lime-200 disabled:opacity-50 text-sm sm:text-base">Hint</button>
+                                    <button onclick="checkAnswer()"
+                                        class="px-5 sm:px-6 h-9 sm:h-10 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-full shadow-md active:scale-95 transition-colors text-sm sm:text-base">Check
+                                        Answer</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-auto w-full pt-3 sm:pt-4 border-t border-teal-100">
+                            <p
+                                class="text-[9px] sm:text-[11px] font-semibold italic text-teal-600 text-center tracking-wide pointer-events-none">
+                                &copy; Copyright by Hoang Truong English</p>
+                        </div>
+                    </div>
+
+                    <!-- Mặt sau -->
+                    <div class="flip-card-back p-4 sm:p-8 border-2 sm:border-4 border-teal-500">
+                        <div id="result-header"
+                            class="text-center py-1.5 rounded-lg font-bold text-base sm:text-lg mb-3"></div>
+                        <div class="flex-grow flex flex-col justify-center items-center text-center">
+                            <h2 class="text-2xl sm:text-5xl font-bold text-teal-900 mb-1" id="back-word"></h2>
+                            <div
+                                class="flex items-center gap-2 mb-3 bg-teal-50 border border-teal-100 px-3 sm:px-4 py-1 rounded-full">
+                                <p class="text-sm sm:text-lg text-teal-700 font-mono font-medium" id="back-phonetic">
+                                </p>
+                                <button onclick="speakCurrentWord(event)" class="text-teal-600 hover:text-teal-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6"
+                                        fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-sm sm:text-lg text-gray-600 font-medium mb-3" id="back-mean"></p>
+                            <div
+                                class="bg-teal-50 border border-teal-100 rounded-lg p-3 sm:p-4 w-full max-w-md shadow-sm">
+                                <p class="text-teal-900 text-xs sm:text-lg font-medium leading-relaxed" id="back-ex">
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-auto w-full pt-3 sm:pt-4">
+                            <div class="flex gap-2 sm:gap-3 mb-2 sm:mb-3">
+                                <button onclick="prevCard()"
+                                    class="flex-1 py-1.5 sm:py-2 bg-lime-100 hover:bg-lime-200 text-lime-800 font-bold rounded-lg transition-colors text-sm sm:text-base">Quay
+                                    lại</button>
+                                <button onclick="nextCard()" id="next-btn"
+                                    class="flex-1 py-1.5 sm:py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg shadow-md transition-colors text-sm sm:text-base">Tiếp
+                                    theo</button>
+                            </div>
+                            <div class="border-t border-teal-100 pt-2">
+                                <p
+                                    class="text-[9px] sm:text-[11px] font-semibold italic text-teal-600 text-center tracking-wide pointer-events-none">
+                                    &copy; Copyright by Hoang Truong English</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng điểm -->
+        <div id="final-screen"
+            class="hidden bg-teal-950/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 text-center border-4 border-teal-600 max-w-md mx-auto w-full flex flex-col">
+            <h2 class="text-2xl sm:text-3xl font-black text-white mb-4">HOÀN THÀNH!</h2>
+            <div class="text-6xl mb-6">🌱</div>
+            <div
+                class="bg-teal-900/50 border border-teal-500/30 rounded-xl p-5 text-left mb-6 shadow-inner text-sm text-teal-50">
+                <p class="flex justify-between border-b border-teal-500/20 pb-2 mb-2"><span>🕒 Hoàn thành:</span> <span
+                        id="finish-time" class="font-medium text-teal-200"></span></p>
+                <p class="flex justify-between border-b border-teal-500/20 pb-2 mb-2"><span>⏳ Thời gian học:</span>
+                    <span id="elapsed-time" class="font-bold text-teal-300"></span></p>
+                <p class="flex justify-between border-b border-teal-500/20 pb-2 mb-2"><span>✅ Đúng tuyệt đối:</span>
+                    <span id="correct-count" class="font-bold text-lime-400"></span></p>
+                <p class="flex justify-between"><span>💡 Có dùng Hint:</span> <span id="hint-count"
+                        class="font-bold text-yellow-400"></span></p>
+
+                <div id="hint-list-container" class="mt-4 hidden">
+                    <p
+                        class="text-xs text-teal-300 font-bold mb-1 border-t border-teal-500/20 pt-2 uppercase tracking-tighter">
+                        Từ vựng đã xem Hint:</p>
+                    <ul id="hint-words-list"
+                        class="list-disc list-inside text-yellow-200 text-xs grid grid-cols-2 gap-1 font-medium"></ul>
+                </div>
+            </div>
+            <button onclick="resetQuizToSummary()"
+                class="py-4 bg-teal-600 hover:bg-teal-500 text-white font-bold text-lg rounded-xl shadow-lg transform transition active:scale-95 uppercase tracking-wider">Học
+                lại từ đầu</button>
+            <div class="border-t border-teal-500/20 pt-3 mt-4">
+                <p
+                    class="text-[10px] sm:text-[11px] font-semibold italic text-teal-400/70 text-center tracking-wide pointer-events-none">
+                    &copy; Copyright by Hoang Truong English</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            { topic: "Green Living 2", word: "regulate", phonetic: "/ˈreɡjuleɪt/", type: "v", mean: "điều chỉnh, quản lý", ex: "Governments _______ industrial activities to reduce pollution and protect public health.", exVi: "Chính phủ quản lý các hoạt động công nghiệp để giảm ô nhiễm và bảo vệ sức khỏe cộng đồng." },
+            { topic: "Green Living 2", word: "innovate", phonetic: "/ˈɪnəveɪt/", type: "v", mean: "đổi mới", ex: "Companies _______ to create environmentally friendly products for modern consumers.", exVi: "Các công ty đổi mới để tạo ra các sản phẩm thân thiện với môi trường cho người tiêu dùng hiện đại." },
+            { topic: "Green Living 2", word: "filter", phonetic: "/ˈfɪltə(r)/", type: "v", mean: "lọc", ex: "Special systems _______ dirty water before it returns to rivers and lakes.", exVi: "Các hệ thống đặc biệt lọc nước bẩn trước khi nó quay trở lại sông hồ." },
+            { topic: "Green Living 2", word: "purify", phonetic: "/ˈpjʊərɪfaɪ/", type: "v", mean: "làm sạch", ex: "Modern technology helps _______ drinking water for communities in rural areas.", exVi: "Công nghệ hiện đại giúp làm sạch nước uống cho các cộng đồng ở khu vực nông thôn." },
+            { topic: "Green Living 2", word: "replant", phonetic: "/ˌriːˈplɑːnt/", type: "v", mean: "trồng lại", ex: "Volunteers _______ trees in damaged forests to restore natural habitats.", exVi: "Tình nguyện viên trồng lại cây ở những khu rừng bị tàn phá để phục hồi môi trường sống tự nhiên." },
+            { topic: "Green Living 2", word: "renovate", phonetic: "/ˈrenəveɪt/", type: "v", mean: "cải tạo", ex: "Many families _______ old houses to improve energy efficiency and reduce waste.", exVi: "Nhiều gia đình cải tạo lại những ngôi nhà cũ để nâng cao hiệu quả sử dụng năng lượng và giảm thiểu rác thải." },
+            { topic: "Green Living 2", word: "embrace", phonetic: "/ɪmˈbreɪs/", type: "v", mean: "đón nhận", ex: "More people _______ green lifestyles to help protect the environment.", exVi: "Ngày càng có nhiều người đón nhận lối sống xanh để giúp bảo vệ môi trường." },
+            { topic: "Green Living 2", word: "sustain", phonetic: "/səˈsteɪn/", type: "v", mean: "duy trì", ex: "Renewable energy helps _______ economic growth without harming nature.", exVi: "Năng lượng tái tạo giúp duy trì sự tăng trưởng kinh tế mà không gây tổn hại đến thiên nhiên." },
+            { topic: "Green Living 2", word: "get rid of", phonetic: "/ɡet rɪd əv/", type: "v", mean: "loại bỏ", ex: "Communities try to _______ plastic waste by encouraging reusable products.", exVi: "Các cộng đồng cố gắng loại bỏ rác thải nhựa bằng cách khuyến khích các sản phẩm có thể tái sử dụng." },
+            { topic: "Green Living 2", word: "trigger", phonetic: "/ˈtrɪɡə(r)/", type: "v", mean: "gây ra", ex: "Extreme weather can _______ serious environmental and social problems.", exVi: "Thời tiết khắc nghiệt có thể gây ra những vấn đề môi trường và xã hội nghiêm trọng." },
+            { topic: "Green Living 2", word: "reassess", phonetic: "/ˌriːəˈses/", type: "v", mean: "đánh giá lại", ex: "Governments _______ environmental policies to improve their effectiveness.", exVi: "Các chính phủ đánh giá lại các chính sách môi trường để nâng cao hiệu quả của chúng." },
+            { topic: "Green Living 2", word: "reappraise", phonetic: "/ˌriːəˈpreɪz/", type: "v", mean: "xem xét lại", ex: "Experts _______ energy strategies to reduce carbon emissions.", exVi: "Các chuyên gia xem xét lại các chiến lược năng lượng để giảm lượng khí thải carbon." },
+            { topic: "Green Living 2", word: "modify", phonetic: "/ˈmɒdɪfaɪ/", type: "v", mean: "sửa đổi", ex: "People _______ daily habits to live in a more environmentally friendly way.", exVi: "Mọi người sửa đổi các thói quen hàng ngày để sống theo cách thân thiện với môi trường hơn." },
+            { topic: "Green Living 2", word: "ecosystem", phonetic: "/ˈiːkəʊˌsɪstəm/", type: "n", mean: "hệ sinh thái", ex: "A healthy _______ supports plants, animals, and human life at the same time.", exVi: "Một hệ sinh thái khỏe mạnh hỗ trợ thực vật, động vật và cả cuộc sống con người cùng một lúc." },
+            { topic: "Green Living 2", word: "biodiversity", phonetic: "/ˌbaɪəʊdaɪˈvɜːsəti/", type: "n", mean: "đa dạng sinh học", ex: "_______ is important because every species plays a role in nature.", exVi: "Đa dạng sinh học rất quan trọng vì mỗi loài đều đóng một vai trò trong tự nhiên." },
+            { topic: "Green Living 2", word: "carbon footprint", phonetic: "/ˌkɑːbən ˈfʊtprɪnt/", type: "n", mean: "lượng khí thải carbon", ex: "People reduce their _______ by using public transportation and saving energy.", exVi: "Mọi người giảm lượng khí thải carbon của họ bằng cách sử dụng phương tiện giao thông công cộng và tiết kiệm năng lượng." },
+            { topic: "Green Living 2", word: "habitat", phonetic: "/ˈhæbɪtæt/", type: "n", mean: "môi trường sống", ex: "Forests provide natural _______s for many animals and plant species.", exVi: "Rừng cung cấp môi trường sống tự nhiên cho nhiều loài động vật và thực vật." },
+            { topic: "Green Living 2", word: "deforestation", phonetic: "/diːˌfɒrɪˈsteɪʃən/", type: "n", mean: "nạn phá rừng", ex: "_______ causes serious environmental damage and loss of wildlife.", exVi: "Nạn phá rừng gây ra thiệt hại môi trường nghiêm trọng và làm mất đi các loài động vật hoang dã." },
+            { topic: "Green Living 2", word: "organic farming", phonetic: "/ɔːˌɡænɪk ˈfɑːmɪŋ/", type: "n", mean: "nông nghiệp hữu cơ", ex: "_______ avoids harmful chemicals and protects soil quality.", exVi: "Nông nghiệp hữu cơ tránh các hóa chất độc hại và bảo vệ chất lượng đất." },
+            { topic: "Green Living 2", word: "hydropower", phonetic: "/ˈhaɪdrəʊpaʊə(r)/", type: "n", mean: "thủy điện", ex: "_______ provides renewable energy for many countries around the world.", exVi: "Thủy điện cung cấp năng lượng tái tạo cho nhiều quốc gia trên toàn thế giới." },
+            { topic: "Green Living 2", word: "overuse", phonetic: "/ˌəʊvəˈjuːs/", type: "n", mean: "sự lạm dụng", ex: "The _______ of natural resources creates long-term environmental problems.", exVi: "Sự lạm dụng (sử dụng quá mức) tài nguyên thiên nhiên tạo ra các vấn đề môi trường dài hạn." },
+            { topic: "Green Living 2", word: "landfill", phonetic: "/ˈlændfɪl/", type: "n", mean: "bãi chôn lấp rác", ex: "Large amounts of waste end up in _______ sites every year.", exVi: "Lượng lớn rác thải bị đưa đến các bãi chôn lấp rác mỗi năm." },
+            { topic: "Green Living 2", word: "scarcity", phonetic: "/ˈskeəsəti/", type: "n", mean: "sự khan hiếm", ex: "Water _______ affects millions of people in dry regions around the world.", exVi: "Sự khan hiếm nước ảnh hưởng đến hàng triệu người ở các khu vực khô hạn trên toàn thế giới." }
+        ];
+
+        let currentIndex = 0;
+        let hintedWords = new Set();
+        let hintUsedThisCard = false;
+        let startTime = null;
+        let timerId = null;
+        let isMusicPlaying = false;
+        let currentFallbackAudio = null;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.25;
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'start') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.4);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.15, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
+                osc.start(now);
+                osc.stop(now + 1.0);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(783.99, now);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.1);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'error') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(349.23, now);
+                osc.frequency.exponentialRampToValueAtTime(261.63, now + 0.2);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        function populateWelcomeTable() {
+            const tbody = document.getElementById('welcome-table-body');
+            tbody.innerHTML = flashcards.map(item => `
+                <tr class="border-b border-teal-900/40 hover:bg-teal-500/20 transition-colors">
+                    <td class="p-3 sm:p-4 font-black text-teal-300 sm:text-lg tracking-wide">${item.word}</td>
+                    <td class="p-3 sm:p-4"><span class="px-2 py-1 bg-teal-500/40 text-white rounded-md text-[9px] sm:text-[10px] uppercase font-black border border-teal-400/30">${item.type}</span></td>
+                    <td class="p-3 sm:p-4 text-teal-100 font-medium leading-relaxed">${item.mean}</td>
+                </tr>
+            `).join('');
+        }
+
+        function startStudy() {
+            playSound('start');
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            startTimer();
+            renderCard();
+        }
+
+        function toggleMusic() {
+            const icon = document.getElementById('music-icon');
+            if (isMusicPlaying) { bgMusic.pause(); icon.textContent = '🔇'; }
+            else { bgMusic.play().catch(e => console.log(e)); icon.textContent = '🎵'; }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        function startTimer() {
+            if (timerId) clearInterval(timerId);
+            startTime = Date.now();
+            timerId = setInterval(() => {
+                const diff = Math.floor((Date.now() - startTime) / 1000);
+                const m = Math.floor(diff / 60).toString().padStart(2, '0');
+                const s = (diff % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function speakCurrentWord(e) {
+            if (e) e.stopPropagation();
+            window.speechSynthesis.cancel();
+            if (currentFallbackAudio) { currentFallbackAudio.pause(); }
+
+            const word = flashcards[currentIndex].word.replace(/[\s-]/g, ' ');
+            const utter = new SpeechSynthesisUtterance(word);
+            utter.lang = 'en-US';
+            utter.rate = 0.9;
+
+            let started = false;
+            utter.onstart = () => started = true;
+            utter.onerror = () => playFallback(word);
+            window.speechSynthesis.speak(utter);
+            setTimeout(() => { if (!started) { window.speechSynthesis.cancel(); playFallback(word); } }, 500);
+        }
+
+        function playFallback(word) {
+            currentFallbackAudio = new Audio(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=2`);
+            currentFallbackAudio.play().catch(e => console.log(e));
+        }
+
+        function renderCard() {
+            const card = flashcards[currentIndex];
+            hintUsedThisCard = false;
+            document.getElementById('hint-btn').disabled = false;
+            document.getElementById('word-mean').textContent = card.mean;
+            document.getElementById('word-type').textContent = card.type;
+
+            // Highlight the missing word
+            let wordLength = card.word.length;
+            let underlineWidth = wordLength < 6 ? 'w-16' : (wordLength < 10 ? 'w-24' : (wordLength >= 14 ? 'w-40' : 'w-32'));
+            document.getElementById('word-ex').innerHTML = card.ex.replace('_______', `<span class="text-teal-600 border-b-2 border-teal-600 inline-block ${underlineWidth}"></span>`);
+
+            document.getElementById('word-exVi').textContent = card.exVi;
+
+            const container = document.getElementById('letter-inputs-container');
+            container.innerHTML = '';
+
+            const words = card.word.split(' ');
+            words.forEach((w, wordIndex) => {
+                const group = document.createElement('div');
+                group.className = 'flex gap-[2px] sm:gap-1';
+
+                w.split('').forEach((char, i) => {
+                    if (char === '-') {
+                        const dash = document.createElement('span');
+                        dash.textContent = '-';
+                        dash.className = 'text-base sm:text-xl font-bold text-teal-300 self-center px-0.5';
+                        group.appendChild(dash);
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text'; input.maxLength = 1;
+                        // Điều chỉnh kích thước ô nhập để phù hợp với từ siêu dài như "carbon footprint", "organic farming"
+                        input.className = 'char-input editable-input w-[22px] h-7 sm:w-8 sm:h-10 text-center text-sm sm:text-lg font-bold border-2 border-teal-200 rounded-md sm:rounded-lg focus:border-teal-500 bg-white text-teal-800 shadow-inner transition-all';
+
+                        input.addEventListener('input', function () {
+                            this.value = this.value.toLowerCase();
+                            const inputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const idx = inputs.indexOf(this);
+                            if (this.value && idx < inputs.length - 1) {
+                                let next = idx + 1;
+                                while (next < inputs.length && inputs[next].readOnly) next++;
+                                if (next < inputs.length) inputs[next].focus();
+                            }
+                        });
+
+                        input.addEventListener('keydown', function (e) {
+                            const inputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const idx = inputs.indexOf(this);
+                            if (e.key === 'Backspace' && !this.value && idx > 0) {
+                                let prev = idx - 1;
+                                while (prev >= 0 && inputs[prev].readOnly) prev--;
+                                if (prev >= 0) inputs[prev].focus();
+                            } else if (e.key === 'Enter') checkAnswer();
+                        });
+                        group.appendChild(input);
+                    }
+                });
+
+                container.appendChild(group);
+                if (wordIndex < words.length - 1) {
+                    const s = document.createElement('div'); s.className = 'w-1.5 sm:w-3'; container.appendChild(s);
+                }
+            });
+
+            setTimeout(() => document.querySelector('.editable-input')?.focus(), 100);
+            document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${flashcards.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / flashcards.length) * 100}%`;
+            document.getElementById('top-prev-btn').classList.toggle('hidden', currentIndex === 0);
+        }
+
+        function giveHint() {
+            if (hintUsedThisCard) return;
+            const target = flashcards[currentIndex].word.replace(/[\s-]/g, '').toLowerCase();
+            const inputs = document.querySelectorAll('.char-input');
+            let pool = [];
+            for (let i = 0; i < inputs.length; i++) if (!inputs[i].readOnly && inputs[i].value.toLowerCase() !== target[i]) pool.push(i);
+
+            if (pool.length === 0) return;
+            // Tăng số lượng hint cho các cụm từ dài
+            const count = target.length <= 6 ? 1 : (target.length >= 14 ? 4 : (target.length >= 9 ? 3 : 2));
+
+            for (let i = 0; i < Math.min(count, pool.length); i++) {
+                const rand = Math.floor(Math.random() * pool.length);
+                const idx = pool.splice(rand, 1)[0];
+                inputs[idx].value = target[idx];
+                inputs[idx].readOnly = true;
+                inputs[idx].className = 'char-input w-[22px] h-7 sm:w-8 sm:h-10 text-center font-bold border-2 border-lime-400 bg-lime-100 text-lime-800 rounded-md sm:rounded-lg';
+            }
+            hintUsedThisCard = true;
+            hintedWords.add(flashcards[currentIndex].word);
+            document.getElementById('hint-btn').disabled = true;
+        }
+
+        function checkAnswer() {
+            const card = flashcards[currentIndex];
+            const target = card.word.replace(/[\s-]/g, '').toLowerCase();
+            const inputs = document.querySelectorAll('.char-input');
+            const user = Array.from(inputs).map(i => i.value).join('').toLowerCase();
+
+            if (user === target) {
+                playSound('success');
+                const header = document.getElementById('result-header');
+                header.textContent = "🎉 CHÍNH XÁC!";
+                header.className = "text-center py-1.5 sm:py-2 rounded-lg font-bold text-sm sm:text-lg mb-3 sm:mb-4 bg-teal-100 text-teal-800 uppercase tracking-widest";
+
+                document.getElementById('back-word').textContent = card.word;
+                document.getElementById('back-phonetic').textContent = card.phonetic;
+                document.getElementById('back-mean').textContent = `${card.mean} (${card.type})`;
+                document.getElementById('back-ex').innerHTML = card.ex.replace('_______', `<span class="font-black text-teal-700 underline decoration-2">${card.word}</span>`);
+
+                document.getElementById('flashcard').classList.add('flipped');
+            } else {
+                playSound('error');
+                document.getElementById('letter-inputs-container').classList.add('shake');
+                setTimeout(() => document.getElementById('letter-inputs-container').classList.remove('shake'), 400);
+            }
+        }
+
+        function nextCard() {
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => {
+                if (currentIndex < flashcards.length - 1) { currentIndex++; renderCard(); }
+                else showFinal();
+            }, 300);
+        }
+
+        function prevCard() {
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => { if (currentIndex > 0) { currentIndex--; renderCard(); } }, 300);
+        }
+
+        function showFinal() {
+            clearInterval(timerId);
+            const total = Math.floor((Date.now() - startTime) / 1000);
+            const m = Math.floor(total / 60); const s = total % 60;
+            const now = new Date();
+
+            document.getElementById('main-content').classList.add('hidden');
+            document.getElementById('final-screen').classList.remove('hidden');
+            document.getElementById('finish-time').textContent = now.toLocaleTimeString('vi-VN') + " - " + now.toLocaleDateString('vi-VN');
+            document.getElementById('elapsed-time').textContent = (m > 0 ? `${m} phút ` : '') + `${s} giây`;
+            document.getElementById('correct-count').textContent = flashcards.length - hintedWords.size;
+            document.getElementById('hint-count').textContent = hintedWords.size;
+
+            const list = document.getElementById('hint-words-list');
+            list.innerHTML = '';
+            if (hintedWords.size > 0) {
+                document.getElementById('hint-list-container').classList.remove('hidden');
+                hintedWords.forEach(w => { const li = document.createElement('li'); li.textContent = w; list.appendChild(li); });
+            }
+        }
+
+        function resetQuizToSummary() {
+            currentIndex = 0; hintedWords.clear();
+            document.getElementById('final-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            populateWelcomeTable();
+        }
+
+        document.addEventListener('DOMContentLoaded', populateWelcomeTable);
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('main-content').classList.contains('hidden')) return;
+            if (e.altKey && e.key.toLowerCase() === 'h') { e.preventDefault(); giveHint(); }
+            if (e.shiftKey && e.key === 'Enter') { e.preventDefault(); speakCurrentWord(); }
+            if (e.key === 'Enter' && !e.shiftKey) {
+                if (document.getElementById('flashcard').classList.contains('flipped')) nextCard();
+                else checkAnswer();
+            }
+        });
+    </script>
+</body>
+
+</html>
