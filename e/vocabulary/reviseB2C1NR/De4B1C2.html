@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Từ Vựng Vũ Trụ - Unit 3 B2C1</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Animations */
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+                box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        .animate-twinkle {
+            animation: twinkle ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        .animate-float-fast {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .animate-float-slow {
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .animate-float-slower {
+            animation: float 12s ease-in-out infinite;
+        }
+
+        @keyframes shootingStar {
+            0% {
+                transform: translateX(0) translateY(0) rotate(-45deg);
+                opacity: 1;
+                width: 0;
+            }
+
+            30% {
+                width: 100px;
+            }
+
+            100% {
+                transform: translateX(-1000px) translateY(1000px) rotate(-45deg);
+                opacity: 0;
+                width: 0;
+            }
+        }
+
+        .shooting-star {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+            border-radius: 999px;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 1));
+            animation: shootingStar 6s linear infinite;
+        }
+
+        /* UI Styles */
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Markdown Bold Styling */
+        .question-text strong {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        /* Prevent scrolling on body when not needed */
+        body {
+            overflow-x: hidden;
+            background-color: black;
+        }
+
+        /* Đảm bảo class hidden luôn hoạt động kể cả khi Tailwind load chậm */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="text-white font-sans min-h-screen relative flex items-center justify-center p-4">
+
+    <!-- Vũ trụ Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-indigo-950 to-black"></div>
+
+        <!-- Stars Container -->
+        <div id="stars-container"></div>
+
+        <!-- Hành tinh -->
+        <div class="absolute top-[10%] left-[5%] text-6xl opacity-80 animate-float-slow">🌎</div>
+        <div class="absolute top-[60%] right-[10%] text-7xl opacity-60 animate-float-slower">🪐</div>
+        <div class="absolute top-[20%] right-[20%] text-4xl opacity-90 animate-float-fast">🌕</div>
+        <div class="absolute bottom-[10%] left-[15%] text-5xl opacity-70 animate-float-slow"
+            style="animation-delay: 2s;">☄️</div>
+
+        <!-- Sao băng -->
+        <div class="absolute top-0 right-0 w-full h-full">
+            <div class="shooting-star top-[20%] left-[80%]" style="animation-delay: 1s;"></div>
+            <div class="shooting-star top-[40%] left-[60%]" style="animation-delay: 5s;"></div>
+            <div class="shooting-star top-[10%] left-[30%]" style="animation-delay: 9s;"></div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="relative z-10 w-full max-w-3xl transition-all duration-500">
+
+        <!-- START SCREEN -->
+        <div id="screen-start"
+            class="glass-panel rounded-3xl p-10 text-center transform hover:scale-105 transition-transform duration-300">
+            <h1
+                class="text-5xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">
+                Chuyến Du Hành Từ Vựng
+            </h1>
+            <p class="text-xl text-gray-300 mb-8">
+                Khám phá Khoa học & Học thuật. Chinh phục <span id="total-count" class="font-bold text-white"></span> từ
+                vựng tinh chọn của Unit 3 (B2-C1)! 🚀
+            </p>
+            <button onclick="startGame()"
+                class="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full text-xl shadow-[0_0_20px_rgba(139,92,246,0.5)] hover:shadow-[0_0_30px_rgba(139,92,246,0.8)] transition-all cursor-pointer">
+                Bắt Đầu Khám Phá
+            </button>
+        </div>
+
+        <!-- PLAYING SCREEN -->
+        <div id="screen-playing" class="glass-panel rounded-3xl p-6 md:p-10 hidden">
+            <!-- Header: Progress & Score -->
+            <div class="flex justify-between items-center mb-6 border-b border-white/20 pb-4">
+                <span id="progress-text" class="text-cyan-300 font-semibold tracking-wider">
+                    CÂU HỎI 1
+                </span>
+                <span id="score-text"
+                    class="bg-purple-900/50 border border-purple-500/50 px-4 py-1 rounded-full text-purple-200 font-bold">
+                    Điểm: 0
+                </span>
+            </div>
+
+            <!-- Question -->
+            <div class="mb-8">
+                <h2 id="question-text"
+                    class="text-2xl md:text-3xl font-medium leading-relaxed question-text text-white"></h2>
+            </div>
+
+            <!-- Options Container -->
+            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <!-- Buttons will be injected here by JS -->
+            </div>
+
+            <!-- Explanation & Next Button -->
+            <div id="explanation-container" class="transition-all duration-500 overflow-hidden max-h-0 opacity-0">
+                <div class="bg-indigo-950/60 border border-indigo-500/30 rounded-2xl p-5 mb-6">
+                    <p id="rationale-text" class="hidden">
+                        <span class="font-bold text-white">Chi tiết:</span> <span id="rationale-content"></span>
+                    </p>
+                </div>
+
+                <button id="btn-next" onclick="nextQuestion()"
+                    class="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-2xl text-xl shadow-lg transition-all flex justify-center items-center gap-2 cursor-pointer">
+                    Tiếp Tục Chuyến Bay 🛸
+                </button>
+            </div>
+        </div>
+
+        <!-- END SCREEN -->
+        <div id="screen-end"
+            class="glass-panel rounded-3xl p-10 text-center transform hover:scale-105 transition-transform duration-300 hidden">
+            <div class="text-7xl mb-6">🏆</div>
+            <h1
+                class="text-4xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">
+                Nhiệm Vụ Hoàn Thành!
+            </h1>
+            <p class="text-2xl text-white mb-2">
+                Điểm số của bạn: <span id="final-score" class="font-bold text-cyan-400"></span>
+            </p>
+            <p id="final-message" class="text-lg text-gray-400 mb-8"></p>
+
+            <button onclick="startGame()"
+                class="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold rounded-full text-xl transition-all flex items-center justify-center gap-2 mx-auto cursor-pointer">
+                🔄 Chơi lại từ đầu
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Logic JavaScript -->
+    <script>
+        // Database 50 từ vựng tinh chọn của Unit 3 - B2C1
+        const rawVocab = [
+            ["adaptability", "khả năng thích nghi, tính linh hoạt, khả năng điều chỉnh"],
+            ["unprecedented", "chưa từng có, chưa từng xảy ra, chưa từng thấy"],
+            ["leverage", "tận dụng (lợi thế, nguồn lực, sức ảnh hưởng); sử dụng hiệu quả"],
+            ["harness", "khai thác, tận dụng (nguồn lực, năng lượng); kiểm soát, chế ngự (sức mạnh)"],
+            ["drastically", "một cách đáng kể, mạnh mẽ, quyết liệt"],
+            ["resilient", "kiên cường, có khả năng phục hồi nhanh (sau khó khăn); bền bỉ, có khả năng chống chịu"],
+            ["efficacy", "hiệu quả, tính hiệu nghiệm (của một phương pháp, thuốc)"],
+            ["indispensable", "cần thiết, không thể thiếu"],
+            ["undermine", "làm suy yếu, phá hoại dần dần; làm xói mòn (uy tín, niềm tin)"],
+            ["anthropogenic", "do con người gây ra; có nguồn gốc từ hoạt động của con người"],
+            ["mitigation", "sự giảm nhẹ, làm dịu đi (tác động tiêu cực); sự làm giảm bớt"],
+            ["paradigm", "mô hình, hệ hình; khung mẫu"],
+            ["coherence", "tính gắn kết, mạch lạc; tính đồng bộ, nhất quán"],
+            ["intractable", "khó giải quyết, khó kiểm soát (vấn đề); ngoan cố, khó bảo (người)"],
+            ["heritable", "có thể di truyền; có thể truyền lại (từ cha mẹ sang con cái)"],
+            ["quandary", "tình thế khó xử, tiến thoái lưỡng nan"],
+            ["indiscriminately", "bừa bãi, không phân biệt; không có sự chọn lọc"],
+            ["irrefutable", "không thể bác bỏ, không thể chối cãi; hiển nhiên"],
+            ["proliferate", "sinh sôi nảy nở, phát triển nhanh chóng; lan rộng"],
+            ["profound", "sâu sắc, uyên thâm (kiến thức, tư tưởng); rất lớn, mạnh mẽ (tác động, cảm xúc)"],
+            ["put into practice", "thực hiện, đưa vào thực tế; áp dụng"],
+            ["breakthroughs", "những đột phá, những phát minh quan trọng"],
+            ["illuminate", "làm sáng tỏ, làm rõ (một vấn đề, sự thật)"],
+            ["alter", "thay đổi, biến đổi"],
+            ["therapeutic", "thuộc về trị liệu, điều trị"],
+            ["cognitive impairment", "suy giảm nhận thức"],
+            ["reorganize", "tái tổ chức, sắp xếp lại"],
+            ["traumatic brain injuries", "chấn thương sọ não"],
+            ["engaging", "thu hút (sự chú ý, tham gia); tham gia vào"],
+            ["targeted", "nhắm mục tiêu, có mục đích cụ thể"],
+            ["consistent", "kiên định, nhất quán; bền vững"],
+            ["strengthen", "củng cố, làm mạnh lên"],
+            ["consequently", "do đó, kết quả là"],
+            ["permanent disability", "tàn tật vĩnh viễn"],
+            ["functional improvements", "cải thiện chức năng"],
+            ["precision", "sự chính xác"],
+            ["intervention", "sự can thiệp (để cải thiện tình hình)"],
+            ["delicate balance", "sự cân bằng tinh tế"],
+            ["stimulation", "sự kích thích"],
+            ["overexertion", "sự gắng sức quá mức"],
+            ["cutting-edge", "tiên tiến, hiện đại nhất"],
+            ["AI-driven diagnostics", "chẩn đoán dựa trên AI"],
+            ["clinicians", "bác sĩ lâm sàng, nhà lâm sàng"],
+            ["protocols", "phác đồ điều trị, quy trình"],
+            ["inherent", "vốn có, cố hữu (tính chất)"],
+            ["capacity", "khả năng, năng lực (để làm gì)"],
+            ["rewire", "tái cấu trúc (não bộ); kết nối lại (dây điện)"],
+            ["phenomenon", "hiện tượng"],
+            ["cortical remapping", "tái lập bản đồ vỏ não"],
+            ["redefine", "định nghĩa lại"]
+        ];
+
+        // Khởi tạo hiển thị tổng số câu
+        document.getElementById('total-count').innerText = rawVocab.length;
+
+        // Sinh Quiz Động và Xáo trộn
+        const quizData = rawVocab.map((item, index) => {
+            const correctMeaning = item[1];
+            let wrongMeanings = [];
+
+            // Random 3 đáp án nhiễu khác với đáp án đúng
+            while (wrongMeanings.length < 3) {
+                const randomItem = rawVocab[Math.floor(Math.random() * rawVocab.length)];
+                if (randomItem[1] !== correctMeaning && !wrongMeanings.includes(randomItem[1])) {
+                    wrongMeanings.push(randomItem[1]);
+                }
+            }
+
+            const options = [
+                { text: correctMeaning, rationale: "Tuyệt vời, đây là đáp án chính xác!", isCorrect: true },
+                { text: wrongMeanings[0], rationale: "Đáp án sai, đây là nghĩa của một từ/cụm từ khác trong bài.", isCorrect: false },
+                { text: wrongMeanings[1], rationale: "Đáp án sai, đây là nghĩa của một từ/cụm từ khác trong bài.", isCorrect: false },
+                { text: wrongMeanings[2], rationale: "Đáp án sai, đây là nghĩa của một từ/cụm từ khác trong bài.", isCorrect: false }
+            ];
+
+            return {
+                questionNumber: index + 1,
+                question: `Nghĩa của từ/cụm từ **${item[0]}** là gì?`,
+                answerOptions: options
+            };
+        });
+
+        // Tạo Background Sao Lấp Lánh
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'absolute rounded-full bg-white opacity-0 animate-twinkle';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                const size = `${Math.random() * 3 + 1}px`;
+                star.style.width = size;
+                star.style.height = size;
+                star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(star);
+            }
+        }
+
+        // Trạng thái Game
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let hasAnswered = false;
+        let currentShuffledOptions = [];
+
+        // DOM Elements
+        const screenStart = document.getElementById('screen-start');
+        const screenPlaying = document.getElementById('screen-playing');
+        const screenEnd = document.getElementById('screen-end');
+
+        const progressText = document.getElementById('progress-text');
+        const scoreText = document.getElementById('score-text');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const explanationContainer = document.getElementById('explanation-container');
+        const rationaleText = document.getElementById('rationale-text');
+        const rationaleContent = document.getElementById('rationale-content');
+        const btnNext = document.getElementById('btn-next');
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function formatMarkdownBold(text) {
+            return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        }
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            hasAnswered = false;
+
+            screenStart.classList.add('hidden');
+            screenEnd.classList.add('hidden');
+            screenPlaying.classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnswered = false;
+            const currentQ = quizData[currentQuestionIndex];
+
+            // Cập nhật UI
+            progressText.innerText = `CÂU HỎI ${currentQuestionIndex + 1} / ${quizData.length}`;
+            scoreText.innerText = `Điểm: ${score}`;
+            questionText.innerHTML = formatMarkdownBold(currentQ.question);
+
+            // Xáo trộn đáp án
+            currentShuffledOptions = shuffleArray(currentQ.answerOptions);
+
+            // Tạo nút đáp án
+            optionsContainer.innerHTML = '';
+            currentShuffledOptions.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = "text-left p-5 rounded-2xl border transition-all duration-300 text-lg bg-white/5 border-white/10 hover:bg-white/10 hover:border-purple-400 cursor-pointer";
+                btn.innerText = option.text;
+                btn.onclick = () => handleAnswer(index, option.isCorrect);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Ẩn phần giải thích
+            explanationContainer.classList.remove('max-h-96', 'opacity-100');
+            explanationContainer.classList.add('max-h-0', 'opacity-0');
+            rationaleText.classList.add('hidden');
+
+            // Cập nhật text nút Next
+            if (currentQuestionIndex < quizData.length - 1) {
+                btnNext.innerHTML = 'Tiếp Tục Chuyến Bay 🛸';
+            } else {
+                btnNext.innerHTML = 'Hoàn Thành Nhiệm Vụ 🏆';
+            }
+        }
+
+        function handleAnswer(selectedIndex, isCorrect) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const currentQ = quizData[currentQuestionIndex];
+
+            if (isCorrect) {
+                score++;
+                scoreText.innerText = `Điểm: ${score}`;
+            }
+
+            // Cập nhật style cho các nút đáp án
+            const buttons = optionsContainer.children;
+            currentShuffledOptions.forEach((option, index) => {
+                const btn = buttons[index];
+                btn.disabled = true;
+                btn.className = "text-left p-5 rounded-2xl border transition-all duration-300 text-lg ";
+
+                if (option.isCorrect) {
+                    btn.className += "bg-green-500/20 border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.4)] text-white";
+                } else if (index === selectedIndex && !option.isCorrect) {
+                    btn.className += "bg-red-500/20 border-red-400 text-red-200";
+                } else {
+                    btn.className += "bg-white/5 border-white/5 opacity-50";
+                }
+            });
+
+            // Hiện giải thích
+            rationaleContent.innerText = currentShuffledOptions[selectedIndex].rationale;
+            rationaleText.className = isCorrect ? "text-green-400 block mt-2" : "text-yellow-400 block mt-2";
+
+            explanationContainer.classList.remove('max-h-0', 'opacity-0');
+            explanationContainer.classList.add('max-h-96', 'opacity-100');
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            screenPlaying.classList.add('hidden');
+            screenEnd.classList.remove('hidden');
+
+            document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+
+            const finalMessage = document.getElementById('final-message');
+            if (score >= quizData.length * 0.9) {
+                finalMessage.innerText = "Kinh ngạc! Bạn đích thực là tinh hoa của ngôn ngữ và tri thức học thuật!";
+            } else if (score >= quizData.length * 0.5) {
+                finalMessage.innerText = "Vốn từ vựng của bạn rất ấn tượng đấy, tiếp tục rèn luyện để đạt mức độ xuất sắc nhé!";
+            } else {
+                finalMessage.innerText = "Hành trình chinh phục kho từ vựng khổng lồ này luôn cần sự kiên nhẫn. Đừng nản chí nhé!";
+            }
+        }
+
+        // Khởi tạo hiệu ứng ngôi sao
+        createStars();
+
+    </script>
+</body>
+
+</html>
+```
