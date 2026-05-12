@@ -1,0 +1,1003 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { ChevronLeft, ChevronRight, CheckCircle2, XCircle, Award, Sparkles, RotateCcw, Languages, Loader2, Volume2,
+Star, X, CalendarDays, BarChart3, ListChecks, ChevronDown, ChevronUp, User, Users } from 'lucide-react';
+
+// --- HỆ THỐNG ÂM THANH UI (Giống iOS) ---
+let audioCtx = null;
+const playSound = (type = 'click') => {
+try {
+if (!audioCtx) {
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+audioCtx = new AudioContext();
+}
+if (audioCtx.state === 'suspended') {
+audioCtx.resume();
+}
+const oscillator = audioCtx.createOscillator();
+const gainNode = audioCtx.createGain();
+oscillator.connect(gainNode);
+gainNode.connect(audioCtx.destination);
+
+if (type === 'pop') {
+oscillator.type = 'sine';
+oscillator.frequency.setValueAtTime(450, audioCtx.currentTime);
+oscillator.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.06);
+gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+oscillator.start(audioCtx.currentTime);
+oscillator.stop(audioCtx.currentTime + 0.06);
+} else {
+oscillator.type = 'sine';
+oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+oscillator.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.02);
+gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
+gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
+oscillator.start(audioCtx.currentTime);
+oscillator.stop(audioCtx.currentTime + 0.02);
+}
+} catch (e) {
+console.warn("Audio API not supported or blocked");
+}
+};
+
+// Âm thanh báo Đúng (Ting ting ăn xu)
+const playSuccessSound = () => {
+try {
+if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+if (audioCtx.state === 'suspended') audioCtx.resume();
+
+// Hàm con tạo 1 nốt nhạc
+const playNote = (freq, startTime, duration) => {
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+osc.type = 'sine';
+osc.frequency.value = freq;
+gain.gain.setValueAtTime(0, startTime);
+gain.gain.linearRampToValueAtTime(0.1, startTime + 0.01);
+gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+osc.start(startTime);
+osc.stop(startTime + duration);
+};
+
+const now = audioCtx.currentTime;
+playNote(987.77, now, 0.15); // Nốt 1 (B5)
+playNote(1318.51, now + 0.1, 0.4); // Nốt 2 cao vút (E6)
+} catch (e) {}
+};
+
+// Âm thanh báo Sai (Bíp trầm buồn)
+const playErrorSound = () => {
+try {
+if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+if (audioCtx.state === 'suspended') audioCtx.resume();
+
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+
+// Sóng triangle tạo cảm giác âm thanh điện tử trầm, hơi "bíp"
+osc.type = 'triangle';
+
+// Vuốt tần số từ 300Hz xuống 150Hz để tạo cảm giác buồn
+osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.3);
+
+gain.gain.setValueAtTime(0, audioCtx.currentTime);
+gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.02);
+gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+
+osc.start(audioCtx.currentTime);
+osc.stop(audioCtx.currentTime + 0.3);
+} catch (e) {}
+};
+
+// Dữ liệu câu hỏi TOEIC
+const quizData = [
+{ id: 101, text: "The lecture will take place at 6:00 P.M., ------- which attendees may ask questions.", options: [{id:
+"A", text: "across"}, {id: "B", text: "after"}, {id: "C", text: "inside"}, {id: "D", text: "among"}], correct: "B" },
+{ id: 102, text: "The ------- antique shop in Pepper Valley will close down next month.", options: [{id: "A", text:
+"last"}, {id: "B", text: "lasts"}, {id: "C", text: "lasted"}, {id: "D", text: "lasting"}], correct: "A" },
+{ id: 103, text: "Merryville residents will receive an online status ------- about the ongoing bridge construction
+project.", options: [{id: "A", text: "update"}, {id: "B", text: "change"}, {id: "C", text: "payment"}, {id: "D", text:
+"request"}], correct: "A" },
+{ id: 104, text: "As a result of ------- many years leading media organizations, Ms. Ayo was selected for the Dowel
+Journalism Prize.", options: [{id: "A", text: "she"}, {id: "B", text: "her"}, {id: "C", text: "hers"}, {id: "D", text:
+"herself"}], correct: "B" },
+{ id: 105, text: "To stop the ------- of computer viruses, do not open suspicious e-mails.", options: [{id: "A", text:
+"break"}, {id: "B", text: "spread"}, {id: "C", text: "balance"}, {id: "D", text: "surface"}], correct: "B" },
+{ id: 106, text: "The hiring manager ------- considered each applicant's résumé and qualifications.", options: [{id:
+"A", text: "caring"}, {id: "B", text: "careful"}, {id: "C", text: "carefully"}, {id: "D", text: "carefulness"}],
+correct: "C" },
+{ id: 107, text: "In October, Mr. Sakamoto will leave for New Zealand ------- will oversee the opening of the new
+Auckland branch.", options: [{id: "A", text: "because"}, {id: "B", text: "in addition"}, {id: "C", text: "and"}, {id:
+"D", text: "prior to"}], correct: "C" },
+{ id: 108, text: "Tarateer Pharmaceuticals is varying its product ------- to include over-the-counter medications.",
+options: [{id: "A", text: "to line"}, {id: "B", text: "lining"}, {id: "C", text: "lined"}, {id: "D", text: "line"}],
+correct: "D" },
+{ id: 109, text: "Dynart, Inc., continuously ------- new ways to reduce its use of plastics.", options: [{id: "A", text:
+"seeks"}, {id: "B", text: "seeker"}, {id: "C", text: "to seek"}, {id: "D", text: "seeking"}], correct: "A" },
+{ id: 110, text: "The cash registers at Pirkle Books automatically ------- the remaining inventory of books available.",
+options: [{id: "A", text: "calculate"}, {id: "B", text: "calculator"}, {id: "C", text: "calculating"}, {id: "D", text:
+"calculation"}], correct: "A" },
+{ id: 111, text: "The product team is designing mapping software that can ------- locate underground minerals.",
+options: [{id: "A", text: "infinitely"}, {id: "B", text: "sincerely"}, {id: "C", text: "precisely"}, {id: "D", text:
+"greatly"}], correct: "C" },
+{ id: 112, text: "According to CEO Mayu Yamada, it would not be ------- responsible to expand the warehouse at this
+time.", options: [{id: "A", text: "finance"}, {id: "B", text: "financials"}, {id: "C", text: "financially"}, {id: "D",
+text: "financing"}], correct: "C" },
+{ id: 113, text: "Analysts cannot say with any ------- what the regional demand for electric trucks will be.", options:
+[{id: "A", text: "certainty"}, {id: "B", text: "justice"}, {id: "C", text: "excellence"}, {id: "D", text: "denial"}],
+correct: "A" },
+{ id: 114, text: "As part of its marketing campaign, Elegancia Dishware is ------- soliciting feedback from customers.",
+options: [{id: "A", text: "lightly"}, {id: "B", text: "loyally"}, {id: "C", text: "actively"}, {id: "D", text:
+"cleanly"}], correct: "C" },
+{ id: 115, text: "Rain gardens are intended to ------- water to prevent flooding of local roads.", options: [{id: "A",
+text: "engage"}, {id: "B", text: "undergo"}, {id: "C", text: "absorb"}, {id: "D", text: "overwhelm"}], correct: "C" },
+{ id: 116, text: "Theta Industries' training program aims to increase the ------- of its manufacturing systems.",
+options: [{id: "A", text: "producer"}, {id: "B", text: "produced"}, {id: "C", text: "productive"}, {id: "D", text:
+"productivity"}], correct: "D" },
+{ id: 117, text: "The board of directors has voted to award Mr. Mitrakos a bonus for his role ------- obtaining the
+international contract.", options: [{id: "A", text: "in"}, {id: "B", text: "at"}, {id: "C", text: "except"}, {id: "D",
+text: "apart"}], correct: "A" },
+{ id: 118, text: "The finance director gave his approval ------- the project can move forward.", options: [{id: "A",
+text: "along"}, {id: "B", text: "furthermore"}, {id: "C", text: "cautiously"}, {id: "D", text: "so that"}], correct: "D"
+},
+{ id: 119, text: "The newspaper article describes ways job seekers can ------- for having little workplace experience.",
+options: [{id: "A", text: "reply"}, {id: "B", text: "capture"}, {id: "C", text: "compensate"}, {id: "D", text:
+"accumulate"}], correct: "C" },
+{ id: 120, text: "Mr. Ellis and Ms. Barnes were both highly qualified, but ------- got the job.", options: [{id: "A",
+text: "myself"}, {id: "B", text: "neither"}, {id: "C", text: "anybody"}, {id: "D", text: "whoever"}], correct: "B" },
+{ id: 121, text: "Ennis Photography purchased all new lighting equipment ------- the high cost.", options: [{id: "A",
+text: "even though"}, {id: "B", text: "however"}, {id: "C", text: "until"}, {id: "D", text: "despite"}], correct: "D" },
+{ id: 122, text: "Marburton residents who wish to ------- a home should contact the award-winning team at Kwan Real
+Estate.", options: [{id: "A", text: "seller"}, {id: "B", text: "sold"}, {id: "C", text: "sell"}, {id: "D", text:
+"selling"}], correct: "C" },
+{ id: 123, text: "Maswa Bistro began a ------- agreement with local farmers to purchase a set amount of produce each
+week.", options: [{id: "A", text: "disruptive"}, {id: "B", text: "cooperative"}, {id: "C", text: "grateful"}, {id: "D",
+text: "concerned"}], correct: "B" },
+{ id: 124, text: "The City of Doyle's new downtown parking ------- have been met with opposition by residents and
+visitors.", options: [{id: "A", text: "restricts"}, {id: "B", text: "restricted"}, {id: "C", text: "restrictions"}, {id:
+"D", text: "restricting"}], correct: "C" },
+{ id: 125, text: "The plumbing position requires extensive training, even for those who studied ------- in technical
+school.", options: [{id: "A", text: "diligently"}, {id: "B", text: "scientifically"}, {id: "C", text: "objectively"},
+{id: "D", text: "decidedly"}], correct: "A" },
+{ id: 126, text: "With its fixed price -------, Omega Cellular guarantees no phone bill increases for three years.",
+options: [{id: "A", text: "assurance"}, {id: "B", text: "assuredly"}, {id: "C", text: "assuring"}, {id: "D", text:
+"assures"}], correct: "A" },
+{ id: 127, text: "As chief analytics officer, Mr. Ko has worked at Lochston Ltd. with great ------- for more than twenty
+years.", options: [{id: "A", text: "deduction"}, {id: "B", text: "duplication"}, {id: "C", text: "declaration"}, {id:
+"D", text: "dedication"}], correct: "D" },
+{ id: 128, text: "Milltown Hospital's cafeteria serves lunch seven days a week ------- only on weekdays.", options:
+[{id: "A", text: "up to"}, {id: "B", text: "as though"}, {id: "C", text: "each time"}, {id: "D", text: "rather than"}],
+correct: "D" },
+{ id: 129, text: "The store's entire inventory of lumber comes from a nearby ------- supplier.", options: [{id: "A",
+text: "financial"}, {id: "B", text: "promotional"}, {id: "C", text: "chemical"}, {id: "D", text: "commercial"}],
+correct: "D" },
+{ id: 130, text: "For a $95 ------- fee, our mechanics will determine what repairs are needed.", options: [{id: "A",
+text: "diagnosed"}, {id: "B", text: "diagnostic"}, {id: "C", text: "diagnosable"}, {id: "D", text: "diagnose"}],
+correct: "B" }
+];
+
+// Hàm format ngày giờ
+const formatDate = (date) => {
+if (!date) return '';
+const hours = String(date.getHours()).padStart(2, '0');
+const minutes = String(date.getMinutes()).padStart(2, '0');
+const day = String(date.getDate()).padStart(2, '0');
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const year = date.getFullYear();
+return `${hours}:${minutes} - ${day}/${month}/${year}`;
+};
+
+export default function App() {
+// State quản lý người dùng
+const [hasStarted, setHasStarted] = useState(false);
+const [userName, setUserName] = useState('');
+const [nameError, setNameError] = useState(false);
+
+const [currentIndex, setCurrentIndex] = useState(0);
+const [attempts, setAttempts] = useState({});
+const [firstAttempts, setFirstAttempts] = useState({});
+const [isFinished, setIsFinished] = useState(false);
+const [finishDate, setFinishDate] = useState(null);
+const [score, setScore] = useState(0);
+const [stars, setStars] = useState([]);
+
+// Trạng thái hiển thị danh sách Review
+const [showReviewList, setShowReviewList] = useState(false);
+
+// Tooltip state dùng để quản lý việc quét, nhưng đã bỏ UI loading
+const [tooltip, setTooltip] = useState({ show: false, text: '' });
+
+// State cho tính năng Ghi chú
+const [notes, setNotes] = useState({});
+const [editingNote, setEditingNote] = useState(null);
+const [tempNoteText, setTempNoteText] = useState('');
+const [pinnedTranslations, setPinnedTranslations] = useState({});
+
+// Thêm state quản lý hiệu ứng rung
+const [shakeOption, setShakeOption] = useState(null);
+
+// Thêm state quản lý hiệu ứng nốt nhạc bay ra
+const [activeNotes, setActiveNotes] = useState({});
+
+const currentQuestion = quizData[currentIndex];
+const totalQuestions = quizData.length;
+
+const translationCache = useRef(new Map());
+const abortControllerRef = useRef(null);
+
+const handleOpenNote = (e, qId, type) => {
+e.stopPropagation();
+playSound('click');
+const key = `${qId}_${type}`;
+setTempNoteText(notes[key] || '');
+setEditingNote(key);
+};
+
+// Xử lý bắt đầu làm bài
+const handleStartQuiz = () => {
+if (userName.trim() === '') {
+playSound('pop');
+setNameError(true);
+return;
+}
+playSound('click');
+setHasStarted(true);
+};
+
+const handleSaveNote = (e, qId, type) => {
+e.stopPropagation();
+playSound('click');
+const key = `${qId}_${type}`;
+setNotes(prev => {
+const newNotes = { ...prev };
+if (tempNoteText.trim() === '') {
+delete newNotes[key];
+} else {
+newNotes[key] = tempNoteText;
+}
+return newNotes;
+});
+setEditingNote(null);
+};
+
+const removePin = (qId, pinId) => {
+playSound('click');
+setPinnedTranslations(prev => {
+const current = prev[qId] || [];
+return { ...prev, [qId]: current.filter(p => p.id !== pinId) };
+});
+};
+
+const renderTextWithPins = (text, qId, readOnly = false) => {
+if (!text) return text;
+// NẾU LÀ TRANG REVIEW (readOnly = true) -> TRẢ VỀ TEXT NGUYÊN BẢN, KHÔNG HIỆN TỪ ĐÃ QUÉT
+if (readOnly) return text;
+
+const pins = pinnedTranslations[qId] || [];
+if (pins.length === 0) return text;
+
+let elements = [text];
+const sortedPins = [...pins].sort((a, b) => b.original.length - a.original.length);
+
+sortedPins.forEach(pin => {
+const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const regex = new RegExp(`(${escapeRegExp(pin.original)})`, 'gi');
+
+elements = elements.flatMap((el, elIndex) => {
+if (typeof el === 'string') {
+const parts = el.split(regex);
+return parts.map((part, idx) => {
+if (part.toLowerCase() === pin.original.toLowerCase()) {
+// NẾU LÀ TRANG LÀM BÀI -> HIỆN ĐẦY ĐỦ BUBBLE VÀ HIGHLIGHT
+return (
+<span key={`${pin.id}-${elIndex}-${idx}`} className="relative inline-block group mx-0.5 mt-6 mb-1">
+    <span
+        className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 flex items-center gap-1.5 bg-[#2d1b54]/95 backdrop-blur-md border border-fuchsia-500/40 text-fuchsia-100 text-xs px-2.5 py-1.5 rounded-lg shadow-[0_4px_15px_rgba(217,70,239,0.3)] whitespace-nowrap z-10 pointer-events-auto">
+        <button onClick={(e)=> { e.stopPropagation(); speakText(pin.original); }} className="text-fuchsia-300
+            hover:text-white transition-colors" title="Listen">
+            <Volume2 size={12} />
+        </button>
+        <span className="font-medium tracking-wide">{pin.translation}</span>
+        <button onClick={(e)=> { e.stopPropagation(); removePin(qId, pin.id); }} className="text-gray-400
+            hover:text-red-400 bg-white/10 hover:bg-white/20 rounded-full p-0.5 transition-colors ml-1" title="Remove">
+            <X size={12} />
+        </button>
+        <span
+            className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-fuchsia-500/40 pointer-events-none"></span>
+        <span
+            className="absolute top-[calc(100%-1px)] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[4px] border-l-transparent border-r-transparent border-t-[#2d1b54]/95 pointer-events-none"></span>
+    </span>
+    <span
+        className="border-b-[2px] border-fuchsia-500/60 border-dotted text-fuchsia-200 select-text bg-fuchsia-500/10 px-0.5 rounded-sm">{part}</span>
+</span>
+);
+}
+return part;
+});
+}
+return el;
+});
+});
+return elements;
+};
+
+const speakText = useCallback((text) => {
+if (!('speechSynthesis' in window)) return;
+window.speechSynthesis.cancel();
+const utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = 'en-US';
+utterance.rate = 0.85;
+const setVoiceAndSpeak = () => {
+const voices = window.speechSynthesis.getVoices();
+const preferredVoice = voices.find(v =>
+v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural'))
+) || voices.find(v => v.lang.startsWith('en'));
+if (preferredVoice) utterance.voice = preferredVoice;
+window.speechSynthesis.speak(utterance);
+};
+if (window.speechSynthesis.getVoices().length === 0) {
+window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+} else {
+setVoiceAndSpeak();
+}
+}, []);
+
+const translateText = async (text) => {
+const lowerText = text.toLowerCase();
+if (translationCache.current.has(lowerText)) {
+return translationCache.current.get(lowerText);
+}
+if (abortControllerRef.current) {
+abortControllerRef.current.abort();
+}
+abortControllerRef.current = new AbortController();
+const signal = abortControllerRef.current.signal;
+const apiKey = "";
+const url =
+`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+const payload = {
+contents: [{ parts: [{ text: `Dịch cụm từ/câu sau sang tiếng Việt (theo ngữ cảnh TOEIC). CHỈ TRẢ VỀ DUY NHẤT 1 NGHĨA
+ngắn gọn nhất, KHÔNG giải thích, KHÔNG có từ đồng nghĩa, KHÔNG dấu chấm câu ở cuối: "${text}"` }] }]
+};
+const delays = [1000, 2000, 4000, 8000, 16000];
+for (let i = 0; i < 5; i++) { try { const res=await fetch(url, { method: 'POST' , headers: { 'Content-Type'
+    : 'application/json' }, body: JSON.stringify(payload), signal }); if (!res.ok) throw new Error('API Error'); const
+    data=await res.json(); const translated=data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "Không thể dịch."
+    ; translationCache.current.set(lowerText, translated); return translated; } catch (err) { if
+    (err.name==='AbortError' ) return null; if (i===4) return "Lỗi kết nối dịch thuật." ; await new Promise(r=>
+    setTimeout(r, delays[i]));
+    }
+    }
+    };
+
+    const handleSelection = useCallback(() => {
+    if (isFinished) return;
+    setTimeout(async () => {
+    const selection = window.getSelection();
+    const text = selection.toString().trim();
+    if (!text) return;
+    if (text.length > 300 || !/[a-zA-Z]/.test(text)) return;
+
+    // Phát âm ngay lập tức
+    speakText(text);
+
+    // Chạy dịch ngầm
+    const translated = await translateText(text);
+    if (translated === null) return;
+
+    // Gắn pin trực tiếp
+    setPinnedTranslations(prev => {
+    const qId = currentQuestion.id;
+    const current = prev[qId] || [];
+    if (!current.some(p => p.original.toLowerCase() === text.toLowerCase())) {
+    return { ...prev, [qId]: [...current, { id: Date.now().toString(), original: text, translation: translated }] };
+    }
+    return prev;
+    });
+
+    // Xóa vùng bôi đen sau khi xử lý xong
+    window.getSelection().removeAllRanges();
+    }, 50);
+    }, [currentQuestion.id, speakText, isFinished]);
+
+    useEffect(() => {
+    document.addEventListener('mouseup', handleSelection);
+    return () => document.removeEventListener('mouseup', handleSelection);
+    }, [handleSelection]);
+
+    useEffect(() => {
+    const generatedStars = Array.from({ length: 50 }).map(() => ({
+    id: Math.random(),
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 100}%`,
+    animationDuration: `${Math.random() * 3 + 2}s`,
+    animationDelay: `${Math.random() * 2}s`,
+    size: `${Math.random() * 3 + 1}px`,
+    }));
+    setStars(generatedStars);
+    }, []);
+
+    useEffect(() => {
+    const completedCount = quizData.filter(q => {
+    const qAtt = attempts[q.id] || [];
+    return qAtt.includes(q.correct) || qAtt.length >= 2;
+    }).length;
+    if (completedCount === totalQuestions && totalQuestions > 0 && !isFinished) {
+    setFinishDate(new Date());
+    setIsFinished(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    }, [attempts, totalQuestions, isFinished]);
+
+    const handleSelectAnswer = (optionId) => {
+    if (window.getSelection().toString().trim().length > 0) return;
+    const qId = currentQuestion.id;
+    const qAttempts = attempts[qId] || [];
+    const isQuestionSolved = qAttempts.includes(currentQuestion.correct);
+    const isQuestionFailed = qAttempts.length >= 2 && !isQuestionSolved;
+    if (isQuestionSolved || isQuestionFailed || qAttempts.includes(optionId)) return;
+
+    const isCorrect = optionId === currentQuestion.correct;
+
+    // Kích hoạt hiệu ứng nốt nhạc bay ra cho option vừa chọn
+    const noteKey = `${qId}_${optionId}`;
+    setActiveNotes(prev => ({ ...prev, [noteKey]: true }));
+    setTimeout(() => {
+    setActiveNotes(prev => {
+    const next = { ...prev };
+    delete next[noteKey];
+    return next;
+    });
+    }, 800); // Tắt hiệu ứng sau 800ms
+
+    // Nếu chọn sai, kích hoạt hiệu ứng rung cho option này
+    if (!isCorrect) {
+    setShakeOption(`${qId}_${optionId}`);
+    setTimeout(() => setShakeOption(null), 400); // Tắt rung sau 400ms
+    }
+
+    playSound('pop');
+    const newAttempts = [...qAttempts, optionId];
+    if (newAttempts.length === 1) {
+    setFirstAttempts(prev => ({ ...prev, [qId]: isCorrect }));
+    if (isCorrect) setScore(s => s + 1);
+    }
+    setAttempts(prev => ({ ...prev, [qId]: newAttempts }));
+    };
+
+    const handleNext = () => {
+    // Kiểm tra xem câu hiện tại làm đúng hay sai/bỏ trống để phát nhạc
+    const qAtt = attempts[currentQuestion.id] || [];
+    const isCorrect = qAtt.includes(currentQuestion.correct);
+    if (isCorrect) {
+    playSuccessSound();
+    } else {
+    playErrorSound();
+    }
+
+    if (currentIndex < totalQuestions - 1) setCurrentIndex(currentIndex + 1); }; const handlePrev=()=> {
+        playSound('click');
+        if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+        };
+
+        const handleFinish = () => {
+        // Kiểm tra câu hiện tại (câu cuối cùng)
+        const qAtt = attempts[currentQuestion.id] || [];
+        const isCorrect = qAtt.includes(currentQuestion.correct);
+        if (isCorrect) {
+        playSuccessSound();
+        } else {
+        playErrorSound();
+        }
+
+        if (!isFinished) {
+        setFinishDate(new Date());
+        setIsFinished(true);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        const handleRestart = () => {
+        playSound('click');
+
+        // 1. Reset dữ liệu bài làm
+        setAttempts({});
+        setFirstAttempts({});
+        setScore(0);
+        setCurrentIndex(0);
+        setIsFinished(false);
+        setShowReviewList(false);
+        setFinishDate(null);
+        setShakeOption(null);
+        setActiveNotes({});
+
+        // 2. Restart thật sự: Xóa sạch cả ghi chú và từ vựng đã ghim
+        setNotes({});
+        setPinnedTranslations({});
+
+        // 3. Đưa về màn hình Welcome để bắt đầu lại toàn bộ
+        setHasStarted(false);
+        setUserName('');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        const jumpToQuestion = (index) => {
+        playSound('click');
+        setCurrentIndex(index);
+        };
+
+        const getOptionStyle = (question, optionId) => {
+        const qAttempts = attempts[question.id] || [];
+        const isCorrectOption = question.correct === optionId;
+        const isSelected = qAttempts.includes(optionId);
+        const isQuestionSolved = qAttempts.includes(question.correct);
+        const isQuestionFailed = qAttempts.length >= 2 && !isQuestionSolved;
+        const isCompleted = isFinished || isQuestionSolved || isQuestionFailed;
+        if (isCompleted) {
+        if (isCorrectOption) return "bg-green-500/30 border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.3)]
+        text-white";
+        if (isSelected) return "bg-red-500/30 border-red-400 shadow-[0_0_15px_rgba(248,113,113,0.3)] text-white
+        opacity-80";
+        return "bg-white/5 border-white/10 opacity-30 text-gray-500";
+        }
+        if (isSelected && !isCorrectOption) return "bg-red-500/30 border-red-400 shadow-[0_0_15px_rgba(248,113,113,0.3)]
+        text-white opacity-60";
+        return "bg-white/5 border-white/10 hover:bg-white/10 text-gray-200";
+        };
+
+        const countCorrect1st = score;
+        const countCorrect2nd = quizData.filter(q => attempts[q.id]?.length === 2 && attempts[q.id][1] ===
+        q.correct).length;
+        const countFailedBoth = quizData.filter(q => attempts[q.id]?.length >= 2 &&
+        !attempts[q.id].includes(q.correct)).length;
+        const countUnfinished = totalQuestions - (countCorrect1st + countCorrect2nd + countFailedBoth);
+
+        return (
+        <div
+            className="min-h-screen bg-[#0a0514] font-sans relative overflow-x-hidden flex flex-col items-center py-10 px-4 sm:px-6 text-white">
+
+            {/* --- TRANSLATION BUBBLE --- */}
+            {tooltip.show && !isFinished && (
+            <div className="absolute z-[100] px-4 py-3 bg-[#1e143c]/95 backdrop-blur-xl border border-purple-400/40 rounded-xl shadow-[0_10px_40px_rgba(168,85,247,0.4)] text-white text-sm max-w-[300px] sm:max-w-[400px] transform -translate-x-1/2 -translate-y-full pointer-events-none transition-all duration-200"
+                style={{ top: tooltip.top, left: tooltip.left }}>
+                {tooltip.loading ? (
+                <div className="flex items-center gap-2 text-purple-300">
+                    <Loader2 size={16} className="animate-spin" />
+                    <span className="animate-pulse">Translating...</span>
+                </div>
+                ) : (
+                <div className="flex items-start gap-3 pointer-events-auto">
+                    <Languages size={18} className="text-fuchsia-400 mt-0.5 shrink-0" />
+                    <span
+                        className="font-medium text-base text-purple-50 leading-relaxed pr-2">{tooltip.translation}</span>
+                    <button onClick={()=> speakText(tooltip.text)} className="p-1.5 rounded-full bg-fuchsia-500/20
+                        text-fuchsia-300 hover:bg-fuchsia-500/40 transition-colors ml-auto
+                        shadow-[0_0_10px_rgba(217,70,239,0.2)]">
+                        <Volume2 size={16} />
+                    </button>
+                </div>
+                )}
+                <div
+                    className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-purple-400/40 pointer-events-none">
+                </div>
+            </div>
+            )}
+
+            {/* --- BACKGROUND ANIMATIONS --- */}
+            <style dangerouslySetInnerHTML={{__html: ` @keyframes twinkle { 0%, 100% { opacity: 0.2; transform:
+                scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } } @keyframes float { 0% { transform:
+                translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+                @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% {
+                transform: translateX(5px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+                /* Hiệu ứng nốt nhạc bay ra - Đã làm to và bay xa hơn */ @keyframes note-burst-1 { 0% { opacity: 1;
+                transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 0; transform: translate(-55px, -50px)
+                scale(1.8) rotate(-15deg); } } @keyframes note-burst-2 { 0% { opacity: 1; transform: translate(-50%,
+                -50%) scale(0.5); } 100% { opacity: 0; transform: translate(0px, -65px) scale(1.5) rotate(5deg); } }
+                @keyframes note-burst-3 { 0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 100% {
+                opacity: 0; transform: translate(55px, -45px) scale(1.9) rotate(25deg); } } @keyframes note-burst-4 { 0%
+                { opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 0; transform:
+                translate(45px, 45px) scale(1.6) rotate(40deg); } } @keyframes note-burst-5 { 0% { opacity: 1;
+                transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 0; transform: translate(-45px, 45px)
+                scale(1.7) rotate(-25deg); } } .star { animation: twinkle infinite ease-in-out; } .floating-blob {
+                animation: float 10s infinite ease-in-out; } .animate-shake { animation: shake 0.4s
+                cubic-bezier(.36,.07,.19,.97) both; } `}} />
+            <div
+                className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-purple-900/30 blur-[120px] floating-blob pointer-events-none">
+            </div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-fuchsia-900/20 blur-[100px] floating-blob pointer-events-none"
+                style={{ animationDelay: '-5s' }}></div>
+            <div className="absolute top-[40%] left-[60%] w-[30vw] h-[30vw] rounded-full bg-indigo-900/30 blur-[90px] floating-blob pointer-events-none"
+                style={{ animationDelay: '-2s' }}></div>
+            {stars.map((star) => (
+            <div key={star.id} className="absolute rounded-full bg-white star pointer-events-none" style={{ left:
+                star.left, top: star.top, width: star.size, height: star.size, animationDuration:
+                star.animationDuration, animationDelay: star.animationDelay }} />
+            ))}
+
+            <div className="relative z-10 w-full max-w-4xl flex flex-col items-center">
+
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <h1
+                        className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 via-purple-400 to-indigo-400 flex items-center justify-center gap-3 drop-shadow-[0_0_10px_rgba(192,38,211,0.5)]">
+                        <Sparkles className="text-fuchsia-400" size={36} />
+                        TOEIC QUIZ
+                        <Sparkles className="text-indigo-400" size={36} />
+                    </h1>
+                    <p className="text-purple-200/70 mt-2 tracking-widest text-sm uppercase">Reading Part 5 • Test 1</p>
+                </div>
+
+                {!hasStarted ? (
+                // ================= TRANG BẮT ĐẦU (ĐIỀN TÊN) =================
+                <div
+                    className="w-full max-w-md bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-8 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col items-center animate-in fade-in zoom-in duration-500 mt-10">
+                    <div
+                        className="w-20 h-20 bg-gradient-to-br from-fuchsia-500 to-indigo-600 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(192,38,211,0.5)]">
+                        <User size={40} className="text-white" />
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8 text-center leading-snug">
+                        <span className="block mb-2 text-xl text-purple-200">WELCOME TO</span>
+                        <span className="block drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">HOÀNG TRƯỜNG ENGLISH</span>
+                    </h2>
+
+                    <div className="w-full flex flex-col items-start gap-2 mb-8">
+                        <input type="text" value={userName} onChange={(e)=> { setUserName(e.target.value);
+                        setNameError(false); }}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleStartQuiz(); }}
+                        placeholder="Enter your name..."
+                        className={`w-full bg-black/40 text-white rounded-xl p-4 border placeholder:italic ${nameError ?
+                        'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'border-white/10
+                        focus:border-fuchsia-400'} focus:outline-none transition-all text-center text-lg`}
+                        />
+                        {nameError && <span className="text-red-400 text-sm mx-auto mt-1 animate-pulse italic">Please
+                            enter your name to start!</span>}
+                    </div>
+
+                    <button onClick={handleStartQuiz}
+                        className="w-full py-4 rounded-xl bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white font-bold text-lg hover:shadow-[0_0_20px_rgba(192,38,211,0.6)] transition-all hover:-translate-y-1">
+                        Start
+                    </button>
+                </div>
+                ) : isFinished ? (
+                // ================= TRANG SUMMARY =================
+                <div className="w-full flex flex-col gap-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
+
+                    {/* BẢNG ĐIỂM */}
+                    <div
+                        className="w-full p-6 sm:p-10 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_0_40px_rgba(139,92,246,0.3)] flex flex-col items-center relative overflow-hidden">
+                        <div
+                            className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-fuchsia-500 to-indigo-500 opacity-80">
+                        </div>
+                        <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3 z-10 text-center">
+                            <Award className="text-yellow-400" size={36} />
+                            Summary for {userName}
+                        </h2>
+                        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 w-full max-w-4xl z-10 mb-8">
+                            <div
+                                className="flex-1 min-w-[110px] bg-green-500/10 border border-green-500/30 rounded-2xl p-4 flex flex-col items-center justify-center shadow-[0_0_15px_rgba(74,222,128,0.1)]">
+                                <span className="text-4xl font-bold text-green-400 mb-1">{countCorrect1st}</span>
+                                <span className="text-xs text-green-200 uppercase font-medium">1st Try Correct</span>
+                            </div>
+                            <div
+                                className="flex-1 min-w-[110px] bg-orange-500/10 border border-orange-500/30 rounded-2xl p-4 flex flex-col items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.1)]">
+                                <span className="text-4xl font-bold text-orange-400 mb-1">{countCorrect2nd}</span>
+                                <span className="text-xs text-orange-200 uppercase font-medium">2nd Try Correct</span>
+                            </div>
+                            <div
+                                className="flex-1 min-w-[110px] bg-red-500/10 border border-red-500/30 rounded-2xl p-4 flex flex-col items-center justify-center shadow-[0_0_15px_rgba(248,113,113,0.1)]">
+                                <span className="text-4xl font-bold text-red-400 mb-1">{countFailedBoth}</span>
+                                <span className="text-xs text-red-200 uppercase font-medium">Failed</span>
+                            </div>
+                            <div
+                                className="flex-1 min-w-[110px] bg-gray-500/10 border border-gray-500/30 rounded-2xl p-4 flex flex-col items-center justify-center shadow-[0_0_15px_rgba(156,163,175,0.1)]">
+                                <span className="text-4xl font-bold text-gray-300 mb-1">{countUnfinished}</span>
+                                <span className="text-xs text-gray-400 uppercase font-medium">Unanswered</span>
+                            </div>
+                        </div>
+                        <div
+                            className="flex flex-col sm:flex-row items-center justify-between w-full border-t border-white/10 pt-6 z-10 gap-4">
+                            <div className="text-purple-200 text-sm flex items-center gap-2">
+                                <CalendarDays size={18} className="text-fuchsia-400" />
+                                Completed at: <strong
+                                    className="text-white text-base tracking-wide">{formatDate(finishDate)}</strong>
+                            </div>
+                            <div className="flex flex-wrap items-center justify-center gap-3">
+                                <a href="https://zalo.me/g/ftny5vgqzhem3autml6s" target="_blank"
+                                    rel="noopener noreferrer" onClick={()=> playSound('click')}
+                                    className="px-6 py-3 rounded-full bg-[#0068FF] hover:bg-[#0052cc] text-white
+                                    font-bold transition-all flex items-center gap-2 hover:-translate-y-1
+                                    shadow-[0_0_15px_rgba(0,104,255,0.4)]"
+                                    >
+                                    <Users size={18} /> Join TOEIC Group
+                                </a>
+                                <button onClick={handleRestart}
+                                    className="px-8 py-3 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white font-bold transition-all flex items-center gap-2 hover:-translate-y-1 shadow-[0_0_20px_rgba(192,38,211,0.5)]">
+                                    <RotateCcw size={18} /> Restart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* NÚT BẤM SỔ DANH SÁCH REVIEW */}
+                    <button onClick={()=> { playSound('click'); setShowReviewList(!showReviewList); }}
+                        className="w-full flex items-center justify-center gap-3 p-5 rounded-2xl bg-white/5 border
+                        border-white/10 hover:bg-white/10 hover:border-fuchsia-400/50 transition-all text-xl font-bold
+                        text-white group"
+                        >
+                        <ListChecks className="text-fuchsia-400 group-hover:scale-110 transition-transform" size={28} />
+                        Detailed Review
+                        {showReviewList ?
+                        <ChevronUp className="text-gray-400" /> :
+                        <ChevronDown className="text-gray-400" />}
+                    </button>
+
+                    {/* DANH SÁCH REVIEW - DẠNG LƯỚI NHỎ GỌN */}
+                    {showReviewList && (
+                    <div
+                        className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                        {quizData.map((q, index) => {
+                        const qAtt = attempts[q.id] || [];
+                        const solved = qAtt.includes(q.correct);
+                        const untouched = qAtt.length === 0;
+                        const questionNote = notes[`${q.id}_question`];
+
+                        return (
+                        <div key={q.id}
+                            className="w-full bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)] relative flex flex-col">
+                            <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                                <span className="text-lg font-bold text-fuchsia-300">Q {index + 1}</span>
+                                <span className={`flex items-center gap-1 font-bold text-xs sm:text-sm ${solved
+                                    ? 'text-green-400' : untouched ? 'text-gray-400' : 'text-red-400' }`}>
+                                    {solved ? <>
+                                        <CheckCircle2 size={16} /> Correct
+                                    </> : untouched ? "Unanswered" : <>
+                                        <XCircle size={16} /> Ans: {q.correct}
+                                    </>}
+                                </span>
+                            </div>
+
+                            <div className="mb-6 flex-grow">
+                                <h3 className="text-sm sm:text-base text-white font-medium leading-relaxed select-text">
+                                    {q.text.split('-------').map((part, i, arr) => (
+                                    <React.Fragment key={i}>
+                                        {renderTextWithPins(part, q.id, true)}
+                                        {i < arr.length - 1 && ( <span
+                                            className="inline-block mx-1.5 text-green-400 font-bold border-b border-green-400 px-1.5 pb-0.5 bg-green-500/10 rounded-t-sm align-middle text-sm sm:text-base">
+                                            {q.options.find(opt => opt.id === q.correct)?.text}
+                                            </span>
+                                            )}
+                                    </React.Fragment>
+                                    ))}
+                                </h3>
+                                {/* Hiển thị ghi chú Câu hỏi (Cyan) - Size nhỏ */}
+                                {questionNote && (
+                                <div className="flex flex-wrap gap-1.5 mt-3">
+                                    {questionNote.split('\n').filter(l => l.trim() !== '').map((line, idx) => (
+                                    <span key={idx}
+                                        className="px-2 py-1 bg-cyan-500/15 text-cyan-200 border border-cyan-500/30 rounded text-[10px] sm:text-xs italic flex items-center gap-1 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+                                        <Star size={10} className="fill-cyan-400 text-cyan-400 shrink-0" />
+                                        {line.trim()}
+                                    </span>
+                                    ))}
+                                </div>
+                                )}
+                            </div>
+
+                            {/* Đáp án dạng lưới 2 cột siêu gọn */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mt-auto">
+                                {q.options.map((option) => {
+                                const noteKey = `${q.id}_${option.id}`;
+                                const hasNote = notes[noteKey];
+                                const styleClass = getOptionStyle(q, option.id);
+                                const isCorrectOption = q.correct === option.id;
+                                const isSelected = qAtt.includes(option.id);
+                                return (
+                                <div key={option.id} className={`text-left px-3 py-2.5 rounded-xl border flex flex-col
+                                    gap-1.5 ${styleClass}`}>
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-7 h-7 rounded-full border flex items-center justify-center
+                                            font-bold text-xs shrink-0 ${isCorrectOption
+                                            ? 'border-green-300 text-green-100 bg-green-500/20 shadow-[0_0_10px_rgba(74,222,128,0.3)]'
+                                            : (isSelected
+                                            ? 'border-red-300 text-red-100 bg-red-500/20 shadow-[0_0_10px_rgba(248,113,113,0.3)]'
+                                            : 'border-white/10 text-white/30' )}`}>
+                                            {option.id}
+                                        </div>
+                                        <span
+                                            className="text-xs sm:text-sm leading-snug flex-1 select-text">{renderTextWithPins(option.text,
+                                            q.id, true)}</span>
+                                    </div>
+                                    {/* Hiển thị ghi chú Đáp án (Yellow) - Size siêu nhỏ */}
+                                    {hasNote && (
+                                    <div className="flex flex-wrap gap-1 mt-1 pl-10">
+                                        {hasNote.split('\n').filter(line => line.trim() !== '').map((line, idx) => (
+                                        <span key={idx}
+                                            className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-200 border border-yellow-500/30 rounded text-[10px] italic flex items-center gap-1 shadow-sm">
+                                            <Star size={10} className="fill-yellow-400 text-yellow-400 shrink-0" />
+                                            {line.trim()}
+                                        </span>
+                                        ))}
+                                    </div>
+                                    )}
+                                </div>
+                                );
+                                })}
+                            </div>
+                        </div>
+                        );
+                        })}
+                    </div>
+                    )}
+                </div>
+                ) : (
+                // ================= TRANG LÀM BÀI =================
+                <>
+                    <div
+                        className="w-full bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative">
+                        <div
+                            className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50">
+                        </div>
+                        <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                            <span className="text-xl font-bold text-fuchsia-300">Question {currentIndex + 1} <span
+                                    className="text-sm font-normal text-purple-300/50">/ {totalQuestions}</span></span>
+                            {attempts[currentQuestion.id]?.length > 0 && (
+                            <span className={`flex items-center gap-1.5 font-bold text-sm sm:text-base
+                                ${attempts[currentQuestion.id].includes(currentQuestion.correct) ? 'text-green-400' :
+                                (attempts[currentQuestion.id].length>= 2) ? 'text-red-400' : 'text-orange-400'}`}>
+                                {attempts[currentQuestion.id].includes(currentQuestion.correct) ? <>
+                                    <CheckCircle2 size={20} /> Correct
+                                </> : (attempts[currentQuestion.id].length >= 2) ? <>
+                                    <XCircle size={20} /> Failed. Answer: {currentQuestion.correct}
+                                </> : <>
+                                    <RotateCcw size={18} /> Incorrect, 1 chance left!
+                                </>}
+                            </span>
+                            )}
+                        </div>
+                        <div className="relative mb-12">
+                            <h3
+                                className="text-2xl sm:text-3xl text-white font-medium leading-[3.5rem] sm:leading-[4rem] select-text">
+                                {currentQuestion.text.split('-------').map((part, i, arr) => (
+                                <React.Fragment key={i}>
+                                    {renderTextWithPins(part, currentQuestion.id, false)}
+                                    {i < arr.length - 1 && (
+                                        (attempts[currentQuestion.id]?.includes(currentQuestion.correct) ||
+                                        attempts[currentQuestion.id]?.length>= 2) ? (
+                                        <span
+                                            className="inline-block mx-2 text-green-400 font-bold border-b-2 border-green-400 px-2 pb-1 bg-green-500/10 rounded-t-md animate-[pulse_0.5s_ease-in-out] align-middle">
+                                            {currentQuestion.options.find(opt => opt.id ===
+                                            currentQuestion.correct)?.text}
+                                        </span>
+                                        ) : <span
+                                            className="inline-block w-24 h-[2px] bg-purple-500/50 mx-2 align-middle"></span>
+                                        )}
+                                </React.Fragment>
+                                ))}
+                            </h3>
+                            {/* Nút Ghi chú Câu hỏi (Cyan) */}
+                            <div className="flex flex-wrap items-center gap-3 mt-6">
+                                <button onClick={(e)=> handleOpenNote(e, currentQuestion.id, 'question')}
+                                    className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10
+                                    rounded-full text-gray-300 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all
+                                    text-sm group">
+                                    <Star size={18} className={notes[`${currentQuestion.id}_question`]
+                                        ? 'text-cyan-400 fill-cyan-400' : 'group-hover:scale-110' } />
+                                    {notes[`${currentQuestion.id}_question`] ? 'Edit Note' : 'Add Note'}
+                                </button>
+                                {notes[`${currentQuestion.id}_question`] &&
+                                notes[`${currentQuestion.id}_question`].split('\n').filter(l => l.trim() !==
+                                '').map((line, idx) => (
+                                <span key={idx}
+                                    className="px-3 py-1 bg-cyan-500/15 text-cyan-200 border border-cyan-500/30 rounded-md text-sm italic flex items-center gap-1.5 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+                                    <Star size={12} className="fill-cyan-400 text-cyan-400 shrink-0" /> {line.trim()}
+                                </span>
+                                ))}
+                            </div>
+                            {editingNote === `${currentQuestion.id}_question` && (
+                            <div onClick={e=> e.stopPropagation()} className="absolute left-0 top-full mt-4 z-50 w-72
+                                bg-[#1e143c] border border-cyan-400/50 rounded-xl p-4 shadow-2xl animate-in fade-in
+                                zoom-in">
+                                <textarea autoFocus value={tempNoteText} onChange={e=> setTempNoteText(e.target.value)} className="w-full bg-black/30 text-white text-sm rounded-lg p-3 border border-white/10 focus:border-cyan-400/50 focus:outline-none resize-none" rows="4" placeholder="Note for this question..."/>
+                        <div className="flex justify-end gap-2 mt-3">
+                            <button onClick={(e) => { e.stopPropagation(); setEditingNote(null); }} className="px-4 py-1.5 text-xs text-gray-400 hover:text-white">Cancel</button>
+                            <button onClick={(e) => handleSaveNote(e, currentQuestion.id, 'question')} className="px-4 py-1.5 text-xs bg-cyan-500 rounded-lg text-yellow-950 font-bold hover:bg-cyan-400">OK</button>
+                        </div>
+                        <div className="absolute bottom-full left-10 w-0 h-0 border-l-[8px] border-r-[8px] border-b-[8px] border-l-transparent border-r-transparent border-b-cyan-400/50"></div>
+                    </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-6">
+                {currentQuestion.options.map((option, optIndex) => {
+                  const noteKey = `${currentQuestion.id}_${option.id}`;
+                  const hasNote = notes[noteKey];
+                  const qAtt = attempts[currentQuestion.id] || [];
+                  const isCompleted = qAtt.includes(currentQuestion.correct) || qAtt.length >= 2;
+                  const showAbove = optIndex >= 2;
+                  const isShaking = shakeOption === noteKey;
+                  const showNotesBurst = activeNotes[noteKey];
+
+                  return (
+                    <div key={option.id} className={`relative ${isShaking ? 'animate-shake' : ''}`}>
+                      <div className={`text-left px-6 py-5 rounded-2xl border transition-all duration-300 flex items-center gap-5 group ${getOptionStyle(currentQuestion, option.id)}`}>
+                        <button onClick={(e) => { e.stopPropagation(); handleSelectAnswer(option.id); }}
+                          disabled={isCompleted || qAtt.includes(option.id)}
+                          className={`relative w-10 h-10 rounded-full border flex items-center justify-center font-bold shrink-0 transition-all duration-200 ${isCompleted || qAtt.includes(option.id) ? 'cursor-default' : 'cursor-pointer hover:scale-110'} ${isCompleted ? (currentQuestion.correct === option.id ? 'border-green-300 text-green-100 bg-green-500/20 shadow-[0_0_15px_rgba(74,222,128,0.5)]' : (qAtt.includes(option.id) ? 'border-red-300 text-red-100 bg-red-500/20 shadow-[0_0_15px_rgba(248,113,113,0.5)]' : 'border-white/10 text-white/30')) : (qAtt.includes(option.id) ? 'border-red-300 text-red-100 bg-red-500/20' : 'border-white/30 text-white/70 hover:border-fuchsia-400')}`}
+                        >
+                          <span className="relative z-10">{option.id}</span>
+                          
+                          {/* Render các nốt nhạc bay ra khi nút được nhấn - Đổi sang text-xl */}
+                          {showNotesBurst && (
+                            <>
+                              <span className="absolute top-1/2 left-1/2 text-fuchsia-300 pointer-events-none animate-[note-burst-1_0.6s_ease-out_forwards] z-0 drop-shadow-md text-xl">♪</span>
+                              <span className="absolute top-1/2 left-1/2 text-indigo-300 pointer-events-none animate-[note-burst-2_0.7s_ease-out_forwards] z-0 drop-shadow-md text-xl">♫</span>
+                              <span className="absolute top-1/2 left-1/2 text-purple-300 pointer-events-none animate-[note-burst-3_0.6s_ease-out_forwards] z-0 drop-shadow-md text-xl">♩</span>
+                              <span className="absolute top-1/2 left-1/2 text-pink-300 pointer-events-none animate-[note-burst-4_0.8s_ease-out_forwards] z-0 drop-shadow-md text-xl">♬</span>
+                              <span className="absolute top-1/2 left-1/2 text-cyan-300 pointer-events-none animate-[note-burst-5_0.7s_ease-out_forwards] z-0 drop-shadow-md text-xl">♪</span>
+                            </>
+                          )}
+                        </button>
+                        <div className="flex-1 flex items-center flex-wrap gap-2">
+                          <span className="text-lg leading-[2.5rem] py-2 select-text">{renderTextWithPins(option.text, currentQuestion.id, false)}</span>
+                          {/* Ghi chú Options (Yellow) */}
+                          {hasNote && hasNote.split('\n').filter(line => line.trim() !== '').map((line, idx) => (
+                            <span key={idx} className="px-3 py-1 bg-yellow-500/20 text-yellow-200 border border-yellow-500/30 rounded-md text-sm italic flex items-center gap-1.5 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                              <Star size={12} className="fill-yellow-400 text-yellow-400 shrink-0"/> {line.trim()}
+                            </span>
+                          ))}
+                        </div>
+                        <button onClick={(e) => handleOpenNote(e, currentQuestion.id, option.id)} className="ml-auto shrink-0 p-2 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-yellow-400">
+                          <Star size={20} className={hasNote ? 'text-yellow-400 fill-yellow-400' : ''}/>
+                        </button>
+                      </div>
+
+                      {editingNote === noteKey && (
+                        <div onClick={e => e.stopPropagation()} className={`absolute right-0 z-[60] w-64 bg-[#1e143c] border border-yellow-400/50 rounded-xl p-3 shadow-2xl animate-in fade-in zoom-in ${showAbove ? 'bottom-full mb-3' : 'top-full mt-2'}`}>
+                          <textarea autoFocus value={tempNoteText} onChange={e => setTempNoteText(e.target.value)} className="w-full bg-black/30 text-white text-sm rounded-lg p-3 border border-white/10 focus:border-yellow-400/50 focus:outline-none resize-none" rows="3" placeholder="Note for this option..."/>
+                          <div className="flex justify-end gap-2 mt-2">
+                            <button onClick={(e) => { e.stopPropagation(); playSound('click'); setEditingNote(null); }} className="px-4 py-1.5 text-xs text-gray-400 hover:text-white">Cancel</button>
+                            <button onClick={(e) => handleSaveNote(e, currentQuestion.id, option.id)} className="px-4 py-1.5 text-xs bg-yellow-500 rounded-lg text-yellow-950 font-bold hover:bg-yellow-400">OK</button>
+                          </div>
+                          <div className={`absolute right-5 w-0 h-0 border-l-[8px] border-r-[8px] border-l-transparent border-r-transparent ${showAbove ? 'top-full border-t-[8px] border-t-yellow-400/50' : 'bottom-full border-b-[8px] border-b-yellow-400/50'}`}></div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="w-full flex justify-between items-center mt-8">
+              <button onClick={handlePrev} disabled={currentIndex === 0} className="px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white disabled:opacity-30 transition-all flex items-center gap-2 hover:bg-white/10"><ChevronLeft size={20} /> Previous</button>
+              {currentIndex === totalQuestions - 1 ? (
+                <button onClick={handleFinish} className="px-8 py-3 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white font-bold transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(192,38,211,0.5)]">Finish <CheckCircle2 size={20} /></button>
+              ) : (
+                <button onClick={handleNext} className={`px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white transition-all flex items-center gap-2 hover:bg-white/10 ${(attempts[currentQuestion.id]?.includes(currentQuestion.correct) || attempts[currentQuestion.id]?.length >= 2) ? 'bg-purple-600/80' : ''}`}>Next <ChevronRight size={20} /></button>
+              )}
+            </div>
+
+            <div className="w-full mt-10 p-3 sm:p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 overflow-x-auto">
+              <div className="grid grid-cols-[repeat(15,minmax(0,1fr))] gap-1.5 sm:gap-2 justify-center w-fit mx-auto min-w-[max-content]">
+                {quizData.map((q, index) => {
+                  let btnStatusClass = "bg-white/10 text-gray-400 hover:bg-white/20";
+                  const qAtt = attempts[q.id] || [];
+                  const solved = qAtt.includes(q.correct);
+                  if (solved || (qAtt.length >= 2)) btnStatusClass = firstAttempts[q.id] ? "bg-green-500/40 text-white shadow-[0_0_10px_rgba(74,222,128,0.3)] hover:bg-green-500/60" : (solved ? "bg-orange-500/40 text-white shadow-[0_0_10px_rgba(249,115,22,0.3)] hover:bg-orange-500/60" : "bg-red-500/40 text-white shadow-[0_0_10px_rgba(248,113,113,0.3)] hover:bg-red-500/60");
+                  else if (qAtt.length === 1) btnStatusClass = "bg-gray-500/60 text-white hover:bg-gray-500/80";
+                  if (currentIndex === index) btnStatusClass += " ring-2 ring-white ring-offset-2 ring-offset-[#0a0514]";
+                  return <button key={q.id} onClick={() => jumpToQuestion(index)} className={`w-6 h-6 sm:w-8 sm:h-8 rounded-md text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${btnStatusClass}`}>{index + 1}</button>;
+                })}
+              </div>
+            </div>
+          </>
+        )}
+        <div className="mt-8 text-center text-purple-300/60 text-sm font-medium pb-4 tracking-wide italic">&copy; Copyright 2026 by Hoang Truong English</div>
+      </div>
+    </div>
+  );
+}
