@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Từ Vựng: Green Living 4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            /* slate-900 */
+        }
+
+        /* --- CSS cho Nền Động Sustainable City (Thành Phố Bền Vững) --- */
+        .scenery-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            /* Gradient từ Xanh Lơ sang Xám Đá */
+            background: linear-gradient(to bottom, #0284c7 0%, #0f766e 50%, #0f172a 100%);
+            overflow: hidden;
+        }
+
+        .hill {
+            position: absolute;
+            bottom: -50px;
+            width: 120%;
+            height: 30%;
+            background: #0f172a;
+            /* slate-900 */
+            border-radius: 50% 50% 0 0;
+            left: -10%;
+            box-shadow: inset 0px 20px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .hill2 {
+            position: absolute;
+            bottom: -40px;
+            width: 100%;
+            height: 25%;
+            background: #1e293b;
+            /* slate-800 */
+            border-radius: 50% 50% 0 0;
+            right: -20%;
+            box-shadow: inset 0px 20px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Mây bay */
+        .cloud {
+            position: absolute;
+            font-size: 3rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+            user-select: none;
+            z-index: -8;
+            animation: floatCloud linear infinite;
+        }
+
+        @keyframes floatCloud {
+            0% {
+                transform: translateX(-20vw);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.9;
+            }
+
+            90% {
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translateX(110vw);
+                opacity: 0;
+            }
+        }
+
+        /* Ánh nắng */
+        .sun {
+            position: absolute;
+            font-size: 6rem;
+            animation: floatSun 16s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 40px rgba(253, 224, 71, 0.9));
+            /* yellow-300 */
+            user-select: none;
+            top: 10%;
+            left: 15%;
+        }
+
+        @keyframes floatSun {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                transform: translateY(-15px) scale(1.05);
+            }
+        }
+
+        /* Cảnh quan đô thị và cây xanh */
+        .city {
+            position: absolute;
+            font-size: 5rem;
+            filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.3));
+            user-select: none;
+            z-index: -7;
+            opacity: 0.8;
+        }
+
+        .tree {
+            position: absolute;
+            font-size: 3rem;
+            filter: drop-shadow(0 0 10px rgba(20, 184, 166, 0.5));
+            user-select: none;
+            z-index: -6;
+            animation: sway 6s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+        }
+
+        @keyframes sway {
+            0% {
+                transform: rotate(-3deg);
+            }
+
+            100% {
+                transform: rotate(3deg);
+            }
+        }
+
+        .flip-card {
+            perspective: 1200px;
+            width: 100%;
+            height: 480px;
+        }
+
+        @media (min-width: 640px) {
+            .flip-card {
+                height: 520px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .flip-card {
+                height: 580px;
+            }
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6);
+            background-color: rgba(255, 255, 255, 0.98);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.5);
+            /* cyan-500 */
+            outline: none;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #06b6d4;
+            border-radius: 10px;
+        }
+
+        /* cyan-500 */
+    </style>
+</head>
+
+<body
+    class="text-slate-900 p-2 sm:p-4 md:p-8 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+
+    <div class="scenery-bg">
+        <div class="hill2"></div>
+        <div class="hill"></div>
+        <div class="sun">☀️</div>
+
+        <!-- Mây trôi -->
+        <div class="cloud" style="top: 15%; animation-duration: 35s; animation-delay: 0s;">☁️</div>
+        <div class="cloud" style="top: 25%; animation-duration: 45s; animation-delay: -15s; font-size: 2rem;">☁️</div>
+        <div class="cloud" style="top: 10%; animation-duration: 40s; animation-delay: -25s; font-size: 4rem;">☁️</div>
+
+        <!-- Đô thị & Cây xanh -->
+        <div class="city" style="bottom: 22%; left: 10%;">🏙️</div>
+        <div class="city" style="bottom: 20%; right: 15%; font-size: 6rem;">🏙️</div>
+
+        <div class="tree" style="bottom: 12%; left: 30%; font-size: 3.5rem;">🌳</div>
+        <div class="tree" style="bottom: 15%; right: 35%; font-size: 2.5rem;">🌲</div>
+        <div class="tree" style="bottom: 10%; right: 10%; font-size: 3rem;">🌳</div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="topic-toast"
+        class="absolute top-8 left-1/2 transform -translate-x-1/2 translate-y-[-250%] bg-white/95 backdrop-blur-md border-2 border-cyan-500 text-cyan-800 px-6 py-3 rounded-full shadow-2xl font-bold text-lg z-50 flex items-center gap-3">
+        <span>⏰</span>
+        <span id="toast-message">Chủ đề mới: Green Living 4</span>
+        <span>🏙️</span>
+    </div>
+
+    <div class="max-w-3xl w-full mx-auto relative z-10">
+
+        <!-- TRANG TỔNG HỢP (WELCOME SCREEN) -->
+        <div id="welcome-screen"
+            class="bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.6)] p-4 sm:p-8 text-center border-2 border-cyan-500/50 flex flex-col max-h-[90vh]">
+            <h1
+                class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-widest drop-shadow-[0_0_15px_rgba(6,182,212,0.8)] uppercase">
+                GREEN LIVING 4</h1>
+            <p class="text-cyan-200 font-medium mb-5 italic text-sm sm:text-lg border-b border-cyan-500/30 pb-3">Lối
+                Sống Bền Vững - Hành Động Đô Thị Xanh</p>
+
+            <div
+                class="flex-grow overflow-y-auto custom-scrollbar mb-6 border border-cyan-500/20 rounded-xl bg-slate-950/50 shadow-inner">
+                <table class="w-full text-left text-[11px] sm:text-base border-collapse">
+                    <thead class="sticky top-0 bg-cyan-700 text-white z-10">
+                        <tr>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Từ vựng</th>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Loại</th>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Nghĩa tiếng Việt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="welcome-table-body" class="divide-y divide-cyan-900/40 text-cyan-50">
+                        <!-- Chèn bằng JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button onclick="startStudy()"
+                class="w-full py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-black text-xl rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.6)] transform transition hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest">
+                BẮT ĐẦU ÔN TẬP 🚀
+            </button>
+
+            <div class="mt-4 pt-2 border-t border-cyan-500/20">
+                <p class="text-[11px] font-bold italic text-cyan-400/70 text-center tracking-wide uppercase">&copy;
+                    Copyright by Hoang Truong English</p>
+            </div>
+        </div>
+
+        <!-- PHẦN CHÍNH -->
+        <div id="main-content" class="hidden">
+            <!-- Nút quay lại -->
+            <button id="top-prev-btn" onclick="prevCard()"
+                class="absolute left-0 sm:left-2 top-0 sm:top-2 flex items-center justify-center p-1.5 text-cyan-200 hover:text-white hover:bg-white/20 rounded-full transition-colors hidden z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </button>
+
+            <!-- Nút nhạc -->
+            <button onclick="toggleMusic()"
+                class="absolute right-0 sm:right-2 top-0 sm:top-2 flex items-center justify-center p-1.5 text-cyan-200 hover:text-white hover:bg-white/20 rounded-full transition-colors z-20">
+                <span id="music-icon" class="text-2xl">🔇</span>
+            </button>
+
+            <!-- Header -->
+            <div
+                class="mb-4 bg-slate-900/80 backdrop-blur-md border border-cyan-400/30 rounded-xl px-4 py-2 sm:py-3 shadow-[0_0_20px_rgba(6,182,212,0.5)] mx-6 sm:mx-14">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-0">
+                    <h1 id="main-topic-title"
+                        class="text-base sm:text-lg font-bold text-white tracking-tight uppercase">GREEN LIVING 4</h1>
+                    <div class="flex items-center gap-2">
+                        <div id="live-timer"
+                            class="bg-cyan-900/50 px-2 py-0.5 rounded border border-cyan-400/30 text-cyan-100 font-mono text-xs">
+                            <span id="timer-display">00:00</span>
+                        </div>
+                        <p class="text-cyan-200 text-xs font-medium"><span id="progress-text">1 / X</span></p>
+                    </div>
+                </div>
+                <div class="w-full bg-cyan-900/50 rounded-full h-1.5 mt-2 overflow-hidden border border-cyan-800">
+                    <div id="progress-bar"
+                        class="bg-cyan-400 h-full transition-all duration-300 shadow-[0_0_10px_#22d3ee]"
+                        style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Flashcard -->
+            <div class="flip-card" id="flashcard">
+                <div class="flip-card-inner">
+                    <!-- Mặt trước -->
+                    <div class="flip-card-front p-4 sm:p-8 border-2 sm:border-4 border-cyan-500">
+                        <div class="flex-grow flex flex-col justify-center items-center text-center">
+                            <div class="flex items-center justify-center gap-2 mb-2 flex-wrap">
+                                <h2 class="text-xl sm:text-3xl font-bold text-slate-900" id="word-mean"></h2>
+                                <span
+                                    class="inline-block px-2 py-0.5 bg-cyan-100 text-cyan-800 rounded font-semibold text-xs uppercase"
+                                    id="word-type"></span>
+                            </div>
+                            <div class="w-12 h-1 bg-cyan-200 my-3 mx-auto rounded"></div>
+                            <p class="text-sm sm:text-xl font-medium text-slate-800 mb-2 leading-relaxed px-2"
+                                id="word-ex"></p>
+                            <p class="text-[11px] sm:text-base text-gray-500 italic mb-4 px-2" id="word-exVi"></p>
+
+                            <div class="w-full flex flex-col items-center gap-4">
+                                <div id="letter-inputs-container"
+                                    class="flex flex-wrap justify-center gap-x-[2px] gap-y-2 w-full"></div>
+                                <div class="flex items-center justify-center gap-2 sm:gap-3 w-full flex-wrap mt-1">
+                                    <button onclick="speakCurrentWord(event)"
+                                        class="w-9 h-9 sm:w-10 sm:h-10 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-full flex items-center justify-center transition-colors shadow-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5"
+                                            fill="currentColor" viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+                                        </svg>
+                                    </button>
+                                    <button id="hint-btn" onclick="giveHint()"
+                                        class="px-4 sm:px-5 h-9 sm:h-10 bg-sky-100 hover:bg-sky-200 text-sky-700 font-bold rounded-full border border-sky-200 disabled:opacity-50 text-sm sm:text-base">Hint</button>
+                                    <button onclick="checkAnswer()"
+                                        class="px-5 sm:px-6 h-9 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-full shadow-md active:scale-95 transition-colors text-sm sm:text-base">Check
+                                        Answer</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-auto w-full pt-3 sm:pt-4 border-t border-cyan-100">
+                            <p
+                                class="text-[9px] sm:text-[11px] font-semibold italic text-cyan-600 text-center tracking-wide pointer-events-none">
+                                &copy; Copyright by Hoang Truong English</p>
+                        </div>
+                    </div>
+
+                    <!-- Mặt sau -->
+                    <div class="flip-card-back p-4 sm:p-8 border-2 sm:border-4 border-cyan-500">
+                        <div id="result-header"
+                            class="text-center py-1.5 rounded-lg font-bold text-base sm:text-lg mb-3"></div>
+                        <div class="flex-grow flex flex-col justify-center items-center text-center">
+                            <h2 class="text-2xl sm:text-5xl font-bold text-slate-900 mb-1" id="back-word"></h2>
+                            <div
+                                class="flex items-center gap-2 mb-3 bg-cyan-50 border border-cyan-100 px-3 sm:px-4 py-1 rounded-full">
+                                <p class="text-sm sm:text-lg text-cyan-700 font-mono font-medium" id="back-phonetic">
+                                </p>
+                                <button onclick="speakCurrentWord(event)" class="text-cyan-600 hover:text-cyan-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6"
+                                        fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-sm sm:text-lg text-gray-600 font-medium mb-3" id="back-mean"></p>
+                            <div
+                                class="bg-cyan-50 border border-cyan-100 rounded-lg p-3 sm:p-4 w-full max-w-md shadow-sm">
+                                <p class="text-slate-800 text-xs sm:text-lg font-medium leading-relaxed" id="back-ex">
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-auto w-full pt-3 sm:pt-4">
+                            <div class="flex gap-2 sm:gap-3 mb-2 sm:mb-3">
+                                <button onclick="prevCard()"
+                                    class="flex-1 py-1.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg transition-colors text-sm sm:text-base">Quay
+                                    lại</button>
+                                <button onclick="nextCard()" id="next-btn"
+                                    class="flex-1 py-1.5 sm:py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-lg shadow-md transition-colors text-sm sm:text-base">Tiếp
+                                    theo</button>
+                            </div>
+                            <div class="border-t border-cyan-100 pt-2">
+                                <p
+                                    class="text-[9px] sm:text-[11px] font-semibold italic text-cyan-600 text-center tracking-wide pointer-events-none">
+                                    &copy; Copyright by Hoang Truong English</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng điểm -->
+        <div id="final-screen"
+            class="hidden bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 text-center border-4 border-cyan-600 max-w-md mx-auto w-full flex flex-col">
+            <h2 class="text-2xl sm:text-3xl font-black text-white mb-4">HOÀN THÀNH!</h2>
+            <div class="text-6xl mb-6">🏙️</div>
+            <div
+                class="bg-cyan-900/50 border border-cyan-500/30 rounded-xl p-5 text-left mb-6 shadow-inner text-sm text-cyan-50">
+                <p class="flex justify-between border-b border-cyan-500/20 pb-2 mb-2"><span>🕒 Hoàn thành:</span> <span
+                        id="finish-time" class="font-medium text-cyan-200"></span></p>
+                <p class="flex justify-between border-b border-cyan-500/20 pb-2 mb-2"><span>⏳ Thời gian học:</span>
+                    <span id="elapsed-time" class="font-bold text-cyan-300"></span></p>
+                <p class="flex justify-between border-b border-cyan-500/20 pb-2 mb-2"><span>✅ Đúng tuyệt đối:</span>
+                    <span id="correct-count" class="font-bold text-emerald-400"></span></p>
+                <p class="flex justify-between"><span>💡 Có dùng Hint:</span> <span id="hint-count"
+                        class="font-bold text-yellow-400"></span></p>
+
+                <div id="hint-list-container" class="mt-4 hidden">
+                    <p
+                        class="text-xs text-cyan-300 font-bold mb-1 border-t border-cyan-500/20 pt-2 uppercase tracking-tighter">
+                        Từ vựng đã xem Hint:</p>
+                    <ul id="hint-words-list"
+                        class="list-disc list-inside text-yellow-200 text-xs grid grid-cols-2 gap-1 font-medium"></ul>
+                </div>
+            </div>
+            <button onclick="resetQuizToSummary()"
+                class="py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-lg rounded-xl shadow-lg transform transition active:scale-95 uppercase tracking-wider">Học
+                lại từ đầu</button>
+            <div class="border-t border-cyan-500/20 pt-3 mt-4">
+                <p
+                    class="text-[10px] sm:text-[11px] font-semibold italic text-cyan-400/70 text-center tracking-wide pointer-events-none">
+                    &copy; Copyright by Hoang Truong English</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            { topic: "Green Living 4", word: "sturdy", phonetic: "/ˈstɜːdi/", type: "adj", mean: "chắc chắn, bền", ex: "People prefer _______ reusable bags because they last longer and reduce plastic waste.", exVi: "Mọi người thích túi tái sử dụng chắc chắn vì chúng bền hơn và giúp giảm rác thải nhựa." },
+            { topic: "Green Living 4", word: "solar-powered", phonetic: "/ˈsəʊlə paʊəd/", type: "adj", mean: "chạy bằng năng lượng mặt trời", ex: "_______ devices help reduce electricity consumption in many households.", exVi: "Các thiết bị chạy bằng năng lượng mặt trời giúp giảm lượng điện tiêu thụ trong nhiều hộ gia đình." },
+            { topic: "Green Living 4", word: "disposable", phonetic: "/dɪˈspəʊzəbl/", type: "adj", mean: "dùng một lần", ex: "_______ products create large amounts of waste and harm the environment.", exVi: "Các sản phẩm dùng một lần tạo ra lượng lớn rác thải và gây hại cho môi trường." },
+            { topic: "Green Living 4", word: "compostable", phonetic: "/kəmˈpɒstəbl/", type: "adj", mean: "có thể ủ phân", ex: "_______ packaging breaks down naturally and reduces landfill waste.", exVi: "Bao bì có thể ủ phân phân hủy tự nhiên và làm giảm lượng rác thải ở bãi rác." },
+            { topic: "Green Living 4", word: "biodegradable", phonetic: "/ˌbaɪəʊdɪˈɡreɪdəbl/", type: "adj", mean: "phân hủy sinh học", ex: "_______ materials are safer for nature than traditional plastic products.", exVi: "Vật liệu phân hủy sinh học an toàn cho thiên nhiên hơn so với các sản phẩm nhựa truyền thống." },
+            { topic: "Green Living 4", word: "depleted", phonetic: "/dɪˈpliːtɪd/", type: "adj", mean: "bị cạn kiệt", ex: "Many natural resources become _______ because of excessive consumption.", exVi: "Nhiều tài nguyên thiên nhiên bị cạn kiệt do tiêu thụ quá mức." },
+            { topic: "Green Living 4", word: "heat-trapping", phonetic: "/ˈhiːt ˌtræpɪŋ/", type: "adj", mean: "giữ nhiệt", ex: "_______ gases contribute to global warming and climate change.", exVi: "Các khí giữ nhiệt góp phần gây ra hiện tượng nóng lên toàn cầu và biến đổi khí hậu." },
+            { topic: "Green Living 4", word: "congested", phonetic: "/kənˈdʒestɪd/", type: "adj", mean: "đông đúc, tắc nghẽn", ex: "_______ cities often suffer from air pollution and traffic problems.", exVi: "Các thành phố đông đúc thường phải gánh chịu ô nhiễm không khí và các vấn đề giao thông." },
+            { topic: "Green Living 4", word: "urbanized", phonetic: "/ˈɜːbənaɪzd/", type: "adj", mean: "đô thị hóa", ex: "Highly _______ areas usually consume more energy and resources.", exVi: "Các khu vực đô thị hóa cao thường tiêu thụ nhiều năng lượng và tài nguyên hơn." },
+            { topic: "Green Living 4", word: "refillable", phonetic: "/ˌriːˈfɪləbl/", type: "adj", mean: "có thể nạp lại", ex: "_______ bottles help reduce plastic waste in daily life.", exVi: "Các chai có thể nạp lại giúp giảm rác thải nhựa trong cuộc sống hàng ngày." },
+            { topic: "Green Living 4", word: "cut down on", phonetic: "/kʌt daʊn ɒn/", type: "v", mean: "cắt giảm", ex: "Families try to _______ electricity use to save money and protect the environment.", exVi: "Các gia đình cố gắng cắt giảm sử dụng điện để tiết kiệm tiền và bảo vệ môi trường." },
+            { topic: "Green Living 4", word: "take in", phonetic: "/teɪk ɪn/", type: "v", mean: "hấp thụ", ex: "Trees _______ carbon dioxide and improve air quality in cities.", exVi: "Cây xanh hấp thụ CO2 và cải thiện chất lượng không khí trong thành phố." },
+            { topic: "Green Living 4", word: "strive for", phonetic: "/straɪv fɔː/", type: "v", mean: "nỗ lực đạt được", ex: "Many countries _______ cleaner energy and sustainable development.", exVi: "Nhiều quốc gia nỗ lực đạt được năng lượng sạch hơn và phát triển bền vững." },
+            { topic: "Green Living 4", word: "phase out", phonetic: "/feɪz aʊt/", type: "v", mean: "loại bỏ dần", ex: "Governments plan to _______ single-use plastic products in the future.", exVi: "Các chính phủ có kế hoạch loại bỏ dần các sản phẩm nhựa dùng một lần trong tương lai." },
+            { topic: "Green Living 4", word: "execute", phonetic: "/ˈeksɪkjuːt/", type: "v", mean: "thực hiện", ex: "Local authorities _______ environmental campaigns to raise public awareness.", exVi: "Các nhà chức trách địa phương thực hiện các chiến dịch môi trường để nâng cao nhận thức cộng đồng." },
+            { topic: "Green Living 4", word: "live off", phonetic: "/lɪv ɒf/", type: "v", mean: "sống nhờ vào", ex: "Some rural communities _______ natural resources from forests and rivers.", exVi: "Một số cộng đồng nông thôn sống nhờ vào các nguồn tài nguyên thiên nhiên từ rừng và sông." },
+            { topic: "Green Living 4", word: "stock up on", phonetic: "/stɒk ʌp ɒn/", type: "v", mean: "tích trữ", ex: "Many households _______ reusable items to reduce daily waste.", exVi: "Nhiều gia đình tích trữ các vật dụng có thể tái sử dụng để giảm lượng rác thải hàng ngày." },
+            { topic: "Green Living 4", word: "accumulate", phonetic: "/əˈkjuːmjəleɪt/", type: "v", mean: "tích tụ", ex: "Plastic waste can _______ in oceans and threaten marine life.", exVi: "Rác thải nhựa có thể tích tụ trong đại dương và đe dọa sinh vật biển." },
+            { topic: "Green Living 4", word: "sort out", phonetic: "/sɔːt aʊt/", type: "v", mean: "phân loại, giải quyết", ex: "Families _______ recyclable materials before disposing of household waste.", exVi: "Các gia đình phân loại các vật liệu có thể tái chế trước khi vứt rác thải sinh hoạt." },
+            { topic: "Green Living 4", word: "proceed with", phonetic: "/prəˈsiːd wɪð/", type: "v", mean: "tiến hành", ex: "Communities _______ green projects to improve local living conditions.", exVi: "Các cộng đồng tiến hành các dự án xanh để cải thiện điều kiện sống địa phương." },
+            { topic: "Green Living 4", word: "intensify", phonetic: "/ɪnˈtensɪfaɪ/", type: "v", mean: "làm tăng mạnh", ex: "Climate change can _______ natural disasters in vulnerable regions.", exVi: "Biến đổi khí hậu có thể làm tăng mạnh các thảm họa thiên nhiên ở các khu vực dễ bị tổn thương." },
+            { topic: "Green Living 4", word: "phase in", phonetic: "/feɪz ɪn/", type: "v", mean: "đưa vào dần", ex: "Governments _______ renewable energy programs to reduce pollution gradually.", exVi: "Các chính phủ đưa vào dần các chương trình năng lượng tái tạo để giảm thiểu ô nhiễm từng bước." },
+            { topic: "Green Living 4", word: "wipe out", phonetic: "/waɪp aʊt/", type: "v", mean: "xóa sổ", ex: "Pollution can _______ entire ecosystems if people ignore environmental problems.", exVi: "Ô nhiễm có thể xóa sổ toàn bộ hệ sinh thái nếu con người phớt lờ các vấn đề môi trường." },
+            { topic: "Green Living 4", word: "eradicate", phonetic: "/ɪˈrædɪkeɪt/", type: "v", mean: "xóa bỏ hoàn toàn", ex: "Global efforts aim to _______ illegal dumping and harmful waste disposal.", exVi: "Các nỗ lực toàn cầu hướng tới việc xóa bỏ hoàn toàn nạn đổ rác trái phép và xử lý chất thải độc hại." },
+            { topic: "Green Living 4", word: "make choices", phonetic: "/meɪk ˈtʃɔɪsɪz/", type: "v", mean: "đưa ra lựa chọn", ex: "Consumers _______ that affect the environment through their daily habits.", exVi: "Người tiêu dùng đưa ra lựa chọn ảnh hưởng đến môi trường thông qua các thói quen hàng ngày." },
+            { topic: "Green Living 4", word: "shift to", phonetic: "/ʃɪft tuː/", type: "v", mean: "chuyển sang", ex: "Many businesses _______ sustainable materials to reduce environmental impact.", exVi: "Nhiều doanh nghiệp chuyển sang các vật liệu bền vững để giảm thiểu tác động đến môi trường." },
+            { topic: "Green Living 4", word: "drop off", phonetic: "/drɒp ɒf/", type: "v", mean: "giảm xuống", ex: "Air quality can _______ quickly in areas with heavy traffic.", exVi: "Chất lượng không khí có thể giảm xuống nhanh chóng ở những khu vực có mật độ giao thông dày đặc." },
+            { topic: "Green Living 4", word: "take control of", phonetic: "/teɪk kənˈtrəʊl əv/", type: "v", mean: "kiểm soát", ex: "Governments need to _______ pollution before it becomes more serious.", exVi: "Các chính phủ cần kiểm soát ô nhiễm trước khi nó trở nên nghiêm trọng hơn." },
+            { topic: "Green Living 4", word: "catch up on", phonetic: "/kætʃ ʌp ɒn/", type: "v", mean: "cập nhật, bù", ex: "Students _______ environmental knowledge through documentaries and books.", exVi: "Học sinh cập nhật kiến thức về môi trường thông qua các bộ phim tài liệu và sách." },
+            { topic: "Green Living 4", word: "compensate", phonetic: "/ˈkɒmpenseɪt/", type: "v", mean: "bù đắp", ex: "Companies plant trees to _______ for carbon emissions from transportation.", exVi: "Các công ty trồng cây để bù đắp cho lượng khí thải carbon từ giao thông vận tải." },
+            { topic: "Green Living 4", word: "come down with", phonetic: "/kʌm daʊn wɪð/", type: "v", mean: "mắc bệnh", ex: "People sometimes _______ respiratory problems because of polluted air.", exVi: "Mọi người đôi khi mắc bệnh về đường hô hấp do không khí bị ô nhiễm." },
+            { topic: "Green Living 4", word: "go green", phonetic: "/ɡəʊ ɡriːn/", type: "v", mean: "sống xanh", ex: "Many young people decide to _______ by reducing waste and saving energy.", exVi: "Nhiều người trẻ quyết định sống xanh bằng cách giảm rác thải và tiết kiệm năng lượng." },
+            { topic: "Green Living 4", word: "look into", phonetic: "/lʊk ˈɪntuː/", type: "v", mean: "điều tra, tìm hiểu", ex: "Scientists _______ new solutions for environmental protection and clean energy.", exVi: "Các nhà khoa học tìm hiểu những giải pháp mới cho việc bảo vệ môi trường và năng lượng sạch." },
+            { topic: "Green Living 4", word: "turn down", phonetic: "/tɜːn daʊn/", type: "v", mean: "từ chối", ex: "Some consumers _______ plastic bags and choose reusable ones instead.", exVi: "Một số người tiêu dùng từ chối túi nilon và thay vào đó chọn túi có thể tái sử dụng." }
+        ];
+
+        let currentIndex = 0;
+        let hintedWords = new Set();
+        let hintUsedThisCard = false;
+        let startTime = null;
+        let timerId = null;
+        let isMusicPlaying = false;
+        let currentFallbackAudio = null;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.25;
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'start') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.4);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.15, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
+                osc.start(now);
+                osc.stop(now + 1.0);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(783.99, now);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.1);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'error') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(349.23, now);
+                osc.frequency.exponentialRampToValueAtTime(261.63, now + 0.2);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        function populateWelcomeTable() {
+            const tbody = document.getElementById('welcome-table-body');
+            tbody.innerHTML = flashcards.map(item => `
+                <tr class="border-b border-cyan-900/40 hover:bg-cyan-500/20 transition-colors">
+                    <td class="p-3 sm:p-4 font-black text-cyan-300 sm:text-lg tracking-wide">${item.word}</td>
+                    <td class="p-3 sm:p-4"><span class="px-2 py-1 bg-cyan-500/40 text-white rounded-md text-[9px] sm:text-[10px] uppercase font-black border border-cyan-400/30">${item.type}</span></td>
+                    <td class="p-3 sm:p-4 text-cyan-100 font-medium leading-relaxed">${item.mean}</td>
+                </tr>
+            `).join('');
+        }
+
+        function startStudy() {
+            playSound('start');
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            startTimer();
+            renderCard();
+        }
+
+        function toggleMusic() {
+            const icon = document.getElementById('music-icon');
+            if (isMusicPlaying) { bgMusic.pause(); icon.textContent = '🔇'; }
+            else { bgMusic.play().catch(e => console.log(e)); icon.textContent = '🎵'; }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        function startTimer() {
+            if (timerId) clearInterval(timerId);
+            startTime = Date.now();
+            timerId = setInterval(() => {
+                const diff = Math.floor((Date.now() - startTime) / 1000);
+                const m = Math.floor(diff / 60).toString().padStart(2, '0');
+                const s = (diff % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function speakCurrentWord(e) {
+            if (e) e.stopPropagation();
+            window.speechSynthesis.cancel();
+            if (currentFallbackAudio) { currentFallbackAudio.pause(); }
+
+            const word = flashcards[currentIndex].word.replace(/[\s-]/g, ' ');
+            const utter = new SpeechSynthesisUtterance(word);
+            utter.lang = 'en-US';
+            utter.rate = 0.9;
+
+            let started = false;
+            utter.onstart = () => started = true;
+            utter.onerror = () => playFallback(word);
+            window.speechSynthesis.speak(utter);
+            setTimeout(() => { if (!started) { window.speechSynthesis.cancel(); playFallback(word); } }, 500);
+        }
+
+        function playFallback(word) {
+            currentFallbackAudio = new Audio(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=2`);
+            currentFallbackAudio.play().catch(e => console.log(e));
+        }
+
+        function renderCard() {
+            const card = flashcards[currentIndex];
+            hintUsedThisCard = false;
+            document.getElementById('hint-btn').disabled = false;
+            document.getElementById('word-mean').textContent = card.mean;
+            document.getElementById('word-type').textContent = card.type;
+
+            // Highlight the missing word
+            let wordLength = card.word.length;
+            let underlineWidth = wordLength < 6 ? 'w-16' : (wordLength < 10 ? 'w-24' : (wordLength >= 14 ? 'w-40' : 'w-32'));
+            document.getElementById('word-ex').innerHTML = card.ex.replace('_______', `<span class="text-cyan-600 border-b-2 border-cyan-600 inline-block ${underlineWidth}"></span>`);
+
+            document.getElementById('word-exVi').textContent = card.exVi;
+
+            const container = document.getElementById('letter-inputs-container');
+            container.innerHTML = '';
+
+            const words = card.word.split(' ');
+            words.forEach((w, wordIndex) => {
+                const group = document.createElement('div');
+                group.className = 'flex gap-[2px] sm:gap-1';
+
+                w.split('').forEach((char, i) => {
+                    if (char === '-') {
+                        const dash = document.createElement('span');
+                        dash.textContent = '-';
+                        dash.className = 'text-base sm:text-xl font-bold text-cyan-300 self-center px-0.5';
+                        group.appendChild(dash);
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text'; input.maxLength = 1;
+                        // Điều chỉnh kích thước ô nhập để phù hợp với từ siêu dài như "biodegradable", "take control of"
+                        input.className = 'char-input editable-input w-[22px] h-7 sm:w-8 sm:h-10 text-center text-sm sm:text-lg font-bold border-2 border-cyan-200 rounded-md sm:rounded-lg focus:border-cyan-500 bg-white text-cyan-800 shadow-inner transition-all';
+
+                        input.addEventListener('input', function () {
+                            this.value = this.value.toLowerCase();
+                            const inputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const idx = inputs.indexOf(this);
+                            if (this.value && idx < inputs.length - 1) {
+                                let next = idx + 1;
+                                while (next < inputs.length && inputs[next].readOnly) next++;
+                                if (next < inputs.length) inputs[next].focus();
+                            }
+                        });
+
+                        input.addEventListener('keydown', function (e) {
+                            const inputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const idx = inputs.indexOf(this);
+                            if (e.key === 'Backspace' && !this.value && idx > 0) {
+                                let prev = idx - 1;
+                                while (prev >= 0 && inputs[prev].readOnly) prev--;
+                                if (prev >= 0) inputs[prev].focus();
+                            } else if (e.key === 'Enter') checkAnswer();
+                        });
+                        group.appendChild(input);
+                    }
+                });
+
+                container.appendChild(group);
+                if (wordIndex < words.length - 1) {
+                    const s = document.createElement('div'); s.className = 'w-1.5 sm:w-3'; container.appendChild(s);
+                }
+            });
+
+            setTimeout(() => document.querySelector('.editable-input')?.focus(), 100);
+            document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${flashcards.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / flashcards.length) * 100}%`;
+            document.getElementById('top-prev-btn').classList.toggle('hidden', currentIndex === 0);
+        }
+
+        function giveHint() {
+            if (hintUsedThisCard) return;
+            const target = flashcards[currentIndex].word.replace(/[\s-]/g, '').toLowerCase();
+            const inputs = document.querySelectorAll('.char-input');
+            let pool = [];
+            for (let i = 0; i < inputs.length; i++) if (!inputs[i].readOnly && inputs[i].value.toLowerCase() !== target[i]) pool.push(i);
+
+            if (pool.length === 0) return;
+            // Tăng số lượng hint cho các cụm từ dài
+            const count = target.length <= 6 ? 1 : (target.length >= 14 ? 4 : (target.length >= 9 ? 3 : 2));
+
+            for (let i = 0; i < Math.min(count, pool.length); i++) {
+                const rand = Math.floor(Math.random() * pool.length);
+                const idx = pool.splice(rand, 1)[0];
+                inputs[idx].value = target[idx];
+                inputs[idx].readOnly = true;
+                inputs[idx].className = 'char-input w-[22px] h-7 sm:w-8 sm:h-10 text-center font-bold border-2 border-sky-400 bg-sky-100 text-sky-800 rounded-md sm:rounded-lg';
+            }
+            hintUsedThisCard = true;
+            hintedWords.add(flashcards[currentIndex].word);
+            document.getElementById('hint-btn').disabled = true;
+        }
+
+        function checkAnswer() {
+            const card = flashcards[currentIndex];
+            const target = card.word.replace(/[\s-]/g, '').toLowerCase();
+            const inputs = document.querySelectorAll('.char-input');
+            const user = Array.from(inputs).map(i => i.value).join('').toLowerCase();
+
+            if (user === target) {
+                playSound('success');
+                const header = document.getElementById('result-header');
+                header.textContent = "🎉 CHÍNH XÁC!";
+                header.className = "text-center py-1.5 sm:py-2 rounded-lg font-bold text-sm sm:text-lg mb-3 sm:mb-4 bg-cyan-100 text-cyan-800 uppercase tracking-widest";
+
+                document.getElementById('back-word').textContent = card.word;
+                document.getElementById('back-phonetic').textContent = card.phonetic;
+                document.getElementById('back-mean').textContent = `${card.mean} (${card.type})`;
+                document.getElementById('back-ex').innerHTML = card.ex.replace('_______', `<span class="font-black text-cyan-700 underline decoration-2">${card.word}</span>`);
+
+                document.getElementById('flashcard').classList.add('flipped');
+            } else {
+                playSound('error');
+                document.getElementById('letter-inputs-container').classList.add('shake');
+                setTimeout(() => document.getElementById('letter-inputs-container').classList.remove('shake'), 400);
+            }
+        }
+
+        function nextCard() {
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => {
+                if (currentIndex < flashcards.length - 1) { currentIndex++; renderCard(); }
+                else showFinal();
+            }, 300);
+        }
+
+        function prevCard() {
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => { if (currentIndex > 0) { currentIndex--; renderCard(); } }, 300);
+        }
+
+        function showFinal() {
+            clearInterval(timerId);
+            const total = Math.floor((Date.now() - startTime) / 1000);
+            const m = Math.floor(total / 60); const s = total % 60;
+            const now = new Date();
+
+            document.getElementById('main-content').classList.add('hidden');
+            document.getElementById('final-screen').classList.remove('hidden');
+            document.getElementById('finish-time').textContent = now.toLocaleTimeString('vi-VN') + " - " + now.toLocaleDateString('vi-VN');
+            document.getElementById('elapsed-time').textContent = (m > 0 ? `${m} phút ` : '') + `${s} giây`;
+            document.getElementById('correct-count').textContent = flashcards.length - hintedWords.size;
+            document.getElementById('hint-count').textContent = hintedWords.size;
+
+            const list = document.getElementById('hint-words-list');
+            list.innerHTML = '';
+            if (hintedWords.size > 0) {
+                document.getElementById('hint-list-container').classList.remove('hidden');
+                hintedWords.forEach(w => { const li = document.createElement('li'); li.textContent = w; list.appendChild(li); });
+            }
+        }
+
+        function resetQuizToSummary() {
+            currentIndex = 0; hintedWords.clear();
+            document.getElementById('final-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            populateWelcomeTable();
+        }
+
+        document.addEventListener('DOMContentLoaded', populateWelcomeTable);
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('main-content').classList.contains('hidden')) return;
+            if (e.altKey && e.key.toLowerCase() === 'h') { e.preventDefault(); giveHint(); }
+            if (e.shiftKey && e.key === 'Enter') { e.preventDefault(); speakCurrentWord(); }
+            if (e.key === 'Enter' && !e.shiftKey) {
+                if (document.getElementById('flashcard').classList.contains('flipped')) nextCard();
+                else checkAnswer();
+            }
+        });
+    </script>
+</body>
+
+</html>
