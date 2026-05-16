@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Từ Vựng: Urbanization 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1c1917;
+            /* stone-900 */
+        }
+
+        /* --- CSS cho Nền Động Urban Dawn (Bình Minh Đô Thị) --- */
+        .scenery-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            /* Gradient từ Xám Đá sang Cam Bình Minh */
+            background: linear-gradient(to bottom, #292524 0%, #78350f 50%, #ea580c 100%);
+            overflow: hidden;
+        }
+
+        .hill {
+            position: absolute;
+            bottom: -50px;
+            width: 120%;
+            height: 35%;
+            background: #1c1917;
+            /* stone-900 */
+            border-radius: 50% 50% 0 0;
+            left: -10%;
+            box-shadow: inset 0px 20px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .hill2 {
+            position: absolute;
+            bottom: -60px;
+            width: 100%;
+            height: 30%;
+            background: #292524;
+            /* stone-800 */
+            border-radius: 50% 50% 0 0;
+            right: -20%;
+            box-shadow: inset 0px 20px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Đám mây bình minh */
+        .cloud {
+            position: absolute;
+            font-size: 3rem;
+            filter: drop-shadow(0 0 10px rgba(253, 186, 116, 0.4));
+            /* orange-300 */
+            user-select: none;
+            z-index: -8;
+            animation: floatCloud linear infinite;
+        }
+
+        @keyframes floatCloud {
+            0% {
+                transform: translateX(-20vw);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.7;
+            }
+
+            90% {
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translateX(110vw);
+                opacity: 0;
+            }
+        }
+
+        /* Ánh nắng mặt trời mọc */
+        .sun {
+            position: absolute;
+            font-size: 7rem;
+            animation: riseSun 20s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 40px rgba(251, 146, 60, 0.9));
+            /* orange-400 */
+            user-select: none;
+            bottom: 25%;
+            left: 20%;
+        }
+
+        @keyframes riseSun {
+            0% {
+                transform: translateY(20px) scale(0.95);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-40px) scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        /* Cần cẩu và tòa nhà đang xây */
+        .crane {
+            position: absolute;
+            font-size: 5rem;
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+            user-select: none;
+            z-index: -7;
+            opacity: 0.8;
+            bottom: 12%;
+        }
+
+        /* Tàu điện (public transit) */
+        .train {
+            position: absolute;
+            font-size: 2.5rem;
+            bottom: 5%;
+            filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.5));
+            user-select: none;
+            z-index: -6;
+            animation: driveTrain linear infinite;
+        }
+
+        @keyframes driveTrain {
+            0% {
+                transform: translateX(-20vw);
+            }
+
+            100% {
+                transform: translateX(120vw);
+            }
+        }
+
+        .flip-card {
+            perspective: 1200px;
+            width: 100%;
+            height: 480px;
+        }
+
+        @media (min-width: 640px) {
+            .flip-card {
+                height: 520px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .flip-card {
+                height: 580px;
+            }
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6);
+            background-color: rgba(255, 255, 255, 0.98);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.5);
+            /* orange-500 */
+            outline: none;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #f97316;
+            border-radius: 10px;
+        }
+
+        /* orange-500 */
+    </style>
+</head>
+
+<body
+    class="text-stone-950 p-2 sm:p-4 md:p-8 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+
+    <div class="scenery-bg">
+        <div class="hill2"></div>
+        <div class="hill"></div>
+        <div class="sun">🌅</div>
+
+        <!-- Mây trôi -->
+        <div class="cloud" style="top: 15%; animation-duration: 35s; animation-delay: 0s;">☁️</div>
+        <div class="cloud" style="top: 25%; animation-duration: 45s; animation-delay: -15s; font-size: 2rem;">☁️</div>
+        <div class="cloud" style="top: 10%; animation-duration: 40s; animation-delay: -25s; font-size: 4rem;">☁️</div>
+
+        <!-- Công trình xây dựng và cần cẩu -->
+        <div class="crane" style="left: 10%; font-size: 6rem; opacity: 0.6;">🏭</div>
+        <div class="crane" style="right: 15%; font-size: 8rem;">🏗️</div>
+        <div class="crane" style="left: 30%; bottom: 10%; font-size: 5rem;">🏙️</div>
+
+        <!-- Tàu điện chạy ngang -->
+        <div class="train" style="bottom: 8%; animation-duration: 15s; animation-delay: 0s;">🚆</div>
+        <div class="train" style="bottom: 5%; animation-duration: 12s; animation-delay: 7s; font-size: 3rem;">🚋</div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="topic-toast"
+        class="absolute top-8 left-1/2 transform -translate-x-1/2 translate-y-[-250%] bg-white/95 backdrop-blur-md border-2 border-orange-500 text-orange-800 px-6 py-3 rounded-full shadow-2xl font-bold text-lg z-50 flex items-center gap-3">
+        <span>⏰</span>
+        <span id="toast-message">Chủ đề mới: Urbanization 2</span>
+        <span>🏗️</span>
+    </div>
+
+    <div class="max-w-3xl w-full mx-auto relative z-10">
+
+        <!-- TRANG TỔNG HỢP (WELCOME SCREEN) -->
+        <div id="welcome-screen"
+            class="bg-stone-900/90 backdrop-blur-xl rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.6)] p-4 sm:p-8 text-center border-2 border-orange-500/50 flex flex-col max-h-[90vh]">
+            <h1
+                class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-widest drop-shadow-[0_0_15px_rgba(249,115,22,0.8)] uppercase">
+                URBANIZATION 2</h1>
+            <p class="text-orange-200 font-medium mb-5 italic text-sm sm:text-lg border-b border-orange-500/30 pb-3">Đô
+                Thị Hóa - Hạ Tầng, Cư Dân & Xã Hội</p>
+
+            <div
+                class="flex-grow overflow-y-auto custom-scrollbar mb-6 border border-orange-500/20 rounded-xl bg-stone-950/50 shadow-inner">
+                <table class="w-full text-left text-[11px] sm:text-base border-collapse">
+                    <thead class="sticky top-0 bg-orange-700 text-white z-10">
+                        <tr>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Từ vựng</th>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Loại</th>
+                            <th class="p-3 sm:p-4 font-bold uppercase tracking-wider">Nghĩa tiếng Việt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="welcome-table-body" class="divide-y divide-orange-900/40 text-orange-50">
+                        <!-- Chèn bằng JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button onclick="startStudy()"
+                class="w-full py-4 bg-orange-600 hover:bg-orange-500 text-white font-black text-xl rounded-xl shadow-[0_0_20px_rgba(249,115,22,0.6)] transform transition hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest">
+                BẮT ĐẦU ÔN TẬP 🚀
+            </button>
+
+            <div class="mt-4 pt-2 border-t border-orange-500/20">
+                <p class="text-[11px] font-bold italic text-orange-400/70 text-center tracking-wide uppercase">&copy;
+                    Copyright by Hoang Truong English</p>
+            </div>
+        </div>
+
+        <!-- PHẦN CHÍNH -->
+        <div id="main-content" class="hidden">
+            <!-- Nút quay lại -->
+            <button id="top-prev-btn" onclick="prevCard()"
+                class="absolute left-0 sm:left-2 top-0 sm:top-2 flex items-center justify-center p-1.5 text-orange-200 hover:text-white hover:bg-white/20 rounded-full transition-colors hidden z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </button>
+
+            <!-- Nút nhạc -->
+            <button onclick="toggleMusic()"
+                class="absolute right-0 sm:right-2 top-0 sm:top-2 flex items-center justify-center p-1.5 text-orange-200 hover:text-white hover:bg-white/20 rounded-full transition-colors z-20">
+                <span id="music-icon" class="text-2xl">🔇</span>
+            </button>
+
+            <!-- Header -->
+            <div
+                class="mb-4 bg-stone-900/80 backdrop-blur-md border border-orange-400/30 rounded-xl px-4 py-2 sm:py-3 shadow-[0_0_20px_rgba(249,115,22,0.5)] mx-6 sm:mx-14">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-0">
+                    <h1 id="main-topic-title"
+                        class="text-base sm:text-lg font-bold text-white tracking-tight uppercase">URBANIZATION 2</h1>
+                    <div class="flex items-center gap-2">
+                        <div id="live-timer"
+                            class="bg-orange-900/50 px-2 py-0.5 rounded border border-orange-400/30 text-orange-100 font-mono text-xs">
+                            <span id="timer-display">00:00</span>
+                        </div>
+                        <p class="text-orange-200 text-xs font-medium"><span id="progress-text">1 / X</span></p>
+                    </div>
+                </div>
+                <div class="w-full bg-orange-900/50 rounded-full h-1.5 mt-2 overflow-hidden border border-orange-800">
+                    <div id="progress-bar"
+                        class="bg-orange-400 h-full transition-all duration-300 shadow-[0_0_10px_#fb923c]"
+                        style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Flashcard -->
+            <div class="flip-card" id="flashcard">
+                <div class="flip-card-inner">
+                    <!-- Mặt trước -->
+                    <div class="flip-card-front p-4 sm:p-8 border-2 sm:border-4 border-orange-500">
+                        <div class="flex-grow flex flex-col justify-center items-center text-center">
+                            <div class="flex items-center justify-center gap-2 mb-2 flex-wrap">
+                                <h2 class="text-xl sm:text-3xl font-bold text-stone-900" id="word-mean"></h2>
+                                <span
+                                    class="inline-block px-2 py-0.5 bg-orange-100 text-orange-800 rounded font-semibold text-xs uppercase"
+                                    id="word-type"></span>
+                            </div>
+                            <div class="w-12 h-1 bg-orange-200 my-3 mx-auto rounded"></div>
+                            <p class="text-sm sm:text-xl font-medium text-stone-800 mb-2 leading-relaxed px-2"
+                                id="word-ex"></p>
+                            <p class="text-[11px] sm:text-base text-gray-500 italic mb-4 px-2" id="word-exVi"></p>
+
+                            <div class="w-full flex flex-col items-center gap-4">
+                                <div id="letter-inputs-container"
+                                    class="flex flex-wrap justify-center gap-x-[2px] gap-y-2 w-full"></div>
+                                <div class="flex items-center justify-center gap-2 sm:gap-3 w-full flex-wrap mt-1">
+                                    <button onclick="speakCurrentWord(event)"
+                                        class="w-9 h-9 sm:w-10 sm:h-10 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-full flex items-center justify-center transition-colors shadow-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5"
+                                            fill="currentColor" viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+                                        </svg>
+                                    </button>
+                                    <button id="hint-btn" onclick="giveHint()"
+                                        class="px-4 sm:px-5 h-9 sm:h-10 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-full border border-stone-200 disabled:opacity-50 text-sm sm:text-base">Hint</button>
+                                    <button onclick="checkAnswer()"
+                                        class="px-5 sm:px-6 h-9 sm:h-10 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full shadow-md active:scale-95 transition-colors text-sm sm:text-base">Check
+                                        Answer</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-auto w-full pt-3 sm:pt-4 border-t border-orange-100">
+                            <p
+                                class="text-[9px] sm:text-[11px] font-semibold italic text-orange-600 text-center tracking-wide pointer-events-none">
+                                &copy; Copyright by Hoang Truong English</p>
+                        </div>
+                    </div>
+
+                    <!-- Mặt sau -->
+                    <div class="flip-card-back p-4 sm:p-8 border-2 sm:border-4 border-orange-500">
+                        <div id="result-header"
+                            class="text-center py-1.5 rounded-lg font-bold text-base sm:text-lg mb-3"></div>
+                        <div class="flex-grow flex flex-col justify-center items-center text-center">
+                            <h2 class="text-2xl sm:text-5xl font-bold text-orange-900 mb-1" id="back-word"></h2>
+                            <div
+                                class="flex items-center gap-2 mb-3 bg-orange-50 border border-orange-100 px-3 sm:px-4 py-1 rounded-full">
+                                <p class="text-sm sm:text-lg text-orange-700 font-mono font-medium" id="back-phonetic">
+                                </p>
+                                <button onclick="speakCurrentWord(event)" class="text-orange-600 hover:text-orange-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6"
+                                        fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-sm sm:text-lg text-gray-600 font-medium mb-3" id="back-mean"></p>
+                            <div
+                                class="bg-orange-50 border border-orange-100 rounded-lg p-3 sm:p-4 w-full max-w-md shadow-sm">
+                                <p class="text-stone-800 text-xs sm:text-lg font-medium leading-relaxed" id="back-ex">
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-auto w-full pt-3 sm:pt-4">
+                            <div class="flex gap-2 sm:gap-3 mb-2 sm:mb-3">
+                                <button onclick="prevCard()"
+                                    class="flex-1 py-1.5 sm:py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-lg transition-colors text-sm sm:text-base">Quay
+                                    lại</button>
+                                <button onclick="nextCard()" id="next-btn"
+                                    class="flex-1 py-1.5 sm:py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg shadow-md transition-colors text-sm sm:text-base">Tiếp
+                                    theo</button>
+                            </div>
+                            <div class="border-t border-orange-100 pt-2">
+                                <p
+                                    class="text-[9px] sm:text-[11px] font-semibold italic text-orange-600 text-center tracking-wide pointer-events-none">
+                                    &copy; Copyright by Hoang Truong English</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng điểm -->
+        <div id="final-screen"
+            class="hidden bg-stone-900/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 text-center border-4 border-orange-600 max-w-md mx-auto w-full flex flex-col">
+            <h2 class="text-2xl sm:text-3xl font-black text-white mb-4">HOÀN THÀNH!</h2>
+            <div class="text-6xl mb-6">🌅</div>
+            <div
+                class="bg-orange-900/50 border border-orange-500/30 rounded-xl p-5 text-left mb-6 shadow-inner text-sm text-orange-50">
+                <p class="flex justify-between border-b border-orange-500/20 pb-2 mb-2"><span>🕒 Hoàn thành:</span>
+                    <span id="finish-time" class="font-medium text-orange-200"></span></p>
+                <p class="flex justify-between border-b border-orange-500/20 pb-2 mb-2"><span>⏳ Thời gian học:</span>
+                    <span id="elapsed-time" class="font-bold text-orange-300"></span></p>
+                <p class="flex justify-between border-b border-orange-500/20 pb-2 mb-2"><span>✅ Đúng tuyệt đối:</span>
+                    <span id="correct-count" class="font-bold text-emerald-400"></span></p>
+                <p class="flex justify-between"><span>💡 Có dùng Hint:</span> <span id="hint-count"
+                        class="font-bold text-yellow-400"></span></p>
+
+                <div id="hint-list-container" class="mt-4 hidden">
+                    <p
+                        class="text-xs text-orange-300 font-bold mb-1 border-t border-orange-500/20 pt-2 uppercase tracking-tighter">
+                        Từ vựng đã xem Hint:</p>
+                    <ul id="hint-words-list"
+                        class="list-disc list-inside text-yellow-200 text-xs grid grid-cols-2 gap-1 font-medium"></ul>
+                </div>
+            </div>
+            <button onclick="resetQuizToSummary()"
+                class="py-4 bg-orange-600 hover:bg-orange-500 text-white font-bold text-lg rounded-xl shadow-lg transform transition active:scale-95 uppercase tracking-wider">Học
+                lại từ đầu</button>
+            <div class="border-t border-orange-500/20 pt-3 mt-4">
+                <p
+                    class="text-[10px] sm:text-[11px] font-semibold italic text-orange-400/70 text-center tracking-wide pointer-events-none">
+                    &copy; Copyright by Hoang Truong English</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            { topic: "Urbanization 2", word: "urbanization", phonetic: "/ˌɜːbənaɪˈzeɪʃən/", type: "n", mean: "sự đô thị hóa", ex: "_______ creates more job opportunities but also increases pressure on public services.", exVi: "Sự đô thị hóa tạo ra nhiều cơ hội việc làm hơn nhưng cũng làm tăng áp lực lên các dịch vụ công cộng." },
+            { topic: "Urbanization 2", word: "infrastructure", phonetic: "/ˈɪnfrəˌstrʌktʃə(r)/", type: "n", mean: "cơ sở hạ tầng", ex: "Strong _______ helps cities provide better transportation and healthcare systems.", exVi: "Cơ sở hạ tầng vững mạnh giúp các thành phố cung cấp hệ thống giao thông và y tế tốt hơn." },
+            { topic: "Urbanization 2", word: "migration", phonetic: "/maɪˈɡreɪʃən/", type: "n", mean: "sự di cư", ex: "Rural-to-urban _______ changes the population structure in many developing countries.", exVi: "Sự di cư từ nông thôn ra thành thị làm thay đổi cơ cấu dân số ở nhiều nước đang phát triển." },
+            { topic: "Urbanization 2", word: "overpopulation", phonetic: "/ˌəʊvəˌpɒpjəˈleɪʃən/", type: "n", mean: "tình trạng quá đông dân", ex: "_______ creates serious problems such as pollution and housing shortages in cities.", exVi: "Tình trạng quá đông dân tạo ra những vấn đề nghiêm trọng như ô nhiễm và thiếu hụt nhà ở tại các thành phố." },
+            { topic: "Urbanization 2", word: "congestion", phonetic: "/kənˈdʒestʃən/", type: "n", mean: "sự tắc nghẽn", ex: "Traffic _______ affects daily life and increases travel time for workers.", exVi: "Sự tắc nghẽn giao thông ảnh hưởng đến cuộc sống hàng ngày và làm tăng thời gian di chuyển của người lao động." },
+            { topic: "Urbanization 2", word: "blockage", phonetic: "/ˈblɒkɪdʒ/", type: "n", mean: "sự tắc nghẽn", ex: "Road _______ often causes delays and frustration during rush hours.", exVi: "Sự tắc nghẽn đường sá thường gây ra sự chậm trễ và bực bội trong những giờ cao điểm." },
+            { topic: "Urbanization 2", word: "overcrowding", phonetic: "/ˌəʊvəˈkraʊdɪŋ/", type: "n", mean: "sự quá tải dân số", ex: "_______ reduces living quality and places pressure on public facilities.", exVi: "Sự quá tải dân số làm giảm chất lượng sống và đặt áp lực lên các tiện ích công cộng." },
+            { topic: "Urbanization 2", word: "urban sprawl", phonetic: "/ˌɜːbən ˈsprɔːl/", type: "n", mean: "sự mở rộng đô thị", ex: "_______ reduces green space and increases dependence on private vehicles.", exVi: "Sự mở rộng đô thị làm giảm không gian xanh và tăng sự phụ thuộc vào phương tiện cá nhân." },
+            { topic: "Urbanization 2", word: "skyscraper", phonetic: "/ˈskaɪˌskreɪpə(r)/", type: "n", mean: "tòa nhà chọc trời", ex: "Modern _______s dominate the skyline in many large cities around the world.", exVi: "Những tòa nhà chọc trời hiện đại thống trị đường chân trời ở nhiều thành phố lớn trên thế giới." },
+            { topic: "Urbanization 2", word: "slum", phonetic: "/slʌm/", type: "n", mean: "khu ổ chuột", ex: "Many families live in _______s because they cannot afford proper housing in the city center.", exVi: "Nhiều gia đình sống trong các khu ổ chuột vì họ không thể chi trả cho nhà ở đàng hoàng ở trung tâm thành phố." },
+            { topic: "Urbanization 2", word: "suburb", phonetic: "/ˈsʌbɜːb/", type: "n", mean: "vùng ngoại ô", ex: "Many workers choose to live in _______s to avoid noise and pollution in the city center.", exVi: "Nhiều công nhân chọn sống ở vùng ngoại ô để tránh tiếng ồn và ô nhiễm ở trung tâm thành phố." },
+            { topic: "Urbanization 2", word: "outskirts", phonetic: "/ˈaʊtskɜːts/", type: "n", mean: "vùng ven", ex: "Factories are often built on the _______ of large cities.", exVi: "Các nhà máy thường được xây dựng ở vùng ven của các thành phố lớn." },
+            { topic: "Urbanization 2", word: "commuter", phonetic: "/kəˈmjuːtə(r)/", type: "n", mean: "người đi làm xa", ex: "Daily _______s spend long hours traveling between home and work.", exVi: "Những người đi làm xa hàng ngày dành nhiều giờ đồng hồ để di chuyển giữa nhà và nơi làm việc." },
+            { topic: "Urbanization 2", word: "evolution", phonetic: "/ˌiːvəˈluːʃən/", type: "n", mean: "sự phát triển, tiến hóa", ex: "The _______ of cities reflects economic and technological progress over time.", exVi: "Sự phát triển của các thành phố phản ánh sự tiến bộ về kinh tế và công nghệ theo thời gian." },
+            { topic: "Urbanization 2", word: "gentrification", phonetic: "/ˌdʒentrɪfɪˈkeɪʃən/", type: "n", mean: "sự tái thiết đô thị", ex: "_______ increases property values but may force poor residents to relocate.", exVi: "Sự tái thiết đô thị làm tăng giá trị bất động sản nhưng có thể buộc những cư dân nghèo phải di dời." },
+            { topic: "Urbanization 2", word: "conveyance", phonetic: "/kənˈveɪəns/", type: "n", mean: "phương tiện vận chuyển", ex: "Public _______ plays an important role in reducing traffic congestion.", exVi: "Phương tiện vận chuyển công cộng đóng vai trò quan trọng trong việc giảm tắc nghẽn giao thông." },
+            { topic: "Urbanization 2", word: "sanitation", phonetic: "/ˌsænɪˈteɪʃən/", type: "n", mean: "điều kiện vệ sinh", ex: "Good _______ improves public health and prevents the spread of disease.", exVi: "Điều kiện vệ sinh tốt giúp cải thiện sức khỏe cộng đồng và ngăn chặn sự lây lan của bệnh tật." },
+            { topic: "Urbanization 2", word: "irrigation", phonetic: "/ˌɪrɪˈɡeɪʃən/", type: "n", mean: "sự tưới tiêu", ex: "Efficient _______ supports agriculture in areas near expanding urban regions.", exVi: "Sự tưới tiêu hiệu quả hỗ trợ nông nghiệp ở các khu vực gần những vùng đô thị đang mở rộng." },
+            { topic: "Urbanization 2", word: "deficit", phonetic: "/ˈdefɪsɪt/", type: "n", mean: "sự thiếu hụt", ex: "Housing _______ becomes a serious issue in rapidly growing cities.", exVi: "Sự thiếu hụt nhà ở trở thành một vấn đề nghiêm trọng ở các thành phố đang phát triển nhanh chóng." },
+            { topic: "Urbanization 2", word: "industrialization", phonetic: "/ɪnˌdʌstriəlaɪˈzeɪʃən/", type: "n", mean: "sự công nghiệp hóa", ex: "_______ attracts workers from rural areas to urban centers.", exVi: "Sự công nghiệp hóa thu hút công nhân từ các vùng nông thôn đến các trung tâm đô thị." },
+            { topic: "Urbanization 2", word: "dweller", phonetic: "/ˈdwelə(r)/", type: "n", mean: "cư dân", ex: "City _______s often face challenges such as noise and air pollution.", exVi: "Cư dân thành phố thường phải đối mặt với những thách thức như ô nhiễm tiếng ồn và không khí." },
+            { topic: "Urbanization 2", word: "inhabitant", phonetic: "/ɪnˈhæbɪtənt/", type: "n", mean: "cư dân", ex: "Urban _______s rely heavily on public transportation and modern infrastructure.", exVi: "Cư dân đô thị phụ thuộc rất nhiều vào giao thông công cộng và cơ sở hạ tầng hiện đại." },
+            { topic: "Urbanization 2", word: "density", phonetic: "/ˈdensəti/", type: "n", mean: "mật độ", ex: "High population _______ creates pressure on housing and transportation systems.", exVi: "Mật độ dân số cao tạo ra áp lực lên hệ thống nhà ở và giao thông." },
+            { topic: "Urbanization 2", word: "disparity", phonetic: "/dɪˈspærəti/", type: "n", mean: "sự chênh lệch", ex: "Economic _______ often appears between urban and rural communities.", exVi: "Sự chênh lệch kinh tế thường xuất hiện giữa cộng đồng đô thị và nông thôn." },
+            { topic: "Urbanization 2", word: "discrepancy", phonetic: "/dɪˈskrepənsi/", type: "n", mean: "sự khác biệt", ex: "There is a clear _______ between living conditions in rich and poor neighborhoods.", exVi: "Có một sự khác biệt rõ ràng giữa điều kiện sống ở các khu phố giàu và nghèo." },
+            { topic: "Urbanization 2", word: "public transit", phonetic: "/ˌpʌblɪk ˈtrænzɪt/", type: "n", mean: "giao thông công cộng", ex: "Reliable _______ helps reduce pollution and traffic problems in cities.", exVi: "Hệ thống giao thông công cộng đáng tin cậy giúp giảm ô nhiễm và các vấn đề giao thông ở các thành phố." },
+            { topic: "Urbanization 2", word: "urban decay", phonetic: "/ˌɜːbən dɪˈkeɪ/", type: "n", mean: "sự xuống cấp đô thị", ex: "_______ affects old neighborhoods that lack investment and maintenance.", exVi: "Sự xuống cấp đô thị ảnh hưởng đến các khu phố cũ kỹ thiếu thốn sự đầu tư và bảo trì." }
+        ];
+
+        let currentIndex = 0;
+        let hintedWords = new Set();
+        let hintUsedThisCard = false;
+        let startTime = null;
+        let timerId = null;
+        let isMusicPlaying = false;
+        let currentFallbackAudio = null;
+
+        let audioCtx = null;
+        const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.25;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            // Thêm độ trễ 0.02s để tránh lỗi "scheduling in the past" của trình duyệt
+            const now = audioCtx.currentTime + 0.02;
+
+            if (type === 'start') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.4);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.15, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
+                osc.start(now);
+                osc.stop(now + 1.0);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(783.99, now);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.1);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'error') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(349.23, now);
+                osc.frequency.exponentialRampToValueAtTime(261.63, now + 0.2);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        function populateWelcomeTable() {
+            const tbody = document.getElementById('welcome-table-body');
+            tbody.innerHTML = flashcards.map(item => `
+                <tr class="border-b border-orange-900/40 hover:bg-orange-500/20 transition-colors">
+                    <td class="p-3 sm:p-4 font-black text-orange-300 sm:text-lg tracking-wide">${item.word}</td>
+                    <td class="p-3 sm:p-4"><span class="px-2 py-1 bg-orange-500/40 text-white rounded-md text-[9px] sm:text-[10px] uppercase font-black border border-orange-400/30">${item.type}</span></td>
+                    <td class="p-3 sm:p-4 text-orange-100 font-medium leading-relaxed">${item.mean}</td>
+                </tr>
+            `).join('');
+        }
+
+        function startStudy() {
+            playSound('start');
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            startTimer();
+            renderCard();
+        }
+
+        function toggleMusic() {
+            const icon = document.getElementById('music-icon');
+            if (isMusicPlaying) { bgMusic.pause(); icon.textContent = '🔇'; }
+            else { bgMusic.play().catch(e => console.log(e)); icon.textContent = '🎵'; }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        function startTimer() {
+            if (timerId) clearInterval(timerId);
+            startTime = Date.now();
+            timerId = setInterval(() => {
+                const diff = Math.floor((Date.now() - startTime) / 1000);
+                const m = Math.floor(diff / 60).toString().padStart(2, '0');
+                const s = (diff % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function speakCurrentWord(e) {
+            if (e) e.stopPropagation();
+            window.speechSynthesis.cancel();
+            if (currentFallbackAudio) { currentFallbackAudio.pause(); }
+
+            const word = flashcards[currentIndex].word.replace(/[\s-]/g, ' ');
+            const utter = new SpeechSynthesisUtterance(word);
+            utter.lang = 'en-US';
+            utter.rate = 0.9;
+
+            let started = false;
+            utter.onstart = () => started = true;
+            utter.onerror = () => playFallback(word);
+            window.speechSynthesis.speak(utter);
+            setTimeout(() => { if (!started) { window.speechSynthesis.cancel(); playFallback(word); } }, 500);
+        }
+
+        function playFallback(word) {
+            // Nguồn dự phòng thứ 1: Google Translate TTS
+            const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q=${encodeURIComponent(word)}`;
+            currentFallbackAudio = new Audio(url);
+            currentFallbackAudio.play().catch(e => {
+                console.log("Google TTS bị chặn, thử nguồn dự phòng thứ 2...");
+                // Nguồn dự phòng thứ 2: Youdao
+                currentFallbackAudio = new Audio(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=2`);
+                currentFallbackAudio.play().catch(err => console.log(err));
+            });
+        }
+
+        function renderCard() {
+            const card = flashcards[currentIndex];
+            hintUsedThisCard = false;
+            document.getElementById('hint-btn').disabled = false;
+            document.getElementById('word-mean').textContent = card.mean;
+            document.getElementById('word-type').textContent = card.type;
+
+            // Highlight the missing word
+            let wordLength = card.word.length;
+            let underlineWidth = wordLength < 6 ? 'w-16' : (wordLength < 10 ? 'w-24' : (wordLength >= 14 ? 'w-40' : 'w-32'));
+            document.getElementById('word-ex').innerHTML = card.ex.replace('_______', `<span class="text-orange-600 border-b-2 border-orange-600 inline-block ${underlineWidth}"></span>`);
+
+            document.getElementById('word-exVi').textContent = card.exVi;
+
+            const container = document.getElementById('letter-inputs-container');
+            container.innerHTML = '';
+
+            const words = card.word.split(' ');
+            words.forEach((w, wordIndex) => {
+                const group = document.createElement('div');
+                group.className = 'flex gap-[2px] sm:gap-1';
+
+                w.split('').forEach((char, i) => {
+                    if (char === '-') {
+                        const dash = document.createElement('span');
+                        dash.textContent = '-';
+                        dash.className = 'text-base sm:text-xl font-bold text-orange-300 self-center px-0.5';
+                        group.appendChild(dash);
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text'; input.maxLength = 1;
+                        // Điều chỉnh kích thước ô nhập để phù hợp với từ siêu dài như "industrialization"
+                        input.className = 'char-input editable-input w-[20px] h-7 sm:w-8 sm:h-10 text-center text-sm sm:text-lg font-bold border-2 border-orange-200 rounded-md sm:rounded-lg focus:border-orange-500 bg-white text-orange-800 shadow-inner transition-all';
+
+                        input.addEventListener('input', function () {
+                            this.value = this.value.toLowerCase();
+                            const inputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const idx = inputs.indexOf(this);
+                            if (this.value && idx < inputs.length - 1) {
+                                let next = idx + 1;
+                                while (next < inputs.length && inputs[next].readOnly) next++;
+                                if (next < inputs.length) inputs[next].focus();
+                            }
+                        });
+
+                        input.addEventListener('keydown', function (e) {
+                            const inputs = Array.from(document.querySelectorAll('.editable-input'));
+                            const idx = inputs.indexOf(this);
+                            if (e.key === 'Backspace' && !this.value && idx > 0) {
+                                let prev = idx - 1;
+                                while (prev >= 0 && inputs[prev].readOnly) prev--;
+                                if (prev >= 0) inputs[prev].focus();
+                            } else if (e.key === 'Enter') checkAnswer();
+                        });
+                        group.appendChild(input);
+                    }
+                });
+
+                container.appendChild(group);
+                if (wordIndex < words.length - 1) {
+                    const s = document.createElement('div'); s.className = 'w-1.5 sm:w-3'; container.appendChild(s);
+                }
+            });
+
+            setTimeout(() => document.querySelector('.editable-input')?.focus(), 100);
+            document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${flashcards.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / flashcards.length) * 100}%`;
+            document.getElementById('top-prev-btn').classList.toggle('hidden', currentIndex === 0);
+        }
+
+        function giveHint() {
+            if (hintUsedThisCard) return;
+            const target = flashcards[currentIndex].word.replace(/[\s-]/g, '').toLowerCase();
+            const inputs = document.querySelectorAll('.char-input');
+            let pool = [];
+            for (let i = 0; i < inputs.length; i++) if (!inputs[i].readOnly && inputs[i].value.toLowerCase() !== target[i]) pool.push(i);
+
+            if (pool.length === 0) return;
+            // Tăng số lượng hint cho các cụm từ dài
+            const count = target.length <= 6 ? 1 : (target.length >= 14 ? 4 : (target.length >= 9 ? 3 : 2));
+
+            for (let i = 0; i < Math.min(count, pool.length); i++) {
+                const rand = Math.floor(Math.random() * pool.length);
+                const idx = pool.splice(rand, 1)[0];
+                inputs[idx].value = target[idx];
+                inputs[idx].readOnly = true;
+                inputs[idx].className = 'char-input w-[20px] h-7 sm:w-8 sm:h-10 text-center font-bold border-2 border-stone-400 bg-stone-100 text-stone-800 rounded-md sm:rounded-lg';
+            }
+            hintUsedThisCard = true;
+            hintedWords.add(flashcards[currentIndex].word);
+            document.getElementById('hint-btn').disabled = true;
+        }
+
+        function checkAnswer() {
+            const card = flashcards[currentIndex];
+            const target = card.word.replace(/[\s-]/g, '').toLowerCase();
+            const inputs = document.querySelectorAll('.char-input');
+            const user = Array.from(inputs).map(i => i.value).join('').toLowerCase();
+
+            if (user === target) {
+                playSound('success');
+                const header = document.getElementById('result-header');
+                header.textContent = "🎉 CHÍNH XÁC!";
+                header.className = "text-center py-1.5 sm:py-2 rounded-lg font-bold text-sm sm:text-lg mb-3 sm:mb-4 bg-orange-100 text-orange-800 uppercase tracking-widest";
+
+                document.getElementById('back-word').textContent = card.word;
+                document.getElementById('back-phonetic').textContent = card.phonetic;
+                document.getElementById('back-mean').textContent = `${card.mean} (${card.type})`;
+                document.getElementById('back-ex').innerHTML = card.ex.replace('_______', `<span class="font-black text-orange-700 underline decoration-2">${card.word}</span>`);
+
+                document.getElementById('flashcard').classList.add('flipped');
+            } else {
+                playSound('error');
+                document.getElementById('letter-inputs-container').classList.add('shake');
+                setTimeout(() => document.getElementById('letter-inputs-container').classList.remove('shake'), 400);
+            }
+        }
+
+        function nextCard() {
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => {
+                if (currentIndex < flashcards.length - 1) { currentIndex++; renderCard(); }
+                else showFinal();
+            }, 300);
+        }
+
+        function prevCard() {
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => { if (currentIndex > 0) { currentIndex--; renderCard(); } }, 300);
+        }
+
+        function showFinal() {
+            clearInterval(timerId);
+            const total = Math.floor((Date.now() - startTime) / 1000);
+            const m = Math.floor(total / 60); const s = total % 60;
+            const now = new Date();
+
+            document.getElementById('main-content').classList.add('hidden');
+            document.getElementById('final-screen').classList.remove('hidden');
+            document.getElementById('finish-time').textContent = now.toLocaleTimeString('vi-VN') + " - " + now.toLocaleDateString('vi-VN');
+            document.getElementById('elapsed-time').textContent = (m > 0 ? `${m} phút ` : '') + `${s} giây`;
+            document.getElementById('correct-count').textContent = flashcards.length - hintedWords.size;
+            document.getElementById('hint-count').textContent = hintedWords.size;
+
+            const list = document.getElementById('hint-words-list');
+            list.innerHTML = '';
+            if (hintedWords.size > 0) {
+                document.getElementById('hint-list-container').classList.remove('hidden');
+                hintedWords.forEach(w => { const li = document.createElement('li'); li.textContent = w; list.appendChild(li); });
+            }
+        }
+
+        function resetQuizToSummary() {
+            currentIndex = 0; hintedWords.clear();
+            document.getElementById('final-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            populateWelcomeTable();
+        }
+
+        document.addEventListener('DOMContentLoaded', populateWelcomeTable);
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('main-content').classList.contains('hidden')) return;
+            if (e.altKey && e.key.toLowerCase() === 'h') { e.preventDefault(); giveHint(); }
+            if (e.shiftKey && e.key === 'Enter') { e.preventDefault(); speakCurrentWord(); }
+            if (e.key === 'Enter' && !e.shiftKey) {
+                if (document.getElementById('flashcard').classList.contains('flipped')) nextCard();
+                else checkAnswer();
+            }
+        });
+    </script>
+</body>
+
+</html>
